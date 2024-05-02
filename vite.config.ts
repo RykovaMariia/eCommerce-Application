@@ -7,11 +7,7 @@ import eslint from 'vite-plugin-eslint'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-    VueDevTools(),
-    eslint()
-  ],
+  plugins: [vue(), VueDevTools(), eslint()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
