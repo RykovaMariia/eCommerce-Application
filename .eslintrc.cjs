@@ -7,14 +7,14 @@ module.exports = {
     'plugin:vue/vue3-essential',
     'eslint:recommended',
     '@vue/eslint-config-typescript',
-    '@vue/eslint-config-prettier/skip-formatting'
+    '@vue/eslint-config-prettier/skip-formatting',
   ],
   parserOptions: {
-    ecmaVersion: 'latest'
+    ecmaVersion: 'latest',
   },
   rules: {
     'vue/multi-word-component-names': 'off',
     'prettier/prettier': ['error'],
-    'no-console': ['error', { allow: ['warn', 'error'] }]
-  }
+    'no-console': ['error', { allow: ['warn', 'error'] }],
+  },
 }
