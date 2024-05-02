@@ -97,3 +97,16 @@ npm run prepare
 ```
 Install Husky to enable pre-commit hooks
 
+# Setup and Running ⚠️
+What things do you need to do in order to run our project locally? 
+
+1. Use node `18.x` or higher.
+2. Installed `.git` on your computer.
+3. Code Editor of your choice.
+4. Installed `npm`.
+5. Clone this repository to local computer or download zip file manually with our repository.
+6. Install all dependencies use `npm install`.
+7. Create the project in `CommerceTools`, setting up the necessary authorization, currencies, languages, and other configurations in the `Merchant Center`.
+8. Create the `API client` for CommerceTools, enabling access to the platform's APIs and managing permissions and scopes required for the project.
+9. Save your API environment variables file `.env` in the project directory.
+10. Finally run a development server: `npm run dev`
