@@ -13,6 +13,8 @@
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.cjs,.ts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
+    "stylelint": "stylelint 'src/*/.scss'",
+    "stylelint:fix": "stylelint --fix 'src/*/.scss'",
     "prepare": "husky"
   },
   "dependencies": {
