@@ -28,3 +28,72 @@ Our platform showcases the latest trends in furniture design, allowing you to di
 * GitHub - for hosting the repository
 * VS Code - code editor
 * Postman - The API Testing Tool 
+
+# Available Scripts ✨
+In the project directory, you can run:
+
+```
+npm run dev
+```
+Runs the app in the development mode.
+
+```
+npm run build
+```
+Builds the app for production to the build folder with type check the App with TypeScript.
+
+```
+npm run preview
+```
+Preview the production build locally
+
+```
+npm run test
+```
+Launches the test runner in the interactive watch mode.
+
+```
+npm run test:run
+```
+Launches the test tests once, without monitoring file changes
+
+```
+npm run type-check
+```
+Type check the App with TypeScript
+
+```
+npm run build-only
+```
+Builds the app for production to the build folder (dist).
+
+```
+npm run lint
+```
+Lint the App with ESlint
+
+```
+npm run format
+```
+This script to make Prettier not only to identify potential errors and violations but also automatically to fix as many of these issues as possible
+
+```
+npm run format:check
+```
+Scan on your codebase using Prettier. Prettier analyzes the code files in the project and checks their formatting for compliance with the established rules
+
+```
+npm run stylelint
+```
+Runs a scan on your codebase using the Stylelint
+
+```
+npm run stylelint:fix
+```
+Run this script to make Stylelint not only to identify potential errors and violations but also automatically to fix as many of these issues as possible
+
+```
+npm run prepare
+```
+Install Husky to enable pre-commit hooks
+
