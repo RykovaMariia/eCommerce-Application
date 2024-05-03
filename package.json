@@ -14,11 +14,11 @@
     "test:run": "vitest run",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
-    "lint": "eslint './src/**/*.{vue,cjs,ts}' --fix --ignore-path .gitignore",
+    "lint": "eslint \"./src/**/*.{vue,cjs,ts}\" --fix --ignore-path .gitignore",
     "format": "prettier --write ./src",
     "format:check": "prettier --check ./src",
-    "stylelint": "stylelint './src/**/*.{css,scss,vue}'",
-    "stylelint:fix": "stylelint './src/**/*.{css,scss,vue}' --fix",
+    "stylelint": "stylelint \"./src/**/*.{css,scss,vue}\"",
+    "stylelint:fix": "stylelint \"./src/**/*.{css,scss,vue}\" --fix",
     "prepare": "husky"
   },
   "dependencies": {
