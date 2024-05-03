@@ -33,7 +33,7 @@ Our platform showcases the latest trends in eco-friendly products, allowing you 
 - [Husky](https://typicode.github.io/husky/) - tool that automatically lint commit messages, code, and run tests upon committing or pushing
 - [Git](https://git-scm.com/) - version control system and project repository management
 - [GitHub](https://pages.github.com/) - the complete developer platform to build, scale, and deliver secure software
-- VS Code - code editor
+- [VS Code](https://code.visualstudio.com/) - code editor
 - [Postman](https://www.postman.com/) - The API Testing Tool
 
 # Available Scripts ✨
