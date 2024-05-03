@@ -28,7 +28,7 @@ Please check the type of change your PR introduces:
 
 # Demo (situationally)
 
-<!-- Add a screenshot or a video demonstration when possible -->
+<!-- Add a screenshot or a video demonstration if possible -->
 
 # Has It Been Tested?
 
