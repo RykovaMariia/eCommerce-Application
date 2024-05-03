@@ -56,7 +56,7 @@ Launches the test runner in the interactive watch mode.
 ```
 npm run test:run
 ```
-Launches the test tests once, without monitoring file changes
+Launches the tests once, without monitoring file changes
 
 ```
 npm run type-check
@@ -81,7 +81,7 @@ This script run Prettier to identify potential errors, violations and fix issues
 ```
 npm run format:check
 ```
-Runs to scan the code base with Prettier Prettier analyzes the code files in the project and checks their formatting for compliance with the established rules
+Runs to scan the code base with Prettier analyzes the code files in the project and checks their formatting for compliance with the established rules
 
 ```
 npm run stylelint
