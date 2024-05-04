@@ -1,0 +1,25 @@
+/* color palette from <https://github.com/vuejs/theme> */
+
+/* color-text */
+$color-text-dark: #27291b;
+$color-text-light: #f4e8da;
+$color-text-accent: #828266;
+$color-text-breadcrumbs: #898b7c;
+$color-text-placeholder: #a8a8a8;
+
+/* color-background */
+$color-background-light: #f4e8da;
+
+/* color-accent */
+$color-accent: #838a60;
+$color-accent-2: #bb9758;
+$color-sale: #ba6559;
+
+/* font */
+@font-face {
+  font-family: NewYork;
+  src: url('../assets/fonts/NewYork.otf') format('opentype');
+}
+
+$font-base: poppins, sans-serif;
+$font-heading: newyork;
