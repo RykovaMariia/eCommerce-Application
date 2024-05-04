@@ -5,7 +5,6 @@ import HelloWorld from './components/HelloWorld.vue'
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
     <div class="wrapper">
       <HelloWorld msg="Hello" />
 
@@ -19,7 +18,9 @@ import HelloWorld from './components/HelloWorld.vue'
   <RouterView />
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+@use './styles/constants.scss';
+
 header {
   max-height: 100vh;
   line-height: 1.5;
@@ -38,7 +39,7 @@ nav {
 }
 
 nav a.router-link-exact-active {
-  color: var(--color-text);
+  color: constants.$color-text-dark;
 }
 
 nav a.router-link-exact-active:hover {
