@@ -7,7 +7,7 @@ import { createVuetify } from 'vuetify'
 
 const vuetify = createVuetify()
 
-describe.only('TheFooter contains text', () => {
+describe('TheFooter contains text', () => {
   it('renders properly', async () => {
     const wrapper = mount(TheFooter, {
       global: {
