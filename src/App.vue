@@ -1,24 +1,26 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+//import { RouterLink, RouterView } from 'vue-router'
+//import HelloWorld from './components/HelloWorld.vue'
+import TheFooter from '@/components/core/TheFooter.vue'
 </script>
 
 <template>
-  <header>
+  <!-- <header>
     <div class="wrapper">
-      <HelloWorld msg="Hello" />
+       <HelloWorld msg="Hello" />
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </div>
-  </header>
+  </header>-->
 
   <RouterView />
+  <TheFooter />
 </template>
 
 <style lang="scss" scoped>
-@use './styles/constants.scss';
+@use '@styles/constants.scss';
 
 header {
   max-height: 100vh;
