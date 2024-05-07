@@ -7,8 +7,6 @@ import { createVuetify } from 'vuetify'
 
 const vuetify = createVuetify()
 
-global.ResizeObserver = require('resize-observer-polyfill')
-
 describe.only('TheFooter contains text', () => {
   it('renders properly', async () => {
     const wrapper = mount(TheFooter, {

@@ -33,7 +33,10 @@ import IconZero from '@components/icons/IconZero.vue'
 .btn {
   margin-top: 1rem;
   padding: 0.8rem 2rem;
+
   color: constants.$color-text-light;
+  text-transform: none;
+
   background-color: constants.$color-secondary;
 }
 </style>
