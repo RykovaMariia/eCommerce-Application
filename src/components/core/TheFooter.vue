@@ -42,7 +42,7 @@ const catalogLinks = [
     <v-container class="container">
       <v-row class="footer-wrapper" justify="center" no-gutters>
         <v-col class="v-col-md-3">
-          <v-slot class="logo"><IconlogoWhite /></v-slot>
+          <div class="logo"><IconlogoWhite /></div>
           <div class="v-col-md-10 logo-text">
             Eco-friendly place, where sustainability meets style!
           </div>
@@ -65,22 +65,18 @@ const catalogLinks = [
         <v-col class="v-col-md-3">
           <div class="contact-link">
             <a href="tel:+380057 000 00 00"
-              ><v-icon icon="mdi-phone" size="x-small"></v-icon>+380057 000 00 00</a
+              ><v-icon icon="mdi-phone" size="small"></v-icon>+380057 000 00 00</a
             >
           </div>
           <div class="contact-link">
             <a href="mailto:green_city@gmail.com"
-              ><v-icon icon="mdi-email" size="x-small"></v-icon>green_city@gmail.com</a
+              ><v-icon icon="mdi-email" size="small"></v-icon>green_city@gmail.com</a
             >
           </div>
           <div class="icons">
-            <a href="https://www.instagram.com/"
-              ><v-icon icon="mdi-instagram" size="small"></v-icon
-            ></a>
-            <a href="https://www.facebook.com"
-              ><v-icon icon="mdi-facebook" size="small"></v-icon
-            ></a>
-            <a href="https://www.twitter.com"><v-icon icon="mdi-twitter" size="small"></v-icon></a>
+            <a href="https://www.instagram.com/"><v-icon icon="mdi-instagram"></v-icon></a>
+            <a href="https://www.facebook.com"><v-icon icon="mdi-facebook"></v-icon></a>
+            <a href="https://www.twitter.com"><v-icon icon="mdi-twitter"></v-icon></a>
           </div>
         </v-col>
       </v-row>

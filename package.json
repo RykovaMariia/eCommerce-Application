@@ -29,9 +29,6 @@
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
-    "@jamescoyle/vue-icon": "^0.1.2",
-    "@mdi/font": "^7.4.47",
-    "@mdi/js": "^7.4.47",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/jsdom": "^21.1.6",
@@ -46,6 +43,7 @@
     "husky": "^9.0.11",
     "jsdom": "^24.0.0",
     "material-design-icons-iconfont": "^6.7.0",
+    "@mdi/font": "^7.4.47",
     "npm-run-all2": "^6.1.2",
     "postcss-html": "^1.6.0",
     "prettier": "^3.2.5",
