@@ -4,12 +4,4 @@
   </div>
 </template>
 
-<style>
-@media (width >= 1024px) {
-  .about {
-    display: flex;
-    align-items: center;
-    min-height: 100vh;
-  }
-}
-</style>
+<style></style>
