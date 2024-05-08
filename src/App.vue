@@ -1,28 +1,21 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import LoginPage from './pages/LoginPage.vue'
 </script>
 
 <template>
   <header>
     <div class="wrapper">
-      <HelloWorld msg="Hello" />
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
     </div>
   </header>
-
-  <RouterView />
+  <LoginPage />
 </template>
 
 <style lang="scss" scoped>
 @use './styles/constants.scss';
 
 header {
-  max-height: 100vh;
-  line-height: 1.5;
+  max-width: 1440px;
+  margin: auto;
 }
 
 .logo {
