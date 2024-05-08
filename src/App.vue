@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import TheHeader from './components/core/TheHeader.vue'
+import TheFooter from '@/components/core/TheFooter.vue'
 </script>
 
 <template>
@@ -9,10 +10,12 @@ import TheHeader from './components/core/TheHeader.vue'
   <main>
     <RouterView />
   </main>
+
+  <TheFooter />
 </template>
 
 <style lang="scss" scoped>
-@use './styles/constants.scss';
+@use '@styles/constants.scss';
 
 header {
   max-height: 100vh;
