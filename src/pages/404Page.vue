@@ -39,4 +39,19 @@ import IconZero from '@components/icons/IconZero.vue'
 
   background-color: constants.$color-secondary;
 }
+
+@media screen and (width <= 960px) {
+  .container,
+  footer {
+    margin-top: 1rem;
+  }
+
+  h1 {
+    font-size: 3rem;
+  }
+
+  .heading-text {
+    font-size: 1rem;
+  }
+}
 </style>

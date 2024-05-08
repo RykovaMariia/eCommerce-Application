@@ -40,29 +40,29 @@ const catalogLinks = [
 <template>
   <footer>
     <v-container class="container">
-      <v-row class="footer-wrapper" justify="center" no-gutters>
-        <v-col class="v-col-md-3">
+      <v-row class="footer-wrapper" justify="center">
+        <v-col class="v-col-md-3 v-col-sm-6 logo">
           <div class="logo"><IconlogoWhite /></div>
           <div class="v-col-md-10 logo-text">
             Eco-friendly place, where sustainability meets style!
           </div>
         </v-col>
 
-        <v-col>
+        <v-col class="v-col-md-3 v-col-sm-6 menu">
           <div class="footer-wrapper-title">Menu</div>
           <div v-for="(link, index) in menuLinks" :key="index">
             <a :href="link.href">{{ link.name }}</a>
           </div>
         </v-col>
 
-        <v-col>
+        <v-col class="v-col-md-3 catalog">
           <div class="footer-wrapper-title">Catalog</div>
           <div v-for="(link, index) in catalogLinks" :key="index">
             <a :href="link.href">{{ link.name }}</a>
           </div>
         </v-col>
 
-        <v-col class="v-col-md-3">
+        <v-col class="v-col-md-3 contacts">
           <div class="contact-link">
             <a href="tel:+380057 000 00 00"
               ><v-icon icon="mdi-phone" size="small"></v-icon>+380057 000 00 00</a
@@ -105,7 +105,6 @@ footer {
 
   .footer-wrapper {
     position: relative;
-    gap: 1rem;
     padding-bottom: 1rem;
 
     &::after {
@@ -123,6 +122,7 @@ footer {
 
     .footer-wrapper-title {
       margin-bottom: 1rem;
+      font-weight: bold;
     }
 
     .logo-text {
@@ -169,8 +169,47 @@ footer {
   }
 
   .footer-under-line {
-    padding-top: 0.5rem;
+    padding-top: 1rem;
     font-size: 0.75rem;
+  }
+
+  @media screen and (width <= 960px) {
+    .logo {
+      order: 1;
+    }
+
+    .contacts {
+      order: 2;
+      margin-top: 3.5rem;
+      padding-left: 3rem;
+    }
+
+    .menu {
+      order: 3;
+    }
+
+    .catalog {
+      order: 4;
+      padding-left: 3rem;
+    }
+  }
+
+  @media screen and (width <= 600px) {
+    .footer-wrapper {
+      font-size: 0.8rem;
+    }
+
+    .logo,
+    .contacts,
+    .menu {
+      flex: 0 0 50%;
+      max-width: 50%;
+    }
+
+    .contacts,
+    .catalog {
+      padding-left: 0.5rem;
+    }
   }
 }
 </style>

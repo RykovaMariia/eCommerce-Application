@@ -65,3 +65,9 @@ h6 {
   max-width: 1440px;
   padding: 0 4rem;
 }
+
+@media screen and (width <= 600px) {
+  .v-container.container {
+    padding: 0 1rem;
+  }
+}
