@@ -1,17 +1,15 @@
 <script setup lang="ts">
+import TheFooter from '@/components/core/TheFooter.vue'
 import LoginPage from './pages/LoginPage.vue'
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
-    </div>
-  </header>
   <LoginPage />
+  <TheFooter />
 </template>
 
 <style lang="scss" scoped>
-@use './styles/constants.scss';
+@use '@styles/constants.scss';
 
 header {
   max-width: 1440px;
