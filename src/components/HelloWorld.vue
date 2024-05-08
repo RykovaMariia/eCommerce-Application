@@ -1,10 +1,25 @@
 <script setup lang="ts">
+import { getApiRoot, projectKey } from '../api/BuildClient'
+import { reactive, onMounted } from 'vue'
+
 defineProps<{
   msg: string
 }>()
+
+let apiData = reactive({})
+
+onMounted(() => {
+  console.warn(projectKey)
+  try {
+    apiData = getApiRoot().withProjectKey({ projectKey }).get().execute()
+  } catch (e) {
+    console.error(e)
+  }
+})
 </script>
 
 <template>
+  {{ apiData }}
   <div class="greetings">
     <h1 class="green">{{ msg }}</h1>
     <h3>

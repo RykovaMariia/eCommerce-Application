@@ -22,6 +22,11 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@commercetools/platform-sdk": "^7.8.0",
+    "@commercetools/sdk-client-v2": "^2.5.0",
+    "cross-fetch": "^4.0.0",
+    "isomorphic-fetch": "^3.0.0",
+    "node-fetch": "^3.3.2",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
@@ -31,8 +36,10 @@
     "@commitlint/config-conventional": "^19.2.2",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
+    "@types/isomorphic-fetch": "^0.0.39",
     "@types/jsdom": "^21.1.6",
     "@types/node": "^20.12.5",
+    "@types/node-fetch": "^2.6.11",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
