@@ -12,14 +12,14 @@ body {
   min-height: 100vh;
 
   font-family: constants.$font-base;
-  font-size: 15px;
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
   color: constants.$color-text-dark;
   text-rendering: optimizelegibility;
 
-  background: url("../assets/images/texture.png");
+  background: url('../assets/images/texture.png');
   background-repeat: round;
   background-size: 35%;
 
@@ -35,4 +35,14 @@ h4,
 h5,
 h6 {
   font-family: constants.$font-heading;
+}
+
+a {
+  font-size: 16px;
+  color: constants.$color-text-dark;
+  text-decoration: none;
+
+  &:hover {
+    color: constants.$color-primary;
+  }
 }
