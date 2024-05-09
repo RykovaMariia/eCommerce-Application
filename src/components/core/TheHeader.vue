@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import IconLogo from '../icons/IconLogo.vue'
 import HoverMenu from '../hover-menu/HoverMenu.vue'
+import IconLogo from '../icons/IconLogo.vue'
 
 const accountMenu = [
   { text: 'Login', href: '/login' },

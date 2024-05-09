@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import IconlogoWhite from '@components/icons/IconlogoWhite.vue'
+import IconLogo from '../icons/IconLogo.vue'
 const menuLinks = [
   {
     name: 'Catalog',
@@ -42,7 +42,7 @@ const catalogLinks = [
     <v-container class="container">
       <v-row class="footer-wrapper" justify="center">
         <v-col class="v-col-md-3 v-col-sm-6 logo">
-          <div class="logo"><IconlogoWhite /></div>
+          <IconLogo :is-while="true" />
           <div class="v-col-md-10 logo-text">
             Eco-friendly place, where sustainability meets style!
           </div>
