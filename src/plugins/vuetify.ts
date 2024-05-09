@@ -20,7 +20,7 @@ const vuetify = createVuetify({
           info: '#2196F3',
           success: '#4CAF50',
           warning: '#FFC107',
-          surface: '#bb9758'
+          surface: '#bb9758',
         },
       },
     },

@@ -19,18 +19,18 @@ const items = [
 <template>
   <v-container class="container">
     <v-breadcrumbs :items="items"></v-breadcrumbs>
-      <div class="login-card">
-        <v-col>
-          <h1 class="login-title">Login</h1>
-          <v-form class="login-form">
-            <TheInput label="Email" placeholder="user@example.com" type="text" />
-            <TheInput label="Password" placeholder="" type="password" icon="mdi-eye-closed" />
+    <div class="login-card">
+      <v-col>
+        <h1 class="login-title">Login</h1>
+        <v-form class="login-form">
+          <TheInput label="Email" placeholder="user@example.com" type="text" />
+          <TheInput label="Password" placeholder="" type="password" icon="mdi-eye-closed" />
 
-            <TheButton textContent="Login" classes="secondary" buttonType="submit" />
-          </v-form>
-        </v-col>
-        <v-img class="login-image" :aspect-ratio="1" :src="path" cover></v-img>
-      </div>
+          <TheButton textContent="Login" classes="secondary" buttonType="submit" />
+        </v-form>
+      </v-col>
+      <v-img class="login-image" :aspect-ratio="1" :src="path" cover></v-img>
+    </div>
   </v-container>
 </template>
 
