@@ -11,7 +11,7 @@ const items = [
   {
     title: 'Login',
     disabled: true,
-    href: 'breadcrumbs_link_1',
+    href: '/login',
   },
 ]
 </script>
@@ -19,7 +19,6 @@ const items = [
 <template>
   <v-container class="container">
     <v-breadcrumbs :items="items"></v-breadcrumbs>
-    <v-col>
       <div class="login-card">
         <v-col>
           <h1 class="login-title">Login</h1>
@@ -32,11 +31,10 @@ const items = [
         </v-col>
         <v-img class="login-image" :aspect-ratio="1" :src="path" cover></v-img>
       </div>
-    </v-col>
   </v-container>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 @use '@/styles/constants.scss';
 
 .v-breadcrumbs {
@@ -47,7 +45,11 @@ const items = [
   display: flex;
   flex-direction: column;
   max-width: 1440px;
-  margin: 0 auto;
+  margin: 3rem auto;
+
+  @media screen and (width <= 768px) {
+    padding: 0;
+  }
 }
 
 .login-title {

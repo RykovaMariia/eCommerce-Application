@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import TheFooter from '@/components/core/TheFooter.vue'
-import LoginPage from './pages/LoginPage.vue'
 </script>
 
 <template>
-  <LoginPage />
   <TheFooter />
 </template>
 
