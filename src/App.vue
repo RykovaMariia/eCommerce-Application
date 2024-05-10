@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import TheFooter from '@/components/core/TheFooter.vue'
+import HelloWord from '@/components/HelloWorld.vue'
 </script>
 
 <template>
+  <HelloWord />
   <RouterView />
   <TheFooter />
 </template>

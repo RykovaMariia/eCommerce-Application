@@ -4,8 +4,8 @@ import { mount } from '@vue/test-utils'
 import TheFooter from '@components/core/TheFooter.vue'
 import { vuetify } from '@/utils/test-utils'
 
-describe('TheFooter contains text', () => {
-  it('renders properly', async () => {
+describe('TheFooter', () => {
+  it('contains text', async () => {
     const wrapper = mount(TheFooter, {
       global: {
         plugins: [vuetify],

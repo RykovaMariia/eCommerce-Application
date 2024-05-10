@@ -5,8 +5,8 @@ import Page404 from '@/pages/404Page.vue'
 import IconZero from '@components/icons/IconZero.vue'
 import { vuetify } from '@/utils/test-utils'
 
-describe('404Page contains component IconZero', () => {
-  it('renders properly', () => {
+describe('404Page', () => {
+  it('contains component IconZero', () => {
     const wrapper = mount(Page404, {
       global: {
         plugins: [vuetify],
