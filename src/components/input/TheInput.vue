@@ -18,7 +18,7 @@ const fieldType = computed(() =>
   props.label === 'Password' ? (marker.value ? props.type : 'text') : props.type,
 )
 const innerIcon = computed(() =>
-  props.label === 'Password' ? (ref(marker) ? props.icon : 'mdi-eye-outline') : '',
+  props.label === 'Password' ? (marker.value ? props.icon : 'mdi-eye-outline') : '',
 )
 </script>
 
