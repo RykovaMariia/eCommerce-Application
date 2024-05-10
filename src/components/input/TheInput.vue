@@ -1,30 +1,31 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { chooseRules } from '@/utils/choose-rules'
 
-defineProps<{
+const props = defineProps<{
   label: string
   placeholder?: string
   type: string
   icon?: string
-}>()
+}>();
 
-let marker = ref(true)
+const rules = computed(() => chooseRules(props.type, props.label))
+const marker = ref(true)
 function togglePassword() {
   marker.value = !marker.value
 }
+const fieldType = computed(() => props.label === 'Password' ? (marker.value ? props.type : 'text') : props.type)
+const innerIcon = computed(() => props.label === 'Password' ? (ref(marker) ? props.icon : 'mdi-eye-outline') : '')
 </script>
 
 <template>
   <v-col>
     <v-text-field
-      :label="$props.label"
-      :placeholder="$props.placeholder"
-      :rules="chooseRules($props.type, $props.label)"
-      :type="$props.label === 'Password' ? (marker ? $props.type : 'text') : $props.type"
-      :append-inner-icon="
-        $props.label === 'Password' ? (marker ? $props.icon : 'mdi-eye-outline') : ''
-      "
+      :label="props.label"
+      :placeholder="props.placeholder"
+      :rules="rules"
+      :type="fieldType"
+      :append-inner-icon="innerIcon"
       @click:append-inner="togglePassword()"
       variant="outlined"
     ></v-text-field>
@@ -32,7 +33,7 @@ function togglePassword() {
 </template>
 
 <style scoped lang="scss">
-@use '../../styles/constants.scss';
+@use '@styles/constants.scss';
 
 .v-field-label {
   font-size: 16px;

@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import TheButton from '@/components/buttons/TheButton.vue'
-import TheInput from '@/components/input/TheInput.vue'
-import path from '@/assets/images/login/login.jpg'
+import path from '@assets/images/login/login.jpg'
+import LoginForm from '@pages/LoginPage/LoginForm.vue'
 const items = [
   {
     title: 'Home',
@@ -22,12 +21,7 @@ const items = [
     <div class="login-card">
       <v-col>
         <h1 class="login-title">Login</h1>
-        <v-form class="login-form">
-          <TheInput label="Email" placeholder="user@example.com" type="text" />
-          <TheInput label="Password" placeholder="" type="password" icon="mdi-eye-closed" />
-
-          <TheButton textContent="Login" classes="secondary" buttonType="submit" />
-        </v-form>
+        <LoginForm />
       </v-col>
       <v-img class="login-image" :aspect-ratio="1" :src="path" cover></v-img>
     </div>

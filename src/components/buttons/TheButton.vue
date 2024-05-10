@@ -1,21 +1,25 @@
 <script setup lang="ts">
-defineProps<{
-  textContent?: String
-  classes?: String
-  buttonType?: String
-}>()
+
+interface ButtonProps {
+  textContent?: string
+  classes?: string
+  buttonType?: string
+}
+const props = withDefaults(defineProps<ButtonProps>(), {
+  buttonType: 'button'
+})
 </script>
 
 <template>
   <v-col>
-    <v-btn variant="flat" :class="$props.classes" :type="$props.buttonType ?? 'button'">
-      {{ textContent }}
+    <v-btn variant="flat" :class="props.classes" :type="props.buttonType">
+      {{ props.textContent }}
     </v-btn>
   </v-col>
 </template>
 
 <style lang="scss">
-@use '../../styles/constants.scss';
+@use '@styles/constants.scss';
 
 .v-btn {
   border-radius: 6px;
