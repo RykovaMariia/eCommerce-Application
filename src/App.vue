@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import TheFooter from '@/components/core/TheFooter.vue'
-import HelloWord from '@/components/HelloWorld.vue'
+import TheFooter from '@components/core/TheFooter.vue'
 </script>
 
 <template>
-  <HelloWord />
   <RouterView />
   <TheFooter />
 </template>
@@ -13,8 +11,8 @@ import HelloWord from '@/components/HelloWorld.vue'
 @use '@styles/constants.scss';
 
 header {
-  max-height: 100vh;
-  line-height: 1.5;
+  max-width: 1440px;
+  margin: auto;
 }
 
 .logo {
