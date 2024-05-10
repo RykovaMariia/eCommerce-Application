@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TheFooter from '@/components/core/TheFooter.vue'
+import TheFooter from '@components/core/TheFooter.vue'
 </script>
 
 <template>
@@ -11,8 +11,8 @@ import TheFooter from '@/components/core/TheFooter.vue'
 @use '@styles/constants.scss';
 
 header {
-  max-height: 100vh;
-  line-height: 1.5;
+  max-width: 1440px;
+  margin: auto;
 }
 
 .logo {
