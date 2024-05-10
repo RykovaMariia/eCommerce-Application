@@ -7,15 +7,19 @@ const props = defineProps<{
   placeholder?: string
   type: string
   icon?: string
-}>();
+}>()
 
 const rules = computed(() => chooseRules(props.type, props.label))
 const marker = ref(true)
 function togglePassword() {
   marker.value = !marker.value
 }
-const fieldType = computed(() => props.label === 'Password' ? (marker.value ? props.type : 'text') : props.type)
-const innerIcon = computed(() => props.label === 'Password' ? (ref(marker) ? props.icon : 'mdi-eye-outline') : '')
+const fieldType = computed(() =>
+  props.label === 'Password' ? (marker.value ? props.type : 'text') : props.type,
+)
+const innerIcon = computed(() =>
+  props.label === 'Password' ? (ref(marker) ? props.icon : 'mdi-eye-outline') : '',
+)
 </script>
 
 <template>

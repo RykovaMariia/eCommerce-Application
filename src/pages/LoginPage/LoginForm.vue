@@ -10,4 +10,3 @@ import TheInput from '@components/input/TheInput.vue'
     <TheButton textContent="Login" classes="secondary" buttonType="submit" />
   </v-form>
 </template>
-

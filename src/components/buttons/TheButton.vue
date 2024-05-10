@@ -1,12 +1,11 @@
 <script setup lang="ts">
-
 interface ButtonProps {
   textContent?: string
   classes?: string
   buttonType?: string
 }
 const props = withDefaults(defineProps<ButtonProps>(), {
-  buttonType: 'button'
+  buttonType: 'button',
 })
 </script>
 
