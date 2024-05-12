@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import RegistrationForm from '@pages/RegistrationPage/RegistrationForm.vue'
+import TheBreadcrumb from '@components/breadcrumbs/TheBreadcrumb.vue';
 const items = [
   {
     title: 'Home',
@@ -16,12 +17,11 @@ const items = [
 
 <template>
   <v-container class="container">
-    <v-breadcrumbs :items="items"></v-breadcrumbs>
+    <TheBreadcrumb :items="items"/>
     <v-col class="registration-card">
       <v-col>
         <h1 class="registration-title">Registration</h1>
       </v-col>
-
       <RegistrationForm />
     </v-col>
   </v-container>
@@ -30,8 +30,11 @@ const items = [
 <style scoped lang="scss">
 @use '@/styles/constants.scss';
 
+.container {
+  margin: 3rem auto;
+}
+
 .registration-card {
-  margin: 1rem auto;
   border: 1px solid constants.$color-primary;
   border-radius: 6px;
 }

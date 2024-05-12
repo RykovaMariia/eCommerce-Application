@@ -8,7 +8,7 @@ import { chooseRules } from '@/utils/choose-rules'
 <template>
   <v-form class="registration-form">
     <v-col class="registration-container">
-      <v-col style="padding: 0">
+      <v-col class="registration-inner-container">
         <TheInput label="First name" placeholder="" type="text" />
         <TheInput label="Last name" placeholder="" type="text" />
         <v-col>
@@ -25,7 +25,7 @@ import { chooseRules } from '@/utils/choose-rules'
         <TheInput label="Email" placeholder="user@example.com" type="text" />
         <TheInput label="Password" placeholder="" type="password" icon="mdi-eye-closed" />
       </v-col>
-      <v-col style="padding: 0">
+      <v-col class="registration-inner-container">
         <TheInput label="United Kingdom" type="text" disabled="true" />
         <TheInput label="City" type="text" />
         <TheInput label="Street" type="text" />
@@ -54,5 +54,9 @@ import { chooseRules } from '@/utils/choose-rules'
   @media screen and (width <= 1024px) {
     flex-direction: column;
   }
+}
+
+.registration-inner-container {
+  padding: 0;
 }
 </style>
