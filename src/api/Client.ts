@@ -4,10 +4,12 @@ import {
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
   type PasswordAuthMiddlewareOptions,
+  type RefreshAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2'
 
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
 import { userAuth } from '@/stores/auth-store'
+import { tokenData } from './TokenInfo'
 
 const userClientBuilder = new ClientBuilder()
 
@@ -44,6 +46,19 @@ export class Client {
       },
     },
     scopes: this.scopes,
+    tokenCache: tokenData,
+    fetch,
+  }
+
+  private refreshAuthMiddlewareOptions: RefreshAuthMiddlewareOptions = {
+    host: this.authUri,
+    projectKey: this.projectKey,
+    credentials: {
+      clientId: import.meta.env.VITE_CTP_CLIENT_ID,
+      clientSecret: import.meta.env.VITE_CTP_CLIENT_SECRET,
+    },
+    refreshToken: userAuth().refreshToken,
+    tokenCache: tokenData,
     fetch,
   }
 
@@ -63,7 +78,10 @@ export class Client {
   }
 
   getClient() {
-    if (this.isLogining || userAuth().isLogined) {
+    if (userAuth().isLogined) {
+      return this.getDefaultClient().withRefreshTokenFlow(this.refreshAuthMiddlewareOptions).build()
+    }
+    if (this.isLogining) {
       return this.getDefaultClient().withPasswordFlow(this.passwordAuthMiddlewareOptions).build()
     }
     return this.getDefaultClient().build()

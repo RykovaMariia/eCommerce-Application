@@ -1,8 +1,12 @@
 import { defineStore } from 'pinia'
+import { localStorageService } from '../services/storage-service'
+
+const refreshToken = localStorageService.getData('token')?.refreshToken
 
 export const userAuth = defineStore('user', {
   state: () => ({
-    isLogined: false,
+    isLogined: refreshToken ? true : false,
+    refreshToken: refreshToken || '',
 
     userCredentials: {
       email: '',
