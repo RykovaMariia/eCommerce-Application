@@ -3,9 +3,11 @@ import {
   ClientBuilder,
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
+  type PasswordAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2'
 
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
+import { userAuth } from '@/stores/auth-store'
 
 const userClientBuilder = new ClientBuilder()
 
@@ -30,18 +32,41 @@ export class Client {
     fetch,
   }
 
+  private passwordAuthMiddlewareOptions: PasswordAuthMiddlewareOptions = {
+    host: this.authUri,
+    projectKey: this.projectKey,
+    credentials: {
+      clientId: import.meta.env.VITE_CTP_CLIENT_ID,
+      clientSecret: import.meta.env.VITE_CTP_CLIENT_SECRET,
+      user: {
+        username: userAuth().userCredentials.email,
+        password: userAuth().userCredentials.password,
+      },
+    },
+    scopes: this.scopes,
+    fetch,
+  }
+
   private httpMiddlewareOptions: HttpMiddlewareOptions = {
     host: this.baseUri,
     fetch,
   }
 
-  getClient() {
+  constructor(private isLogining = false) {}
+
+  getDefaultClient() {
     return userClientBuilder
       .withProjectKey(this.projectKey)
       .withClientCredentialsFlow(this.authMiddlewareOptions)
       .withHttpMiddleware(this.httpMiddlewareOptions)
       .withLoggerMiddleware()
-      .build()
+  }
+
+  getClient() {
+    if (this.isLogining || userAuth().isLogined) {
+      return this.getDefaultClient().withPasswordFlow(this.passwordAuthMiddlewareOptions).build()
+    }
+    return this.getDefaultClient().build()
   }
 
   getProjectKey() {
