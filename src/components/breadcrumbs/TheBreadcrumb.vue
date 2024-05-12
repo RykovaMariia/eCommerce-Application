@@ -1,8 +1,8 @@
 <script setup lang="ts">
 interface IItem {
-  title: 'Login',
-  disabled: true,
-  href: '/login',
+  title: 'Login'
+  disabled: true
+  href: '/login'
 }
 const props = defineProps<{
   items: IItem[]
