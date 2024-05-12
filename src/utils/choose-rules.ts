@@ -1,4 +1,4 @@
-import { getMaxTime } from "./max-time"
+import { getMaxTime } from './max-time'
 
 export const rules = {
   required: (value: string) => {
@@ -30,21 +30,16 @@ export const rules = {
   },
   street: (value: string) => {
     const pattern = /^[a-zA-Z0-9.[^<>()[\]\\.,;:\s@"]{1,}$/
-    return (
-      pattern.test(value) || 
-      'Input must contain at least one character'
-    )
+    return pattern.test(value) || 'Input must contain at least one character'
   },
   birthdate: (value: string) => {
-    const maxTime = getMaxTime();
-    return (
-      (new Date(value).valueOf()) < new Date(maxTime).valueOf() ||
-      'Invalid input'
-    )
+    const maxTime = getMaxTime()
+    return new Date(value).valueOf() < new Date(maxTime).valueOf() || 'Invalid input'
+  },
+  postcode: (value: string) => {
+    const pattern = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/
+    return pattern.test(value) || 'Postal code doesn\'t match with the format: AA9A 9AA - A signifies a letter and 9 a digit. Only uppercase letters'
   }
-  // postcode: (value: string) => {
-  //   const pattern = /^
-  // }
 }
 
 export function chooseRules(type: string, label: string) {
@@ -59,6 +54,9 @@ export function chooseRules(type: string, label: string) {
   }
   if (type === 'text' && label === 'Birth date') {
     return [rules.required, rules.birthdate]
+  }
+  if (type === 'text' && label === 'Postal code') {
+    return [rules.required, rules.postcode]
   }
   return [rules.required, rules.text]
 }

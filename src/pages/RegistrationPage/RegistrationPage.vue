@@ -19,9 +19,9 @@ const items = [
     <v-breadcrumbs :items="items"></v-breadcrumbs>
     <v-col class="registration-card">
       <v-col>
-        <h1 class="registration-title">Registration</h1>  
+        <h1 class="registration-title">Registration</h1>
       </v-col>
-      
+
       <RegistrationForm />
     </v-col>
   </v-container>
