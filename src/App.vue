@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import TheFooter from '@components/core/TheFooter.vue'
+import RegistrationPage from '@pages/RegistrationPage/RegistrationPage.vue'
 </script>
 
 <template>
-  <RouterView />
+  <!-- <RouterView /> -->
+  <RegistrationPage />
   <TheFooter />
 </template>
 

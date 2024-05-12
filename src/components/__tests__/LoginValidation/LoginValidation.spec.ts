@@ -13,7 +13,11 @@ describe('input validation function test', () => {
   })
 
   test('should return an array of rules for else case', () => {
-    expect(chooseRules('text', 'Test')).toEqual([rules.required])
+    expect(chooseRules('text', 'Test')).toEqual([rules.required, rules.text])
+  })
+
+  test('should return an array of rules for street case', () => {
+    expect(chooseRules('text', 'Street')).toEqual([rules.required, rules.street])
   })
 
   test('regular expression should match with email address format', () => {

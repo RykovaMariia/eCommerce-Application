@@ -7,6 +7,7 @@ const props = defineProps<{
   placeholder?: string
   type: string
   icon?: string
+  disabled?: boolean
 }>()
 
 const rules = computed(() => chooseRules(props.type, props.label))
@@ -32,6 +33,7 @@ const innerIcon = computed(() =>
       :append-inner-icon="innerIcon"
       @click:append-inner="togglePassword()"
       variant="outlined"
+      :disabled="$props.disabled"
     ></v-text-field>
   </v-col>
 </template>

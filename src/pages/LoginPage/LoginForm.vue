@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TheButton from '@components/buttons/TheButton.vue'
-import TheInput from '@components/input/TheInput.vue'
+import TheInput from '@components/inputs/TheInput.vue'
 </script>
 
 <template>
