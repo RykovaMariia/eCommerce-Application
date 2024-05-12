@@ -35,7 +35,7 @@ import { chooseRules } from '@/utils/choose-rules'
         </v-col>
       </v-col>
     </v-col>
-    <TheButton textContent="Sign Up" classes="secondary" buttonType="submit" size="large"/>
+    <TheButton textContent="Sign Up" classes="secondary" buttonType="submit" size="large" />
   </v-form>
 </template>
 

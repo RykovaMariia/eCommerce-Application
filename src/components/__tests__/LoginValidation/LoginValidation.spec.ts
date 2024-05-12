@@ -69,6 +69,8 @@ describe('input validation function test', () => {
   })
 
   test('regular expression should handle invalid postal code format', () => {
-    expect(rules.postcode('0A99AA')).toEqual('Postal code doesn\'t match with the format: AA9A 9AA - A signifies a letter and 9 a digit. Only uppercase letters')
+    expect(rules.postcode('0A99AA')).toEqual(
+      "Postal code doesn't match with the format: AA9A 9AA - A signifies a letter and 9 a digit. Only uppercase letters",
+    )
   })
 })

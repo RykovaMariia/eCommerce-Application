@@ -7,7 +7,7 @@ interface ButtonProps {
 }
 const props = withDefaults(defineProps<ButtonProps>(), {
   buttonType: 'button',
-  size: 'default'
+  size: 'default',
 })
 </script>
 
