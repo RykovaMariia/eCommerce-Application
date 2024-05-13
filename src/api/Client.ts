@@ -8,8 +8,9 @@ import {
 } from '@commercetools/sdk-client-v2'
 
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
-import { userAuth } from '@/stores/auth-store'
+const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
 import { tokenData } from './TokenInfo'
+import { localStorageService } from '@/services/storage-service'
 
 const userClientBuilder = new ClientBuilder()
 
@@ -41,7 +42,7 @@ export class Client {
       clientId: this.clientId,
       clientSecret: this.clientSecret,
     },
-    refreshToken: userAuth().refreshToken,
+    refreshToken: refreshToken,
     tokenCache: tokenData,
     fetch,
   }
@@ -84,7 +85,7 @@ export class Client {
   }
 
   getClient() {
-    if (userAuth().isLogined) {
+    if (refreshToken) {
       return this.getDefaultClient().withRefreshTokenFlow(this.refreshAuthMiddlewareOptions).build()
     }
     return this.getDefaultClient().build()
@@ -96,3 +97,5 @@ export class Client {
     })
   }
 }
+
+export const client = new Client()
