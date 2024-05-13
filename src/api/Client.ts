@@ -13,7 +13,7 @@ import { tokenData } from './TokenInfo'
 
 const userClientBuilder = new ClientBuilder()
 
-export class Client {
+class Client {
   private projectKey = import.meta.env.VITE_CTP_PROJECT_KEY
   private authUri = import.meta.env.VITE_CTP_AUTH_URL
   private baseUri = import.meta.env.VITE_CTP_API_URL
@@ -96,3 +96,5 @@ export class Client {
     })
   }
 }
+
+export const client = new Client()
