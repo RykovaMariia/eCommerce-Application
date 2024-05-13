@@ -13,7 +13,7 @@ import { tokenData } from './TokenInfo'
 
 const userClientBuilder = new ClientBuilder()
 
-class Client {
+export class Client {
   private projectKey = import.meta.env.VITE_CTP_PROJECT_KEY
   private authUri = import.meta.env.VITE_CTP_AUTH_URL
   private baseUri = import.meta.env.VITE_CTP_API_URL
@@ -90,11 +90,9 @@ class Client {
     return this.getDefaultClient().build()
   }
 
-  getApiRoot(client: Client) {
+  getApiRoot(client = this.getClient()) {
     return createApiBuilderFromCtpClient(client).withProjectKey({
       projectKey: this.projectKey,
     })
   }
 }
-
-export const client = new Client()
