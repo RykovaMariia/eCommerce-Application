@@ -46,6 +46,7 @@ export const rules = {
 }
 
 export function chooseRules(type: string, label: string) {
+  if (label === 'United Kingdom') return
   if (type === 'text' && label === 'Email') {
     return [rules.required, rules.email]
   }
