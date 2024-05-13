@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import TheInput from '@components/inputs/TheInput.vue'
 import TheButton from '@components/buttons/TheButton.vue'
-import { getMaxTime } from '@/utils/max-time'
-import { chooseRules } from '@/utils/choose-rules'
+import TheDateInput from '@/components/inputs/TheDateInput.vue'
 </script>
 
 <template>
@@ -12,15 +11,7 @@ import { chooseRules } from '@/utils/choose-rules'
         <TheInput label="First name" placeholder="" type="text" />
         <TheInput label="Last name" placeholder="" type="text" />
         <v-col>
-          <v-date-input
-            label="Birth date"
-            variant="outlined"
-            prepend-icon=""
-            :max="getMaxTime()"
-            year="2000"
-            type="text"
-            :rules="chooseRules('text', 'Birth date')"
-          ></v-date-input>
+          <TheDateInput label="Birth date" type="text" />
         </v-col>
         <TheInput label="Email" placeholder="user@example.com" type="text" />
         <TheInput label="Password" placeholder="" type="password" icon="mdi-eye-closed" />

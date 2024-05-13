@@ -37,7 +37,7 @@ export const rules = {
     return new Date(value).valueOf() < new Date(maxTime).valueOf() || 'Invalid input'
   },
   postcode: (value: string) => {
-    const pattern = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/
+    const pattern = /^[A-Z]{1,2}[0-9][A-Z0-9]? {1}?[0-9][A-Z]{2}$/
     return (
       pattern.test(value) ||
       "Postal code doesn't match with the format: AA9A 9AA - A signifies a letter and 9 a digit. Only uppercase letters"
