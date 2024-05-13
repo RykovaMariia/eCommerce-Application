@@ -34,28 +34,12 @@ export class Client {
     fetch,
   }
 
-  private passwordAuthMiddlewareOptions: PasswordAuthMiddlewareOptions = {
-    host: this.authUri,
-    projectKey: this.projectKey,
-    credentials: {
-      clientId: import.meta.env.VITE_CTP_CLIENT_ID,
-      clientSecret: import.meta.env.VITE_CTP_CLIENT_SECRET,
-      user: {
-        username: userAuth().userCredentials.email,
-        password: userAuth().userCredentials.password,
-      },
-    },
-    scopes: this.scopes,
-    tokenCache: tokenData,
-    fetch,
-  }
-
   private refreshAuthMiddlewareOptions: RefreshAuthMiddlewareOptions = {
     host: this.authUri,
     projectKey: this.projectKey,
     credentials: {
-      clientId: import.meta.env.VITE_CTP_CLIENT_ID,
-      clientSecret: import.meta.env.VITE_CTP_CLIENT_SECRET,
+      clientId: this.clientId,
+      clientSecret: this.clientSecret,
     },
     refreshToken: userAuth().refreshToken,
     tokenCache: tokenData,
@@ -67,7 +51,23 @@ export class Client {
     fetch,
   }
 
-  constructor(private isLogining = false) {}
+  getPasswordAuthMiddlewareOptions(email: string, password: string): PasswordAuthMiddlewareOptions {
+    return {
+      host: this.authUri,
+      projectKey: this.projectKey,
+      credentials: {
+        clientId: this.clientId,
+        clientSecret: this.clientSecret,
+        user: {
+          username: email,
+          password: password,
+        },
+      },
+      scopes: this.scopes,
+      tokenCache: tokenData,
+      fetch,
+    }
+  }
 
   getDefaultClient() {
     return userClientBuilder
@@ -77,23 +77,22 @@ export class Client {
       .withLoggerMiddleware()
   }
 
+  getPasswordFlowClient(email: string, password: string) {
+    return this.getDefaultClient()
+      .withPasswordFlow(this.getPasswordAuthMiddlewareOptions(email, password))
+      .build()
+  }
+
   getClient() {
     if (userAuth().isLogined) {
       return this.getDefaultClient().withRefreshTokenFlow(this.refreshAuthMiddlewareOptions).build()
     }
-    if (this.isLogining) {
-      return this.getDefaultClient().withPasswordFlow(this.passwordAuthMiddlewareOptions).build()
-    }
     return this.getDefaultClient().build()
-  }
-
-  getProjectKey() {
-    return this.projectKey
   }
 
   getApiRoot = () => {
     return createApiBuilderFromCtpClient(this.getClient()).withProjectKey({
-      projectKey: this.getProjectKey(),
+      projectKey: this.projectKey,
     })
   }
 }
