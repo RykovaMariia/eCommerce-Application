@@ -90,7 +90,7 @@ class Client {
     return this.getDefaultClient().build()
   }
 
-  getApiRoot(client = this.getClient()) {
+  getApiRoot(client: Client) {
     return createApiBuilderFromCtpClient(client).withProjectKey({
       projectKey: this.projectKey,
     })
