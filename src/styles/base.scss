@@ -19,10 +19,6 @@ body {
   color: constants.$color-text-dark;
   text-rendering: optimizelegibility;
 
-  background: url('../assets/images/texture.png');
-  background-repeat: round;
-  background-size: 35%;
-
   transition:
     color 0.5s,
     background-color 0.5s;
@@ -80,4 +76,10 @@ a {
   &:hover {
     color: constants.$color-primary;
   }
+}
+
+.v-application {
+  background: url('../assets/images/texture.png') !important;
+  background-repeat: round !important;
+  background-size: 35% !important;
 }

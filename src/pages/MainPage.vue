@@ -1,5 +1,9 @@
 <script setup lang="ts"></script>
 
-<template>
-  <main>Main</main>
-</template>
+<template><div class="test">Main</div></template>
+
+<style>
+.test {
+  height: 2000px;
+}
+</style>

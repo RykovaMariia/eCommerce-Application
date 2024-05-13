@@ -1,5 +1,6 @@
 @use './constants.scss';
 @use './base.scss';
+@import 'vuetify/styles';
 
 #app {
   display: flex;

@@ -1,3 +1,3 @@
 <script setup lang="ts"></script>
 
-<template>Catalog</template>
+<template>Favorites</template>

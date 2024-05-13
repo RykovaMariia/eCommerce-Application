@@ -30,8 +30,23 @@ const router = createRouter({
     },
     {
       path: '/about',
-      name: 'catalog',
+      name: 'about',
       component: () => import('@pages/AboutPage.vue'),
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('@pages/AboutPage.vue'),
+    },
+    {
+      path: '/favorites',
+      name: 'favorites',
+      component: () => import('@pages/Favorites.vue'),
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('@pages/Cart.vue'),
     },
   ],
 })

@@ -93,6 +93,7 @@ const props = defineProps<{
 }
 
 .logo {
+  user-select: none;
   width: 4rem;
   height: 4rem;
 }

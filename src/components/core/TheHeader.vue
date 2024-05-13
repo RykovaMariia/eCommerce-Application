@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import HoverMenu from '../hover-menu/HoverMenu.vue'
 import IconLogo from '../icons/IconLogo.vue'
+import BurgerMenu from './BurgerMenu.vue'
+import { openBurgerStore } from '@/stores/counter'
+
+const store = openBurgerStore()
 
 const accountMenu = [
   { text: 'Login', href: '/login' },
@@ -19,56 +23,74 @@ const catalogMenu = [
   { text: 'Eco dishes', href: '/catalog' },
   { text: 'Gift sets', href: '/catalog' },
 ]
+
+function openBurger() {
+  store.toggleOpenState()
+}
 </script>
 
 <template>
-  <v-toolbar class="toolbar">
-    <HoverMenu :menu-items="catalogMenu" menu-trigger-text="Catalog" />
+  <v-app-bar class="toolbar" scroll-behavior="hide" flat height="100">
+    <v-app-bar-nav-icon
+      color="primary"
+      v-if="$vuetify.display.md || $vuetify.display.sm || $vuetify.display.xs"
+      variant="text"
+      @click="openBurger"
+    ></v-app-bar-nav-icon>
 
-    <v-list class="nav-list">
+    <HoverMenu
+      v-if="$vuetify.display.lg || $vuetify.display.xl || $vuetify.display.xxl"
+      :menu-items="catalogMenu"
+      menu-trigger-text="Catalog"
+    />
+
+    <v-list
+      v-if="$vuetify.display.lg || $vuetify.display.xl || $vuetify.display.xxl"
+      class="nav-list"
+    >
       <v-list-item v-for="item in infoReference" :key="item.href"
         ><a :href="item.href">{{ item.text }}</a></v-list-item
       >
     </v-list>
 
     <v-spacer></v-spacer>
-    <IconLogo />
+    <a href="/"><IconLogo /></a>
     <v-spacer></v-spacer>
 
     <v-btn icon>
       <v-icon>mdi-magnify</v-icon>
     </v-btn>
 
-    <v-btn icon>
+    <v-btn icon to="/favorites">
       <v-icon>mdi-heart-outline</v-icon>
     </v-btn>
 
-    <HoverMenu :menu-items="accountMenu" menu-trigger-icon="mdi-account-outline" />
+    <HoverMenu
+      v-if="$vuetify.display.lg || $vuetify.display.xl || $vuetify.display.xxl"
+      :menu-items="accountMenu"
+      menu-trigger-icon="mdi-account-outline"
+    />
 
-    <v-btn icon>
+    <v-btn icon to="/cart">
       <v-icon>mdi-basket-outline</v-icon>
     </v-btn>
-  </v-toolbar>
+  </v-app-bar>
+
+  <BurgerMenu
+    :account-menu="accountMenu"
+    :catalog-menu="catalogMenu"
+    :info-reference="infoReference"
+  />
 </template>
 
 <style lang="scss" scoped>
 @use '../../styles/constants.scss';
 
-.toolbar {
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background-color: constants.$color-opacity;
-  border-bottom: 2px solid constants.$color-primary;
-}
-
-:deep(.v-toolbar__content) {
-  overflow: visible;
-  height: 100px !important;
-  padding: 0 10px 0 20px;
+.v-app-bar.toolbar {
+  padding: 0 2rem;
+  background-image: url('@assets/images/texture.png');
+  background-size: 35%;
+  border-bottom: 1px solid constants.$color-primary;
 }
 
 .mdi-magnify,
@@ -85,9 +107,9 @@ const catalogMenu = [
 
 .nav-list {
   display: flex;
-  gap: 20px;
+  gap: 3rem;
 
-  padding: 0;
+  padding-left: 3rem;
 
   font-size: 1rem;
 

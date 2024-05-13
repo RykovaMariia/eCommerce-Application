@@ -22,7 +22,7 @@ defineProps<{
 
         <div class="trigger" v-if="menuTriggerText">
           {{ menuTriggerText }}
-          <v-icon class="menu-icon">{{ menuTriggerIcon }}</v-icon>
+          <v-icon v-if="menuTriggerIcon" class="menu-icon">{{ menuTriggerIcon }}</v-icon>
         </div>
       </div>
     </template>
