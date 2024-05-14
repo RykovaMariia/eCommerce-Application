@@ -1,4 +1,6 @@
 import { getMaxTime } from './maxTime'
+import { InputLabel } from '@/enums/inputLabel'
+import { InputType } from '@/enums/inputType'
 
 export const rules = {
   required: (value: string) => {
@@ -29,7 +31,7 @@ export const rules = {
     )
   },
   street: (value: string) => {
-    const pattern = /^[a-zA-Z0-9.[^<>()[\]\\.,;:\s@"]{1,}$/
+    const pattern = /^[a-zA-Z0-9.[^<>()/[\]\\.,;:\s@"]{1,}$/
     return pattern.test(value) || 'Input must contain at least one character'
   },
   birthdate: (value: string) => {
@@ -46,20 +48,20 @@ export const rules = {
 }
 
 export function chooseRules(type: string, label: string) {
-  if (label === 'United Kingdom') return
-  if (type === 'text' && label === 'Email') {
+  if (label === InputLabel.Country) return
+  if (type === InputType.Text && label === InputLabel.Email) {
     return [rules.required, rules.email]
   }
-  if (type === 'password') {
+  if (type === InputType.Password) {
     return [rules.required, rules.password]
   }
-  if (type === 'text' && label === 'Street') {
+  if (type === InputType.Text && label === InputLabel.Street) {
     return [rules.required, rules.street]
   }
-  if (type === 'text' && label === 'Birth date') {
+  if (type === InputType.Text && label === InputLabel.BirthDate) {
     return [rules.required, rules.birthdate]
   }
-  if (type === 'text' && label === 'Postal code') {
+  if (type === InputType.Text && label === InputLabel.PostalCode) {
     return [rules.required, rules.postcode]
   }
   return [rules.required, rules.text]

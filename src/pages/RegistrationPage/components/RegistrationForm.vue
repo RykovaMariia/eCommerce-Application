@@ -2,8 +2,8 @@
 import Input from '@components/inputs/Input.vue'
 import Button from '@components/buttons/Button.vue'
 import DateInput from '@/components/inputs/DateInput.vue'
-import { InputLabel } from '@/enums/inputLabel';
-import { InputType } from '@/enums/inputType';
+import { InputLabel } from '@/enums/inputLabel'
+import { InputType } from '@/enums/inputType'
 </script>
 
 <template>
@@ -16,7 +16,12 @@ import { InputType } from '@/enums/inputType';
           <DateInput :label="InputLabel.BirthDate" :type="InputType.Text" />
         </v-col>
         <Input :label="InputLabel.Email" placeholder="user@example.com" :type="InputType.Text" />
-        <Input :label="InputLabel.Password" placeholder="" :type="InputType.Password" icon="mdi-eye-closed" />
+        <Input
+          :label="InputLabel.Password"
+          placeholder=""
+          :type="InputType.Password"
+          icon="mdi-eye-closed"
+        />
       </v-col>
       <v-col class="registration-inner-container">
         <Input :label="InputLabel.Country" :type="InputType.Text" disabled="true" />

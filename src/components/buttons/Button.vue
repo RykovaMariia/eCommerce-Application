@@ -4,6 +4,7 @@ interface ButtonProps {
   classes?: string
   buttonType?: string
   size?: string
+  to?: string
 }
 const props = withDefaults(defineProps<ButtonProps>(), {
   buttonType: 'button',
