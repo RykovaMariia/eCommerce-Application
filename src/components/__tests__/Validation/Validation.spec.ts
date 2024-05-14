@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 
-import { chooseRules } from '@/utils/choose-rules'
-import { rules } from '@/utils/choose-rules'
+import { chooseRules } from '@/utils/chooseRules'
+import { rules } from '@/utils/chooseRules'
 
 describe('input validation function test', () => {
   test('must return an array of rules for the email input type', () => {

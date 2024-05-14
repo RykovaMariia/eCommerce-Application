@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import RegistrationForm from '@pages/RegistrationPage/RegistrationForm.vue'
-import TheBreadcrumb from '@components/breadcrumbs/TheBreadcrumb.vue'
+import RegistrationForm from '@/pages/RegistrationPage/components/RegistrationForm.vue'
+import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 const items = [
   {
     title: 'Home',
@@ -17,7 +17,7 @@ const items = [
 
 <template>
   <v-container class="container">
-    <TheBreadcrumb :items="items" />
+    <Breadcrumb :items="items" />
     <v-col class="registration-card">
       <v-col>
         <h1 class="registration-title">Registration</h1>

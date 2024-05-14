@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { chooseRules } from '@/utils/choose-rules'
+import { chooseRules } from '@/utils/chooseRules'
 
 const props = defineProps<{
   label: string

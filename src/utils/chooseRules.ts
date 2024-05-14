@@ -1,4 +1,4 @@
-import { getMaxTime } from './max-time'
+import { getMaxTime } from './maxTime'
 
 export const rules = {
   required: (value: string) => {

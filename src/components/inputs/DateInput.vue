@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { chooseRules } from '@/utils/choose-rules'
-import { getMaxTime } from '@/utils/max-time'
+import { chooseRules } from '@/utils/chooseRules'
+import { getMaxTime } from '@/utils/maxTime'
 import { computed } from 'vue'
 
 const props = defineProps<{

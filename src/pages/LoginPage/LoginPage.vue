@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import path from '@assets/images/login/login.jpg'
-import LoginForm from '@pages/LoginPage/LoginForm.vue'
-import TheBreadcrumb from '@components/breadcrumbs/TheBreadcrumb.vue'
+import LoginForm from '@pages/LoginPage/components/LoginForm.vue'
+import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 const items = [
   {
     title: 'Home',
@@ -18,7 +18,7 @@ const items = [
 
 <template>
   <v-container class="container">
-    <TheBreadcrumb :items="items" />
+    <Breadcrumb :items="items" />
     <div class="login-card">
       <v-col>
         <h1 class="login-title">Login</h1>
