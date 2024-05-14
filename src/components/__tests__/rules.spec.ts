@@ -5,12 +5,14 @@ import { rules } from '@/utils/chooseRules'
 describe('validation rules test', () => {
   const invalidOutput = {
     email: 'Invalid e-mail. Please enter your e-mail in the format: example@gmail.com',
-    password: 'Invalid password. Password must be at least 8 characters long, contain at least one uppercase letter, at least one lowercase letter, at least one digit, at least one special character, must not contain leading or trailing whitespace.',
+    password:
+      'Invalid password. Password must be at least 8 characters long, contain at least one uppercase letter, at least one lowercase letter, at least one digit, at least one special character, must not contain leading or trailing whitespace.',
     street: 'Input must contain at least one character',
     birthdate: 'Invalid input',
-    postcode: "Postal code doesn't match with the format: AA9A 9AA - A signifies a letter and 9 a digit. Only uppercase letters"
+    postcode:
+      "Postal code doesn't match with the format: AA9A 9AA - A signifies a letter and 9 a digit. Only uppercase letters",
   }
-  const testEmail: {value: string; expectedOutput: boolean | string}[] = [
+  const testEmail: { value: string; expectedOutput: boolean | string }[] = [
     { value: 'user@example.com', expectedOutput: true },
     { value: 'jane_doe123@sub.domain.co.uk', expectedOutput: true },
     { value: 'user+mailbox/department=shipping@example.com', expectedOutput: true },
@@ -24,11 +26,14 @@ describe('validation rules test', () => {
     { value: 'username@yahoo..com', expectedOutput: invalidOutput.email },
   ]
 
-  test.each(testEmail)('rule should handle valid and invalid email address format', ({value, expectedOutput}) => {
-    expect(rules.email(value)).toBe(expectedOutput)
-  })
+  test.each(testEmail)(
+    'rule should handle valid and invalid email address format',
+    ({ value, expectedOutput }) => {
+      expect(rules.email(value)).toBe(expectedOutput)
+    },
+  )
 
-  const testPassword: {value: string; expectedOutput: boolean | string}[] = [
+  const testPassword: { value: string; expectedOutput: boolean | string }[] = [
     { value: '1-3K5y78', expectedOutput: true },
     { value: 'Aa1!abcd', expectedOutput: true },
     { value: 'Zx9_2*Vb', expectedOutput: true },
@@ -42,24 +47,30 @@ describe('validation rules test', () => {
     { value: 'AaBbCc!', expectedOutput: invalidOutput.password },
   ]
 
-  test.each(testPassword)('rule should handle valid and invalid password format', ({value, expectedOutput}) => {
-    expect(rules.password(value)).toBe(expectedOutput)
-  })
+  test.each(testPassword)(
+    'rule should handle valid and invalid password format',
+    ({ value, expectedOutput }) => {
+      expect(rules.password(value)).toBe(expectedOutput)
+    },
+  )
 
-  const testStreet: {value: string; expectedOutput: boolean | string}[] = [
+  const testStreet: { value: string; expectedOutput: boolean | string }[] = [
     { value: '123MainSt', expectedOutput: true },
     { value: '9SunsetBlvd', expectedOutput: true },
     { value: '1011OakRd', expectedOutput: true },
     { value: '', expectedOutput: invalidOutput.street },
   ]
 
-  test.each(testStreet)('rule should handle valid and invalid password format', ({value, expectedOutput}) => {
-    expect(rules.street(value)).toBe(expectedOutput)
-  })
+  test.each(testStreet)(
+    'rule should handle valid and invalid password format',
+    ({ value, expectedOutput }) => {
+      expect(rules.street(value)).toBe(expectedOutput)
+    },
+  )
 
-  const dateNow = (new Date(Date.now())).toISOString();
+  const dateNow = new Date(Date.now()).toISOString()
 
-  const testBirthDate: {value: string; expectedOutput: boolean | string}[] = [
+  const testBirthDate: { value: string; expectedOutput: boolean | string }[] = [
     { value: '2004-05-12T21:10:59.502Z', expectedOutput: true },
     { value: '2007-09-01T00:00:00.000Z', expectedOutput: true },
     { value: '1960-05-05T00:00:00.000Z', expectedOutput: true },
@@ -71,11 +82,14 @@ describe('validation rules test', () => {
     { value: '2020-03-15T00:00:00.000Z', expectedOutput: invalidOutput.birthdate },
   ]
 
-  test.each(testBirthDate)('rule should handle valid and invalid date format', ({value, expectedOutput}) => {
-    expect(rules.birthdate(value)).toBe(expectedOutput)
-  })
+  test.each(testBirthDate)(
+    'rule should handle valid and invalid date format',
+    ({ value, expectedOutput }) => {
+      expect(rules.birthdate(value)).toBe(expectedOutput)
+    },
+  )
 
-  const testPostalCode: {value: string; expectedOutput: boolean | string}[] = [
+  const testPostalCode: { value: string; expectedOutput: boolean | string }[] = [
     { value: 'AA9A 9AA', expectedOutput: true },
     { value: 'A9A 9AA', expectedOutput: true },
     { value: 'A9 9AA', expectedOutput: true },
@@ -89,7 +103,10 @@ describe('validation rules test', () => {
     { value: 'A 1 AAA', expectedOutput: invalidOutput.postcode },
   ]
 
-  test.each(testPostalCode)('rule should handle valid and invalid date format', ({value, expectedOutput}) => {
-    expect(rules.postcode(value)).toBe(expectedOutput)
-  })
+  test.each(testPostalCode)(
+    'rule should handle valid and invalid date format',
+    ({ value, expectedOutput }) => {
+      expect(rules.postcode(value)).toBe(expectedOutput)
+    },
+  )
 })
