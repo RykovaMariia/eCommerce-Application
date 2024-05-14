@@ -8,13 +8,14 @@ import {
 } from '@commercetools/sdk-client-v2'
 
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
-const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
+
 import { tokenData } from './TokenInfo'
 import { localStorageService } from '@/services/storage-service'
+const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
 
 const userClientBuilder = new ClientBuilder()
 
-export class Client {
+export class ClientService {
   private projectKey = import.meta.env.VITE_CTP_PROJECT_KEY
   private authUri = import.meta.env.VITE_CTP_AUTH_URL
   private baseUri = import.meta.env.VITE_CTP_API_URL
@@ -98,4 +99,4 @@ export class Client {
   }
 }
 
-export const client = new Client()
+export const clientService = new ClientService()
