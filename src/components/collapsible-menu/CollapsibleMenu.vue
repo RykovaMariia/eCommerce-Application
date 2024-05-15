@@ -1,6 +1,6 @@
 <script lang="ts" setup>
+import type { Link } from '@/interfaces/link'
 import { ref } from 'vue'
-import type { Link } from '../core/BurgerMenu.vue'
 
 const isOpenMenu = ref([])
 
@@ -17,7 +17,7 @@ const { menuTriggerText, items } = defineProps<{
         <v-list-item v-bind="props" :title="menuTriggerText" variant="plain"></v-list-item>
       </template>
       <v-list-item
-        v-for="{ text, href } in items"
+        v-for="{ name: text, href } in items"
         :key="text"
         :title="text"
         :value="text"

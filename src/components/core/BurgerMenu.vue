@@ -1,11 +1,7 @@
 <script lang="ts" setup>
+import type { Link } from '@/interfaces/link'
 import CollapsibleMenu from '../collapsible-menu/CollapsibleMenu.vue'
 import { openBurgerStore } from '@/stores/openBurgerStore'
-
-export interface Link {
-  text: string
-  href: string
-}
 
 const store = openBurgerStore()
 
@@ -20,7 +16,7 @@ const { catalogMenu, infoLinks, accountMenu } = defineProps<{
   <v-navigation-drawer v-model="store.isOpenBurger">
     <v-list class="nav-list">
       <v-list-item v-for="link in infoLinks" :key="link.href" :to="link.href" variant="plain">{{
-        link.text
+        link.name
       }}</v-list-item>
     </v-list>
 
@@ -28,7 +24,7 @@ const { catalogMenu, infoLinks, accountMenu } = defineProps<{
 
     <v-list class="nav-list-login">
       <v-list-item v-for="item in accountMenu" :key="item.href" :to="item.href" variant="plain">{{
-        item.text
+        item.name
       }}</v-list-item>
     </v-list>
   </v-navigation-drawer>

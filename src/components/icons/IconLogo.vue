@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 const props = defineProps<{
-  isWhile?: boolean
+  isLight?: boolean
 }>()
 </script>
 
 <template>
   <svg
     class="logo"
-    :class="{ logo_while: props.isWhile }"
+    :class="{ logo_while: props.isLight }"
     xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     width="414.187"

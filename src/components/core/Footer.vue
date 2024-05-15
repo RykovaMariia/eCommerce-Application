@@ -42,7 +42,7 @@ const catalogLinks = [
     <v-container class="container">
       <v-row class="footer-wrapper" justify="center">
         <v-col class="v-col-md-3 v-col-sm-6 logo">
-          <IconLogo :is-while="true" />
+          <IconLogo :isLight="true" />
           <div class="v-col-md-10 logo-text">
             Eco-friendly place, where sustainability meets style!
           </div>
