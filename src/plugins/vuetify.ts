@@ -21,6 +21,7 @@ const vuetify = createVuetify({
           success: '#4CAF50',
           warning: '#FFC107',
           surface: '#bb9758',
+          'on-surface': '#27291b',
         },
       },
     },
