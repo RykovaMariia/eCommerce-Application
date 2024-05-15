@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 
 <template>
   <v-col>
-    <v-btn variant="flat" :class="props.classes" :type="props.buttonType" :size="props.size">
+    <v-btn variant="flat" :class="props.classes" :type="props.buttonType" :size="props.size" :to="props.to">
       {{ props.textContent }}
     </v-btn>
   </v-col>
