@@ -3,6 +3,7 @@ const props = defineProps<{
   isWhile?: boolean
 }>()
 </script>
+
 <template>
   <svg
     class="logo"

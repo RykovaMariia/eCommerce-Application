@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import CollapsibleMenu from '../collapsible-menu/CollapsibleMenu.vue'
-import { openBurgerStore } from '@/stores/counter'
+import { openBurgerStore } from '@/stores/openBurgerStore'
 
 export interface Link {
   text: string
@@ -9,9 +9,9 @@ export interface Link {
 
 const store = openBurgerStore()
 
-const { catalogMenu, infoReference, accountMenu } = defineProps<{
+const { catalogMenu, infoLinks, accountMenu } = defineProps<{
   catalogMenu: Link[]
-  infoReference: Link[]
+  infoLinks: Link[]
   accountMenu: Link[]
 }>()
 </script>
@@ -19,12 +19,12 @@ const { catalogMenu, infoReference, accountMenu } = defineProps<{
 <template>
   <v-navigation-drawer v-model="store.isOpenBurger">
     <v-list class="nav-list">
-      <v-list-item v-for="item in infoReference" :key="item.href" :to="item.href" variant="plain">{{
-        item.text
+      <v-list-item v-for="link in infoLinks" :key="link.href" :to="link.href" variant="plain">{{
+        link.text
       }}</v-list-item>
     </v-list>
 
-    <CollapsibleMenu title="Catalog" :items="catalogMenu" />
+    <CollapsibleMenu menuTriggerText="Catalog" :items="catalogMenu" />
 
     <v-list class="nav-list-login">
       <v-list-item v-for="item in accountMenu" :key="item.href" :to="item.href" variant="plain">{{
@@ -35,7 +35,7 @@ const { catalogMenu, infoReference, accountMenu } = defineProps<{
 </template>
 
 <style lang="scss" scoped>
-@use '../../styles/constants.scss';
+@use '@styles/constants.scss';
 
 .v-list {
   padding: 0;
@@ -57,7 +57,7 @@ const { catalogMenu, infoReference, accountMenu } = defineProps<{
 }
 
 .nav-list-login {
-  margin-top: 40px;
   display: flex;
+  margin-top: 40px;
 }
 </style>

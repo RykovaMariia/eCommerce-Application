@@ -2,7 +2,7 @@
 import HoverMenu from '../hover-menu/HoverMenu.vue'
 import IconLogo from '../icons/IconLogo.vue'
 import BurgerMenu from './BurgerMenu.vue'
-import { openBurgerStore } from '@/stores/counter'
+import { openBurgerStore } from '@/stores/openBurgerStore'
 
 const store = openBurgerStore()
 
@@ -11,7 +11,7 @@ const accountMenu = [
   { text: 'Register', href: '/register' },
 ]
 
-const infoReference = [
+const infoLinks = [
   { text: 'About us', href: '/about' },
   { text: 'Contacts', href: '/' },
 ]
@@ -30,61 +30,56 @@ function openBurger() {
 </script>
 
 <template>
-  <v-app-bar class="toolbar" scroll-behavior="hide" flat height="100">
-    <v-app-bar-nav-icon
-      color="primary"
-      v-if="$vuetify.display.md || $vuetify.display.sm || $vuetify.display.xs"
-      variant="text"
-      @click="openBurger"
-    ></v-app-bar-nav-icon>
+    <v-app-bar class="toolbar" scroll-behavior="hide" flat height="100">
+      <v-app-bar-nav-icon
+        color="primary"
+        v-if="$vuetify.display.mdAndDown"
+        variant="text"
+        @click="openBurger"
+      ></v-app-bar-nav-icon>
 
-    <HoverMenu
-      v-if="$vuetify.display.lg || $vuetify.display.xl || $vuetify.display.xxl"
-      :menu-items="catalogMenu"
-      menu-trigger-text="Catalog"
-    />
+      <HoverMenu
+        v-if="$vuetify.display.lgAndUp"
+        :menu-items="catalogMenu"
+        menu-trigger-text="Catalog"
+      />
 
-    <v-list
-      v-if="$vuetify.display.lg || $vuetify.display.xl || $vuetify.display.xxl"
-      class="nav-list"
-    >
-      <v-list-item v-for="item in infoReference" :key="item.href"
-        ><a :href="item.href">{{ item.text }}</a></v-list-item
-      >
-    </v-list>
+      <v-list v-if="$vuetify.display.lgAndUp" class="nav-list">
+        <v-list-item v-for="item in infoLinks" :key="item.href"
+          ><a :href="item.href">{{ item.text }}</a></v-list-item
+        >
+      </v-list>
 
-    <v-spacer></v-spacer>
-    <a href="/"><IconLogo /></a>
-    <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
 
-    <v-btn icon>
-      <v-icon>mdi-magnify</v-icon>
-    </v-btn>
+      <a href="/"><IconLogo /></a>
 
-    <v-btn icon to="/favorites">
-      <v-icon>mdi-heart-outline</v-icon>
-    </v-btn>
+      <v-spacer></v-spacer>
 
-    <HoverMenu
-      v-if="$vuetify.display.lg || $vuetify.display.xl || $vuetify.display.xxl"
-      :menu-items="accountMenu"
-      menu-trigger-icon="mdi-account-outline"
-    />
+      <v-btn icon>
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
 
-    <v-btn icon to="/cart">
-      <v-icon>mdi-basket-outline</v-icon>
-    </v-btn>
-  </v-app-bar>
+      <v-btn icon to="/favorites">
+        <v-icon>mdi-heart-outline</v-icon>
+      </v-btn>
 
-  <BurgerMenu
-    :account-menu="accountMenu"
-    :catalog-menu="catalogMenu"
-    :info-reference="infoReference"
-  />
+      <HoverMenu
+        v-if="$vuetify.display.lgAndUp"
+        :menu-items="accountMenu"
+        menu-trigger-icon="mdi-account-outline"
+      />
+
+      <v-btn icon to="/cart">
+        <v-icon>mdi-basket-outline</v-icon>
+      </v-btn>
+    </v-app-bar>
+
+    <BurgerMenu :account-menu="accountMenu" :catalog-menu="catalogMenu" :info-links="infoLinks" />
 </template>
 
 <style lang="scss" scoped>
-@use '../../styles/constants.scss';
+@use '@styles/constants.scss';
 
 .v-app-bar.toolbar {
   padding: 0 2rem;

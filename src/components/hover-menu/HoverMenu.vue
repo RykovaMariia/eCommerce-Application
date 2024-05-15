@@ -35,7 +35,7 @@ defineProps<{
 </template>
 
 <style lang="scss" scoped>
-@use '../../styles/constants.scss';
+@use '@styles/constants.scss';
 
 .account-wrapper {
   display: flex;

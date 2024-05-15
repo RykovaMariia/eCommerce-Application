@@ -4,8 +4,8 @@ import type { Link } from '../core/BurgerMenu.vue'
 
 const isOpenMenu = ref([])
 
-const { title, items } = defineProps<{
-  title: string
+const { menuTriggerText, items } = defineProps<{
+  menuTriggerText: string
   items: Link[]
 }>()
 </script>
@@ -14,7 +14,7 @@ const { title, items } = defineProps<{
   <v-list v-model:opened="isOpenMenu">
     <v-list-group value="items">
       <template v-slot:activator="{ props }">
-        <v-list-item v-bind="props" :title="title" variant="plain"></v-list-item>
+        <v-list-item v-bind="props" :title="menuTriggerText" variant="plain"></v-list-item>
       </template>
       <v-list-item
         v-for="{ text, href } in items"
@@ -29,7 +29,7 @@ const { title, items } = defineProps<{
 </template>
 
 <style lang="scss" scoped>
-@use '../../styles/constants.scss';
+@use '@styles/constants.scss';
 
 .v-list-item--density-default.v-list-item--one-line {
   cursor: pointer;
