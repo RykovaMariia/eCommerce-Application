@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { ResizeObserverMock, getAppWrapper, vuetify } from '@/utils/test-utils'
+import { ResizeObserverMock, getAppWrapper, vuetify } from '@/utils/testUtils'
 import { createPinia } from 'pinia'
 import router from '@/router'
 import { VAppBarNavIcon } from 'vuetify/components'

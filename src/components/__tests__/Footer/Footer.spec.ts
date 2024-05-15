@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 
 import Footer from '@components/core/Footer.vue'
-import { vuetify } from '@/utils/test-utils'
+import { vuetify } from '@/utils/testUtils'
 
 describe('Footer', () => {
   it('contains text', async () => {

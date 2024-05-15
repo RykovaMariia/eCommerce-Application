@@ -19,7 +19,7 @@ export const routes = [
   {
     path: '/register',
     name: 'register',
-    component: () => import('@pages/RegisterPage.vue'),
+    component: () => import('@pages/RegistrationPage/RegistrationPage.vue'),
   },
   {
     path: '/catalog',
