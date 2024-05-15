@@ -6,7 +6,6 @@ import VueDevTools from 'vite-plugin-vue-devtools'
 import eslint from 'vite-plugin-eslint'
 import stylelint from 'vite-plugin-stylelint'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
@@ -14,6 +13,10 @@ export default defineConfig({
     eslint(),
     stylelint(),
   ],
+  define: {
+    global: 'window',
+  },
+
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -25,6 +28,7 @@ export default defineConfig({
       '@styles': fileURLToPath(new URL('./src/styles', import.meta.url)),
       '@pages': fileURLToPath(new URL('./src/pages', import.meta.url)),
       '@plugins': fileURLToPath(new URL('./src/plugins', import.meta.url)),
+      'node-fetch': 'isomorphic-fetch',
     },
   },
 })

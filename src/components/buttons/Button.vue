@@ -3,15 +3,24 @@ interface ButtonProps {
   textContent?: string
   classes?: string
   buttonType?: string
+  size?: string
+  to?: string
 }
 const props = withDefaults(defineProps<ButtonProps>(), {
   buttonType: 'button',
+  size: 'default',
 })
 </script>
 
 <template>
   <v-col>
-    <v-btn variant="flat" :class="props.classes" :type="props.buttonType">
+    <v-btn
+      variant="flat"
+      :class="props.classes"
+      :type="props.buttonType"
+      :size="props.size"
+      :to="props.to"
+    >
       {{ props.textContent }}
     </v-btn>
   </v-col>
