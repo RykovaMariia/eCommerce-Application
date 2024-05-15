@@ -53,7 +53,7 @@
     </g>
   </svg>
 </template>
-<style>
+<style scoped>
 .cls-1 {
   filter: url('#filter');
 }
