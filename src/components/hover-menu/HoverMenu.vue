@@ -1,11 +1,8 @@
 <script lang="ts" setup>
-interface MenuItem {
-  text: string
-  href: string
-}
+import type { Link } from '@/interfaces/link'
 
 defineProps<{
-  menuItems: MenuItem[]
+  menuItems: Link[]
   menuTriggerText?: string
   menuTriggerIcon?: string
 }>()
@@ -28,7 +25,7 @@ defineProps<{
     </template>
     <div class="dropdown">
       <a class="dropdown-item" v-for="item of menuItems" :key="item.href" :href="item.href">{{
-        item.text
+        item.name
       }}</a>
     </div>
   </v-menu>

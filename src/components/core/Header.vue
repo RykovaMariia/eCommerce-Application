@@ -7,21 +7,21 @@ import { openBurgerStore } from '@/stores/openBurgerStore'
 const store = openBurgerStore()
 
 const accountMenu = [
-  { text: 'Login', href: '/login' },
-  { text: 'Register', href: '/register' },
+  { name: 'Login', href: '/login' },
+  { name: 'Register', href: '/register' },
 ]
 
 const infoLinks = [
-  { text: 'About us', href: '/about' },
-  { text: 'Contacts', href: '/' },
+  { name: 'About us', href: '/about' },
+  { name: 'Contacts', href: '/' },
 ]
 
 const catalogMenu = [
-  { text: 'Organic cosmetic', href: '/catalog' },
-  { text: 'Hygiene products', href: '/catalog' },
-  { text: 'Shoppers', href: '/catalog' },
-  { text: 'Eco dishes', href: '/catalog' },
-  { text: 'Gift sets', href: '/catalog' },
+  { name: 'Organic cosmetic', href: '/catalog' },
+  { name: 'Hygiene products', href: '/catalog' },
+  { name: 'Shoppers', href: '/catalog' },
+  { name: 'Eco dishes', href: '/catalog' },
+  { name: 'Gift sets', href: '/catalog' },
 ]
 
 function openBurger() {
@@ -45,7 +45,7 @@ function openBurger() {
 
     <v-list v-if="$vuetify.display.lgAndUp" class="nav-list">
       <v-list-item v-for="item in infoLinks" :key="item.href"
-        ><a :href="item.href">{{ item.text }}</a></v-list-item
+        ><a :href="item.href">{{ item.name }}</a></v-list-item
       >
     </v-list>
 
