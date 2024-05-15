@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { chooseRules } from '@/utils/choose-rules'
+import { chooseRules } from '@/utils/chooseRules'
 
 const props = defineProps<{
   label: string
   placeholder?: string
   type: string
   icon?: string
+  disabled?: boolean
 }>()
+
+const data = defineModel()
 
 const rules = computed(() => chooseRules(props.type, props.label))
 const marker = ref(true)
@@ -32,6 +35,8 @@ const innerIcon = computed(() =>
       :append-inner-icon="innerIcon"
       @click:append-inner="togglePassword()"
       variant="outlined"
+      :disabled="$props.disabled"
+      v-model="data"
     ></v-text-field>
   </v-col>
 </template>
