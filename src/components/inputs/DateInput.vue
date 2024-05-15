@@ -11,7 +11,7 @@ const props = defineProps<{
 const emit = defineEmits({
   setInput(inputData: string) {
     return new Date(inputData).toDateString()
-  }
+  },
 })
 
 const yearToShow = '2000'

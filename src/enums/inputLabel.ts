@@ -1,4 +1,4 @@
-import { COUNTRY } from "@/constants/constants";
+import { COUNTRY } from '@/constants/constants'
 
 export const enum InputLabel {
   FirstName = 'First name',

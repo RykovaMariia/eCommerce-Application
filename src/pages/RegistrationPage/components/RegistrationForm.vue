@@ -9,16 +9,16 @@ import Checkbox from '@/components/checkbox/Checkbox.vue'
 import { COUNTRY } from '@/constants/constants'
 
 interface IUserRegistrationData {
-  firstName: string;
-  lastName: string;
-  birthDate: string;
-  email: string;
-  password: string;
-  country: string;
-  city: string;
-  street: string;
-  postalCode: string;
-  isDefaultAddress: boolean;
+  firstName: string
+  lastName: string
+  birthDate: string
+  email: string
+  password: string
+  country: string
+  city: string
+  street: string
+  postalCode: string
+  isDefaultAddress: boolean
 }
 
 const userRegistrationData = {
@@ -34,20 +34,38 @@ const userRegistrationData = {
   isDefaultAddress: false,
 }
 
-const userData: IUserRegistrationData = reactive({...userRegistrationData})
-
+const userData: IUserRegistrationData = reactive({ ...userRegistrationData })
 </script>
 
 <template>
   <v-form class="registration-form">
     <v-col class="registration-container">
       <v-col class="registration-inner-container">
-        <Input :label="InputLabel.FirstName" placeholder="" :type="InputType.Text" v-model="userData.firstName"/>
-        <Input :label="InputLabel.LastName" placeholder="" :type="InputType.Text" v-model="userData.lastName"/>
+        <Input
+          :label="InputLabel.FirstName"
+          placeholder=""
+          :type="InputType.Text"
+          v-model="userData.firstName"
+        />
+        <Input
+          :label="InputLabel.LastName"
+          placeholder=""
+          :type="InputType.Text"
+          v-model="userData.lastName"
+        />
         <v-col>
-          <DateInput :label="InputLabel.BirthDate" :type="InputType.Text" @setInput="(v) => userData.birthDate = v" />
+          <DateInput
+            :label="InputLabel.BirthDate"
+            :type="InputType.Text"
+            @setInput="(v) => (userData.birthDate = v)"
+          />
         </v-col>
-        <Input :label="InputLabel.Email" placeholder="user@example.com" :type="InputType.Text" v-model="userData.email"/>
+        <Input
+          :label="InputLabel.Email"
+          placeholder="user@example.com"
+          :type="InputType.Text"
+          v-model="userData.email"
+        />
         <Input
           :label="InputLabel.Password"
           placeholder=""
@@ -57,12 +75,16 @@ const userData: IUserRegistrationData = reactive({...userRegistrationData})
         />
       </v-col>
       <v-col class="registration-inner-container">
-        <Input :label="InputLabel.Country" :type="InputType.Text" disabled="true"/>
-        <Input :label="InputLabel.City" :type="InputType.Text" v-model="userData.city"/>
-        <Input :label="InputLabel.Street" :type="InputType.Text" v-model="userData.street"/>
-        <Input :label="InputLabel.PostalCode" :type="InputType.Text" v-model="userData.postalCode"/>
+        <Input :label="InputLabel.Country" :type="InputType.Text" disabled="true" />
+        <Input :label="InputLabel.City" :type="InputType.Text" v-model="userData.city" />
+        <Input :label="InputLabel.Street" :type="InputType.Text" v-model="userData.street" />
+        <Input
+          :label="InputLabel.PostalCode"
+          :type="InputType.Text"
+          v-model="userData.postalCode"
+        />
         <v-col>
-          <Checkbox label="Set as default address" v-model="userData.isDefaultAddress"/>
+          <Checkbox label="Set as default address" v-model="userData.isDefaultAddress" />
         </v-col>
       </v-col>
     </v-col>

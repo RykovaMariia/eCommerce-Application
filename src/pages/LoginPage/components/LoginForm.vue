@@ -3,11 +3,11 @@ import TheButton from '@components/buttons/TheButton.vue'
 import TheInput from '@components/inputs/TheInput.vue'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
-import { reactive } from 'vue';
+import { reactive } from 'vue'
 
 interface IUserLoginData {
-  email: string;
-  password: string;
+  email: string
+  password: string
 }
 
 const userLoginData = {
@@ -15,12 +15,17 @@ const userLoginData = {
   password: '',
 }
 
-const userData: IUserLoginData = reactive({...userLoginData})
+const userData: IUserLoginData = reactive({ ...userLoginData })
 </script>
 
 <template>
   <v-form class="login-form">
-    <TheInput :label="InputLabel.Email" placeholder="user@example.com" :type="InputType.Text" v-model="userData.email"/>
+    <TheInput
+      :label="InputLabel.Email"
+      placeholder="user@example.com"
+      :type="InputType.Text"
+      v-model="userData.email"
+    />
     <TheInput
       :label="InputLabel.Password"
       placeholder=""
