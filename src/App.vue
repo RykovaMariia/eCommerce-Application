@@ -18,8 +18,8 @@ import TheFooter from '@/components/core/TheFooter.vue'
 @use '@styles/constants.scss';
 
 header {
-  max-height: 100vh;
-  line-height: 1.5;
+  max-width: 1440px;
+  margin: auto;
 }
 
 .logo {
