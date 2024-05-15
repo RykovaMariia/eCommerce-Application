@@ -10,6 +10,8 @@ const props = defineProps<{
   disabled?: boolean
 }>()
 
+const data = defineModel()
+
 const rules = computed(() => chooseRules(props.type, props.label))
 const marker = ref(true)
 function togglePassword() {
@@ -34,6 +36,7 @@ const innerIcon = computed(() =>
       @click:append-inner="togglePassword()"
       variant="outlined"
       :disabled="$props.disabled"
+      v-model="data"
     ></v-text-field>
   </v-col>
 </template>
