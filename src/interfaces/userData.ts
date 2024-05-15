@@ -1,9 +1,9 @@
-export interface IUserLoginData {
+export interface UserLoginData {
   email: string
   password: string
 }
 
-export interface IUserRegistrationData {
+export interface UserRegistrationData {
   firstName: string
   lastName: string
   birthDate: string

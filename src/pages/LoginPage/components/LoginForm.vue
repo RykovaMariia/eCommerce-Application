@@ -4,14 +4,14 @@ import Input from '@components/inputs/Input.vue'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import { reactive } from 'vue'
-import type { IUserLoginData } from '@/interfaces/userData'
+import type { UserLoginData } from '@/interfaces/userData'
 
 const userLoginData = {
   email: '',
   password: '',
 }
 
-const userData: IUserLoginData = reactive({ ...userLoginData })
+const userData: UserLoginData = reactive({ ...userLoginData })
 </script>
 
 <template>

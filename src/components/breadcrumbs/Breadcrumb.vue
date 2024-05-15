@@ -1,11 +1,11 @@
 <script setup lang="ts">
-interface IItem {
+interface Item {
   title: string
   disabled: boolean
   href: string
 }
 const props = defineProps<{
-  items: IItem[]
+  items: Item[]
 }>()
 </script>
 

@@ -7,7 +7,7 @@ import { InputType } from '@/enums/inputType'
 import { reactive } from 'vue'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
 import { COUNTRY } from '@/constants/constants'
-import type { IUserRegistrationData } from '@/interfaces/userData'
+import type { UserRegistrationData } from '@/interfaces/userData'
 
 const userRegistrationData = {
   firstName: '',
@@ -22,7 +22,7 @@ const userRegistrationData = {
   isDefaultAddress: false,
 }
 
-const userData: IUserRegistrationData = reactive({ ...userRegistrationData })
+const userData: UserRegistrationData = reactive({ ...userRegistrationData })
 </script>
 
 <template>
