@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import TheButton from '@components/buttons/TheButton.vue'
-import TheInput from '@components/inputs/TheInput.vue'
+import Button from '@components/buttons/Button.vue'
+import Input from '@components/inputs/Input.vue'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import { reactive } from 'vue'
@@ -20,19 +20,19 @@ const userData: IUserLoginData = reactive({ ...userLoginData })
 
 <template>
   <v-form class="login-form">
-    <TheInput
+    <Input
       :label="InputLabel.Email"
       placeholder="user@example.com"
       :type="InputType.Text"
       v-model="userData.email"
     />
-    <TheInput
+    <Input
       :label="InputLabel.Password"
       placeholder=""
       :type="InputType.Password"
       v-model="userData.password"
       icon="mdi-eye-closed"
     />
-    <TheButton textContent="Login" classes="secondary" buttonType="submit" />
+    <Button textContent="Login" classes="secondary" buttonType="submit" />
   </v-form>
 </template>
