@@ -7,19 +7,7 @@ import { InputType } from '@/enums/inputType'
 import { reactive } from 'vue'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
 import { COUNTRY } from '@/constants/constants'
-
-interface IUserRegistrationData {
-  firstName: string
-  lastName: string
-  birthDate: string
-  email: string
-  password: string
-  country: string
-  city: string
-  street: string
-  postalCode: string
-  isDefaultAddress: boolean
-}
+import type { IUserRegistrationData } from '@/interfaces/userData'
 
 const userRegistrationData = {
   firstName: '',

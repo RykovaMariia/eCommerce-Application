@@ -4,11 +4,7 @@ import Input from '@components/inputs/Input.vue'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import { reactive } from 'vue'
-
-interface IUserLoginData {
-  email: string
-  password: string
-}
+import type { IUserLoginData } from '@/interfaces/userData'
 
 const userLoginData = {
   email: '',
