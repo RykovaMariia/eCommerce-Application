@@ -10,8 +10,12 @@ export interface UserRegistrationData {
   email: string
   password: string
   country: string
+  addresses: Address[]
+  isSame: boolean
+}
+
+export interface Address {
   city: string
   street: string
   postalCode: string
-  isDefaultAddress: boolean
 }
