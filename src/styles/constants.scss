@@ -1,5 +1,3 @@
-/* color palette from <https://github.com/vuejs/theme> */
-
 /* color-text */
 $color-text-dark: #27291b;
 $color-text-light: #f4e8da;
@@ -20,7 +18,7 @@ $color-logo: #6d8e65;
 /* font */
 @font-face {
   font-family: NewYork;
-  src: url('../assets/fonts/NewYork.otf') format('opentype');
+  src: url('@assets/fonts/NewYork.otf') format('opentype');
 }
 
 $font-base: poppins, sans-serif;

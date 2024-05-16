@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import HoverMenu from '../hover-menu/HoverMenu.vue'
-import IconLogo from '../icons/IconLogo.vue'
+import HoverMenu from '@components/hover-menu/HoverMenu.vue'
+import IconLogo from '@components/icons/IconLogo.vue'
 import BurgerMenu from './BurgerMenu.vue'
 import { openBurgerStore } from '@/stores/openBurgerStore'
 

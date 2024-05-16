@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Link } from '@/interfaces/link'
-import CollapsibleMenu from '../collapsible-menu/CollapsibleMenu.vue'
+import CollapsibleMenu from '@components/collapsible-menu/CollapsibleMenu.vue'
 import { openBurgerStore } from '@/stores/openBurgerStore'
 
 const store = openBurgerStore()
