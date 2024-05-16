@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from '@/components/buttons/Button.vue'
 import IconFour from '@components/icons/IconFour.vue'
 import IconZero from '@components/icons/IconZero.vue'
 </script>
@@ -7,7 +8,7 @@ import IconZero from '@components/icons/IconZero.vue'
   <v-container class="container">
     <h1 class="title"><IconFour /><IconZero /><IconFour /></h1>
     <div class="heading-text">Oops! Page is not found.</div>
-    <v-btn class="btn" size="lg" variant="outlined" rounded="lg" text="Go to catalog" flat></v-btn>
+    <Button textContent="Go to main" size="large"></Button>
   </v-container>
 </template>
 
@@ -16,8 +17,8 @@ import IconZero from '@components/icons/IconZero.vue'
 
 .container {
   gap: 1rem;
-  margin-top: 8rem;
   text-align: center;
+  padding: 4rem 0;
 }
 
 .title {
@@ -41,7 +42,6 @@ import IconZero from '@components/icons/IconZero.vue'
 }
 
 @media screen and (width <= 960px) {
-  .container,
   footer {
     margin-top: 1rem;
   }

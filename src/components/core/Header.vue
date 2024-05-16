@@ -8,7 +8,7 @@ const store = openBurgerStore()
 
 const accountMenu = [
   { name: 'Login', href: '/login' },
-  { name: 'Register', href: '/register' },
+  { name: 'Register', href: '/registration' },
 ]
 
 const infoLinks = [
@@ -45,13 +45,13 @@ function openBurger() {
 
     <v-list v-if="$vuetify.display.lgAndUp" class="nav-list">
       <v-list-item v-for="item in infoLinks" :key="item.href"
-        ><a :href="item.href">{{ item.name }}</a></v-list-item
+        ><RouterLink :to="item.href">{{ item.name }}</RouterLink></v-list-item
       >
     </v-list>
 
     <v-spacer></v-spacer>
 
-    <a href="/main"><IconLogo /></a>
+    <RouterLink to="/main"><IconLogo /></RouterLink>
 
     <v-spacer></v-spacer>
 

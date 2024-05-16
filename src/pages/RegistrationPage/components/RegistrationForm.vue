@@ -63,7 +63,7 @@ const userData: UserRegistrationData = reactive({ ...userRegistrationData })
         />
       </v-col>
       <v-col class="registration-inner-container">
-        <Input :label="InputLabel.Country" :type="InputType.Text" disabled="true" />
+        <Input :label="InputLabel.Country" :type="InputType.Text" disabled />
         <Input :label="InputLabel.City" :type="InputType.Text" v-model="userData.city" />
         <Input :label="InputLabel.Street" :type="InputType.Text" v-model="userData.street" />
         <Input
