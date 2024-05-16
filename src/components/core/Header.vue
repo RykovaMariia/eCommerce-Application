@@ -51,7 +51,7 @@ function openBurger() {
 
     <v-spacer></v-spacer>
 
-    <a href="/"><IconLogo /></a>
+    <a href="/main"><IconLogo /></a>
 
     <v-spacer></v-spacer>
 
