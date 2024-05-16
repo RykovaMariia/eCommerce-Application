@@ -10,7 +10,7 @@ import {
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
 
 import { tokenData } from './TokenInfo'
-import { localStorageService } from '@/services/storage-service'
+import { localStorageService } from '@/services/storageService'
 const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
 
 const userClientBuilder = new ClientBuilder()

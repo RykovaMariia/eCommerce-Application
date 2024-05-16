@@ -5,7 +5,7 @@ import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import { reactive } from 'vue'
 import type { UserLoginData } from '@/interfaces/userData'
-import { AuthService } from '@/services/auth-service'
+import { AuthService } from '@/services/authService'
 
 const userLoginData = {
   email: '',
