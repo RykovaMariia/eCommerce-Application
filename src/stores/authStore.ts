@@ -15,3 +15,5 @@ export const userAuth = defineStore('user', {
     },
   },
 })
+
+export type UserAuth = typeof userAuth
