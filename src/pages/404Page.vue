@@ -8,7 +8,7 @@ import IconZero from '@components/icons/IconZero.vue'
   <v-container class="container">
     <h1 class="title"><IconFour /><IconZero /><IconFour /></h1>
     <div class="heading-text">Oops! Page is not found.</div>
-    <Button textContent="Go to main" size="large"></Button>
+    <Button to="/main" textContent="Go to main" size="large"></Button>
   </v-container>
 </template>
 
