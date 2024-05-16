@@ -26,14 +26,14 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   </v-col>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '@styles/constants.scss';
 
 .v-btn {
   border-radius: 6px;
 }
 
-.v-btn__content {
+.v-btn--variant-flat {
   font-size: 16px;
   color: constants.$color-text-light;
   text-transform: none;
