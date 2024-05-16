@@ -38,7 +38,7 @@ describe('Auth Service', () => {
     vi.clearAllMocks()
   })
 
-  it.only('should call the clientService methods with the correct data', async () => {
+  it('should call the clientService methods with the correct data', async () => {
     const userData = {
       email: 'test@example.com',
       password: 'Password123',
