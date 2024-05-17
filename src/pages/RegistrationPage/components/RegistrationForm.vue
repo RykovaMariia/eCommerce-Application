@@ -12,7 +12,7 @@ import { isTheSameAddress } from '@/stores/addressStateStore/addressesState'
 
 const isSameAddress = isTheSameAddress()
 
-const address: { addressShipping: Address, addressBilling: Address } = {
+const address: { addressShipping: Address; addressBilling: Address } = {
   addressShipping: {
     city: '',
     street: '',
@@ -22,11 +22,11 @@ const address: { addressShipping: Address, addressBilling: Address } = {
     city: '',
     street: '',
     postalCode: '',
-  }
+  },
 }
 
-const addressShipping = reactive({...address.addressShipping})
-const addressBilling = reactive({...address.addressBilling})
+const addressShipping = reactive({ ...address.addressShipping })
+const addressBilling = reactive({ ...address.addressBilling })
 
 const userData: UserRegistrationData = reactive({
   firstName: '',
@@ -37,7 +37,7 @@ const userData: UserRegistrationData = reactive({
   country: COUNTRY,
   addresses: {
     addressShipping,
-    addressBilling
+    addressBilling,
   },
   isSame: false,
 })
@@ -112,17 +112,37 @@ const title = computed(() => {
               <h2 class="address-title">{{ title }}</h2>
             </v-col>
             <Input :label="InputLabel.City" :type="InputType.Text" v-model="addressBilling.city" />
-            <Input :label="InputLabel.Street" :type="InputType.Text" v-model="addressBilling.street" />
-            <Input :label="InputLabel.PostalCode" :type="InputType.Text" v-model="addressBilling.postalCode" />
+            <Input
+              :label="InputLabel.Street"
+              :type="InputType.Text"
+              v-model="addressBilling.street"
+            />
+            <Input
+              :label="InputLabel.PostalCode"
+              :type="InputType.Text"
+              v-model="addressBilling.postalCode"
+            />
           </v-col>
           <v-col style="padding: 0">
             <div v-if="isSameAddress.isNotSame">
               <v-col>
                 <h2 class="address-title">Shipping address</h2>
               </v-col>
-              <Input :label="InputLabel.City" :type="InputType.Text" v-model="addressShipping.city" />
-              <Input :label="InputLabel.Street" :type="InputType.Text" v-model="addressShipping.street" />
-              <Input :label="InputLabel.PostalCode" :type="InputType.Text" v-model="addressShipping.postalCode" />
+              <Input
+                :label="InputLabel.City"
+                :type="InputType.Text"
+                v-model="addressShipping.city"
+              />
+              <Input
+                :label="InputLabel.Street"
+                :type="InputType.Text"
+                v-model="addressShipping.street"
+              />
+              <Input
+                :label="InputLabel.PostalCode"
+                :type="InputType.Text"
+                v-model="addressShipping.postalCode"
+              />
             </div>
           </v-col>
         </v-col>

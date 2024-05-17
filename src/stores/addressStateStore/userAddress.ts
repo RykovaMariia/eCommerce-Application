@@ -8,7 +8,7 @@ interface State {
 export const useAddressStore = defineStore('address', {
   state: (): State => {
     return {
-      addressList: []
+      addressList: [],
     }
   },
 })
