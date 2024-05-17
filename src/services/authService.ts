@@ -7,6 +7,7 @@ import {
 } from '@/services/storageService'
 import { tokenData } from '@/api/TokenInfo'
 import type { UserLoginData } from '@/interfaces/userData'
+import router from '@/router'
 
 export class AuthService {
   constructor(
@@ -26,6 +27,7 @@ export class AuthService {
         .then(() => {
           this.userAuth().toogleAuthState()
           this.localStorageService.saveData('token', tokenData.get())
+          router.push('/main')
         })
         .catch((error: Error) => {
           console.warn(error.message)

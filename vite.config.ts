@@ -29,6 +29,7 @@ export default defineConfig({
       '@pages': fileURLToPath(new URL('./src/pages', import.meta.url)),
       '@plugins': fileURLToPath(new URL('./src/plugins', import.meta.url)),
       '@api': fileURLToPath(new URL('./src/api', import.meta.url)),
+      '@services': fileURLToPath(new URL('./src/services', import.meta.url)),
       'node-fetch': 'isomorphic-fetch',
     },
   },
