@@ -3,13 +3,25 @@ import HoverMenu from '@components/hover-menu/HoverMenu.vue'
 import IconLogo from '@components/icons/IconLogo.vue'
 import BurgerMenu from './BurgerMenu.vue'
 import { openBurgerStore } from '@/stores/openBurgerStore'
+import { userAuth } from '@/stores/authStore'
+import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
 
 const store = openBurgerStore()
+const { isLoggined } = storeToRefs(userAuth())
 
-const accountMenu = [
-  { name: 'Login', href: '/login' },
-  { name: 'Register', href: '/registration' },
-]
+const accountMenu = computed(() => {
+  if (isLoggined.value) {
+    return [
+      { name: 'Logout', href: '/logout' },
+      { name: 'Profile', href: '/profile' },
+    ]
+  }
+  return [
+    { name: 'Login', href: '/login' },
+    { name: 'Register', href: '/registration' },
+  ]
+})
 
 const infoLinks = [
   { name: 'About us', href: '/about' },

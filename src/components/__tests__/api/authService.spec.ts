@@ -2,7 +2,6 @@ import { describe, it, expect, afterEach, vi } from 'vitest'
 import { AuthService } from '@/services/authService'
 import { ClientService } from '@/api/ClientService'
 import type { LocalStorageState, StorageService } from '@/services/storageService'
-import { type UserAuth } from '@/stores/authStore'
 
 describe('Auth Service', () => {
   const ClientServiceMock = {
@@ -24,14 +23,9 @@ describe('Auth Service', () => {
     saveData: vi.fn(),
   }
 
-  const userAuthMock = () => {
-    return { toogleAuthState: vi.fn() }
-  }
-
   const authService = new AuthService(
     ClientServiceMock as unknown as ClientService,
     localStorageServiceMock as unknown as StorageService<LocalStorageState>,
-    userAuthMock as unknown as UserAuth,
   )
 
   afterEach(() => {
