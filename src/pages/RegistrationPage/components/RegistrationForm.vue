@@ -56,7 +56,7 @@ const title = computed(() => {
 </script>
 
 <template>
-  <v-form class="registration-form" >
+  <v-form class="registration-form">
     <v-col class="registration-container">
       <v-col class="registration-inner-container">
         <Input
