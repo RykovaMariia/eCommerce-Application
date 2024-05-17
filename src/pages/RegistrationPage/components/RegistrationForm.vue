@@ -8,7 +8,7 @@ import { computed, reactive, watch } from 'vue'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
 import { COUNTRY } from '@/constants/constants'
 import type { Address, UserRegistrationData } from '@/interfaces/userData'
-import { isTheSameAddress } from '@/stores/addressStateStore/addressesState'
+import { isTheSameAddress } from '@/stores/addressesState'
 
 const isSameAddress = isTheSameAddress()
 
@@ -79,7 +79,7 @@ const title = computed(() => {
           <DateInput
             :label="InputLabel.BirthDate"
             :type="InputType.Text"
-            @setInput="(v: string) => (userData.birthDate = v)"
+            @setInput="(value) => (userData.birthDate = value)"
           />
         </v-col>
         <Input
