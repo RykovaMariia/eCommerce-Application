@@ -3,7 +3,7 @@ import RegistrationForm from '@/pages/RegistrationPage/components/RegistrationFo
 import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 const items = [
   {
-    title: 'Home',
+    title: 'Main',
     disabled: false,
     href: '/',
   },
