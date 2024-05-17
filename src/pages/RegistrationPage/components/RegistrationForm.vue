@@ -46,9 +46,13 @@ watch(isSameAddress, (indicator) => {
   if (indicator.isNotSame) {
     userData.addresses.addressShipping = addressShipping
   } else {
-    userData.addresses.addressShipping = { city: '', street: '', postalCode: '' }
+    userData.addresses.addressShipping = addressBilling
   }
 })
+
+function submit() {
+  console.warn(userData)
+}
 
 const title = computed(() => {
   return isSameAddress.isNotSame ? 'Billing address' : 'Billing / shipping address'
@@ -56,7 +60,7 @@ const title = computed(() => {
 </script>
 
 <template>
-  <v-form class="registration-form">
+  <v-form class="registration-form" @submit.prevent="submit">
     <v-col class="registration-container">
       <v-col class="registration-inner-container">
         <Input
