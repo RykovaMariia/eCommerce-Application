@@ -12,16 +12,12 @@ body {
   min-height: 100vh;
 
   font-family: constants.$font-base;
-  font-size: 1rem;
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
   color: constants.$color-text-dark;
   text-rendering: optimizelegibility;
-
-  background: url('../assets/images/texture.png');
-  background-repeat: round;
-  background-size: 35%;
 
   transition:
     color 0.5s,
@@ -61,13 +57,32 @@ h6 {
   font-size: 2rem;
 }
 
+main.v-main {
+  padding: calc(100px + 3rem) 4rem 3rem;
+}
+
 .v-container.container {
   max-width: 1440px;
-  padding: 0 4rem;
+  padding: 0;
 }
 
 @media screen and (width <= 600px) {
   .v-container.container {
     padding: 0 1rem;
   }
+}
+
+a {
+  color: constants.$color-text-dark;
+  text-decoration: none;
+
+  &:hover {
+    color: constants.$color-primary;
+  }
+}
+
+.v-application {
+  background: url('@assets/images/texture.png') !important;
+  background-repeat: round !important;
+  background-size: 35% !important;
 }

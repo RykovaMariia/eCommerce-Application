@@ -1,27 +1,49 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@pages/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/404',
-      name: '404',
-      component: () => import('@pages/404Page.vue'),
-    },
-    {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('@pages/MainPage.vue'),
+    },
+    {
+      path: '/main',
+      name: 'main',
+      component: () => import('@pages/MainPage.vue'),
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@pages/LoginPage/LoginPage.vue'),
+    },
+    {
+      path: '/registration',
+      name: 'registration',
+      component: () => import('@pages/RegistrationPage/RegistrationPage.vue'),
+    },
+    {
+      path: '/catalog',
+      name: 'catalog',
+      component: () => import('@pages/CatalogPage.vue'),
     },
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('@pages/AboutView.vue'),
+      component: () => import('@pages/AboutPage.vue'),
     },
+    {
+      path: '/favorites',
+      name: 'favorites',
+      component: () => import('@pages/FavoritesPage.vue'),
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('@pages/Cart.vue'),
+    },
+    { path: '/:pathMatch(.*)*', component: () => import('@pages/404Page.vue') },
   ],
 })
 

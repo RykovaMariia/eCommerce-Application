@@ -6,3 +6,19 @@ export const vuetify = createVuetify({
   components: { ...components },
   directives: { ...directives },
 })
+
+export class ResizeObserverMock {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+export function getAppWrapper() {
+  return {
+    template: `
+      <v-app>
+        <slot  />
+      </v-app>
+    `,
+  }
+}

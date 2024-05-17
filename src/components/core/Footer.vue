@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import IconlogoWhite from '@components/icons/IconlogoWhite.vue'
+import IconLogo from '@components/icons/IconLogo.vue'
 const menuLinks = [
   {
     name: 'Catalog',
@@ -42,7 +42,7 @@ const catalogLinks = [
     <v-container class="container">
       <v-row class="footer-wrapper" justify="center">
         <v-col class="v-col-md-3 v-col-sm-6 logo">
-          <div class="logo"><IconlogoWhite /></div>
+          <IconLogo :isLight="true" />
           <div class="v-col-md-10 logo-text">
             Eco-friendly place, where sustainability meets style!
           </div>
@@ -51,14 +51,14 @@ const catalogLinks = [
         <v-col class="v-col-md-3 v-col-sm-6 menu">
           <div class="footer-wrapper-title">Menu</div>
           <div v-for="(link, index) in menuLinks" :key="index">
-            <a :href="link.href">{{ link.name }}</a>
+            <RouterLink :to="link.href">{{ link.name }}</RouterLink>
           </div>
         </v-col>
 
         <v-col class="v-col-md-3 catalog">
           <div class="footer-wrapper-title">Catalog</div>
           <div v-for="(link, index) in catalogLinks" :key="index">
-            <a :href="link.href">{{ link.name }}</a>
+            <RouterLink :to="link.href">{{ link.name }}</RouterLink>
           </div>
         </v-col>
 
@@ -93,6 +93,10 @@ const catalogLinks = [
 
 <style lang="scss" scoped>
 @use '@styles/constants.scss';
+
+.v-container.container {
+  padding: 0 4rem;
+}
 
 footer {
   margin-top: auto;

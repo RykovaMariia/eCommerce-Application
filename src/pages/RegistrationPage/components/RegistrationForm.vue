@@ -50,18 +50,13 @@ watch(isSameAddress, (indicator) => {
   }
 })
 
-function submit() {
-  console.warn(isSameAddress.isNotSame)
-  console.warn(userData)
-}
-
 const title = computed(() => {
   return isSameAddress.isNotSame ? 'Billing address' : 'Billing / shipping address'
 })
 </script>
 
 <template>
-  <v-form class="registration-form" @submit.prevent="submit">
+  <v-form class="registration-form" >
     <v-col class="registration-container">
       <v-col class="registration-inner-container">
         <Input
