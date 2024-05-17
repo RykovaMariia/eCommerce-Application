@@ -5,6 +5,7 @@ import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import { reactive } from 'vue'
 import type { UserLoginData } from '@/interfaces/userData'
+import { authService } from '@/services/authService'
 
 const userLoginData = {
   email: '',
@@ -12,10 +13,16 @@ const userLoginData = {
 }
 
 const userData: UserLoginData = reactive({ ...userLoginData })
+
+function login() {
+  if (userData.email && userData.password) {
+    authService.login(userData)
+  }
+}
 </script>
 
 <template>
-  <v-form class="login-form">
+  <v-form class="login-form" @submit.prevent="login">
     <Input
       :label="InputLabel.Email"
       placeholder="user@example.com"

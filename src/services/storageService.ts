@@ -1,6 +1,6 @@
 import type { TokenStore } from '@commercetools/sdk-client-v2'
 
-class StorageService<T> {
+export class StorageService<T> {
   constructor(private storageKeyPrefix: string) {}
 
   private getStorageKey(key: string): string {
@@ -45,8 +45,8 @@ class StorageService<T> {
   }
 }
 
-export type LocalStorage = {
+export type LocalStorageState = {
   token: TokenStore
 }
 
-export const localStorageService = new StorageService<LocalStorage>('ECommerce_')
+export const localStorageService = new StorageService<LocalStorageState>('ECommerce_')
