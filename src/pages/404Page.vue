@@ -17,8 +17,8 @@ import IconZero from '@components/icons/IconZero.vue'
 
 .container {
   gap: 1rem;
-  text-align: center;
   padding: 4rem 0;
+  text-align: center;
 }
 
 .title {
