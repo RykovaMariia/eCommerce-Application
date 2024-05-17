@@ -13,7 +13,7 @@ const { catalogMenu, infoLinks, accountMenu } = defineProps<{
 </script>
 
 <template>
-  <v-navigation-drawer v-model="store.isOpenBurger">
+  <v-navigation-drawer v-model="store.isOpenBurger" disable-resize-watcher>
     <v-list class="nav-list">
       <v-list-item v-for="link in infoLinks" :key="link.href" :to="link.href" variant="plain">{{
         link.name

@@ -31,7 +31,6 @@ describe('should render components within Header with a large screen width', () 
     })
 
     await router.isReady()
-    console.warn(header.html())
     expect(header.findAllComponents(HoverMenu).length).toBe(2)
     expect(header.findComponent(VAppBarNavIcon).exists()).toBeFalsy()
     expect(header.find('.nav-list').exists()).toBeTruthy()

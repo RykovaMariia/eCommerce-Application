@@ -57,9 +57,13 @@ h6 {
   font-size: 2rem;
 }
 
+main.v-main {
+  padding: calc(100px + 3rem) 4rem 3rem;
+}
+
 .v-container.container {
   max-width: 1440px;
-  padding: 0 4rem;
+  padding: 0;
 }
 
 @media screen and (width <= 600px) {

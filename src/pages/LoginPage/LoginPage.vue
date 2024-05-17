@@ -36,7 +36,6 @@ const items = [
   display: flex;
   flex-direction: column;
   max-width: 1440px;
-  margin: 3rem auto;
 
   @media screen and (width <= 768px) {
     padding: 0;

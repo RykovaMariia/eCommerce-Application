@@ -30,10 +30,6 @@ const items = [
 <style scoped lang="scss">
 @use '@/styles/constants.scss';
 
-.container {
-  margin: 3rem auto;
-}
-
 .registration-card {
   border: 1px solid constants.$color-primary;
   border-radius: 6px;

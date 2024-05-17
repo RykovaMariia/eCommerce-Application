@@ -24,9 +24,13 @@ defineProps<{
       </div>
     </template>
     <div class="dropdown">
-      <a class="dropdown-item" v-for="item of menuItems" :key="item.href" :href="item.href">{{
-        item.name
-      }}</a>
+      <RouterLink
+        class="dropdown-item"
+        v-for="item of menuItems"
+        :key="item.href"
+        :to="item.href"
+        >{{ item.name }}</RouterLink
+      >
     </div>
   </v-menu>
 </template>
