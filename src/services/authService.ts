@@ -1,5 +1,5 @@
 import { ClientService, clientService } from '@/api/ClientService'
-import { userAuth, type UserAuth } from '@/stores/authStore'
+
 import {
   StorageService,
   localStorageService,
@@ -12,28 +12,18 @@ export class AuthService {
   constructor(
     private clientService: ClientService,
     private localStorageService: StorageService<LocalStorageState>,
-    private userAuth: UserAuth,
   ) {}
 
-  login(userData: UserLoginData) {
-    try {
-      const userClientData = this.clientService
-        .getApiRoot(this.clientService.getPasswordFlowClient(userData.email, userData.password))
-        .me()
-        .get()
-        .execute()
-      return userClientData
-        .then(() => {
-          this.userAuth().toogleAuthState()
-          this.localStorageService.saveData('token', tokenData.get())
-        })
-        .catch((error: Error) => {
-          console.warn(error.message)
-        })
-    } catch (e) {
-      console.error(e)
-    }
+  async login(userData: UserLoginData) {
+    const userClientData = this.clientService
+      .getApiRoot(this.clientService.getPasswordFlowClient(userData.email, userData.password))
+      .me()
+      .get()
+      .execute()
+    return userClientData.then(() => {
+      this.localStorageService.saveData('token', tokenData.get())
+    })
   }
 }
 
-export const authService = new AuthService(clientService, localStorageService, userAuth)
+export const authService = new AuthService(clientService, localStorageService)

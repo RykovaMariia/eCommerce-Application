@@ -1,3 +1,5 @@
+import { localStorageService } from '@/services/storageService'
+import { userAuth } from '@/stores/authStore'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -43,8 +45,23 @@ const router = createRouter({
       name: 'cart',
       component: () => import('@pages/Cart.vue'),
     },
+    {
+      path: '/logout',
+      name: 'logout',
+      component: () => null,
+    },
     { path: '/:pathMatch(.*)*', component: () => import('@pages/404Page.vue') },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.name === 'login' && userAuth().isLoggined) {
+    next({ name: 'main', replace: true })
+  } else if (to.name === 'logout' && userAuth().isLoggined) {
+    userAuth().toogleAuthState()
+    localStorageService.removeData('token')
+    next({ name: 'main' })
+  } else next()
 })
 
 export default router
