@@ -1,17 +1,16 @@
 import { defineStore } from 'pinia'
 
-
 interface Alert {
-  isOpenAlert: boolean;
-  message: string;
-  type: "info" | "error" | "success" | "warning";
+  isOpenAlert: boolean
+  message: string
+  type: 'info' | 'error' | 'success' | 'warning'
 }
 
 export const alertStore = defineStore('Alert', {
   state: (): Alert => ({
     isOpenAlert: false,
     message: '',
-    type: 'info'
+    type: 'info',
   }),
 
   actions: {

@@ -28,7 +28,7 @@ function login() {
         .me()
         .get()
         .execute()
-        userClientData
+      userClientData
         .then((data) => {
           console.warn(data.body)
           userAuth().toogleAuthState()
@@ -48,7 +48,6 @@ function login() {
     }
   }
 }
-
 </script>
 
 <template>

@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { alertStore } from '@/stores/alertStore';
+import { alertStore } from '@/stores/alertStore'
 
 const alert = alertStore()
 </script>
 
 <template>
-  <v-alert closable :text="alert.message" position="fixed" class="alert-window" @click:close="() => alert.setFalse()" :type="alert.type"></v-alert>
+  <v-alert
+    closable
+    :text="alert.message"
+    position="fixed"
+    class="alert-window"
+    @click:close="() => alert.setFalse()"
+    :type="alert.type"
+  ></v-alert>
 </template>
 
 <style scoped lang="scss">
