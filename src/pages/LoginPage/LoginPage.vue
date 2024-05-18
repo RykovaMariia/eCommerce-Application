@@ -4,7 +4,7 @@ import LoginForm from '@pages/LoginPage/components/LoginForm.vue'
 import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 const items = [
   {
-    title: 'Home',
+    title: 'Main',
     disabled: false,
     href: '/',
   },
