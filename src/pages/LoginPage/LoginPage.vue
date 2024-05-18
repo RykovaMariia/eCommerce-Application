@@ -2,6 +2,7 @@
 import path from '@assets/images/login/login.jpg'
 import LoginForm from '@pages/LoginPage/components/LoginForm.vue'
 import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
+
 const items = [
   {
     title: 'Main',

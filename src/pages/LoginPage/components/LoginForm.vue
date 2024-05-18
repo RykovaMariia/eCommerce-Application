@@ -5,7 +5,13 @@ import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import { reactive } from 'vue'
 import type { UserLoginData } from '@/interfaces/userData'
-import { authService } from '@/services/authService'
+import { clientService } from '@/api/ClientService'
+import { userAuth } from '@/stores/authStore'
+import { tokenData } from '@/api/TokenInfo'
+import { localStorageService } from '@/services/storageService'
+import { alertStore } from '@/stores/alertStore'
+
+const isAlert = alertStore()
 
 const userLoginData = {
   email: '',
@@ -16,9 +22,33 @@ const userData: UserLoginData = reactive({ ...userLoginData })
 
 function login() {
   if (userData.email && userData.password) {
-    authService.login(userData)
+    try {
+      const userClientData = clientService
+        .getApiRoot(clientService.getPasswordFlowClient(userData.email, userData.password))
+        .me()
+        .get()
+        .execute()
+        userClientData
+        .then((data) => {
+          console.warn(data.body)
+          userAuth().toogleAuthState()
+          console.warn(tokenData.get())
+          localStorageService.saveData('token', tokenData.get())
+        })
+        .catch((error: Error) => {
+          console.warn(error.message)
+          isAlert.setTrue()
+          isAlert.$patch((state) => {
+            state.message = error.message
+            state.type = 'warning'
+          })
+        })
+    } catch (e) {
+      console.error(e)
+    }
   }
 }
+
 </script>
 
 <template>

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import Header from '@components/core/Header.vue'
 import Footer from '@components/core/Footer.vue'
+import { alertStore } from '@/stores/alertStore';
+import { storeToRefs } from 'pinia';
+import AlertWindow from '@components/alertWindow/AlertWindow.vue';
+const { isOpenAlert } =  storeToRefs(alertStore())
 </script>
 
 <template>
@@ -10,6 +14,7 @@ import Footer from '@components/core/Footer.vue'
       <RouterView />
     </v-main>
     <Footer />
+    <AlertWindow v-if="isOpenAlert"/>
   </v-app>
 </template>
 

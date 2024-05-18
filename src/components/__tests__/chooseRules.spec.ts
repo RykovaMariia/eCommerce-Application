@@ -13,7 +13,7 @@ describe('chooseRules function test', () => {
   })
 
   test('should return an array of rules for street', () => {
-    expect(chooseRules('text', 'Street')).toEqual([rules.required, rules.street])
+    expect(chooseRules('text', 'Street')).toEqual([rules.street])
   })
 
   test('should return an array of rules for birth date', () => {
@@ -21,7 +21,11 @@ describe('chooseRules function test', () => {
   })
 
   test('should return an array of rules for postal code', () => {
-    expect(chooseRules('text', 'Postal code')).toEqual([rules.required, rules.postcode])
+    expect(chooseRules('text', 'Postal code')).toEqual([rules.postcode])
+  })
+
+  test('should return an array of rules for postal code', () => {
+    expect(chooseRules('text', 'City')).toEqual([rules.text])
   })
 
   test('should return an array of rules for else case', () => {
