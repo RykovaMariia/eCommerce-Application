@@ -47,15 +47,21 @@ const router = createRouter({
     },
     {
       path: '/logout',
+      name: 'logout',
       component: () => null,
-      beforeEnter(to, from, next) {
-        userAuth().toogleAuthState()
-        localStorageService.removeData('token')
-        next('/main')
-      },
     },
     { path: '/:pathMatch(.*)*', component: () => import('@pages/404Page.vue') },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.name === 'login' && userAuth().isLoggined) {
+    next({ name: 'main', replace: true })
+  } else if (to.name === 'logout' && userAuth().isLoggined) {
+    userAuth().toogleAuthState()
+    localStorageService.removeData('token')
+    next({ name: 'main' })
+  } else next()
 })
 
 export default router
