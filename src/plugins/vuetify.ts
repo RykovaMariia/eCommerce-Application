@@ -27,6 +27,9 @@ const vuetify = createVuetify({
           surface: '#bb9758',
           'on-surface': '#27291b',
         },
+        variables: {
+          'disabled-opacity': '0.8',
+        }
       },
     },
   },
