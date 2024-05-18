@@ -13,8 +13,8 @@ const { isLoggined } = storeToRefs(userAuth())
 const accountMenu = computed(() => {
   if (isLoggined.value) {
     return [
-      { name: 'Logout', href: '/logout' },
       { name: 'Profile', href: '/profile' },
+      { name: 'Logout', href: '/logout' },
     ]
   }
   return [
