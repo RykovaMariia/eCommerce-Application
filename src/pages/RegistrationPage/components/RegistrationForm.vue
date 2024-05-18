@@ -101,7 +101,12 @@ const title = computed(() => {
         />
       </v-col>
       <v-col class="registration-inner-container">
-        <Input :label="InputLabel.Country" :type="InputType.Text" disabled class="registration-input"/>
+        <Input
+          :label="InputLabel.Country"
+          :type="InputType.Text"
+          disabled
+          class="registration-input"
+        />
         <v-col>
           <Checkbox
             label="Use the billing address as the shipping address"
@@ -193,7 +198,7 @@ const title = computed(() => {
 
 .registration-input {
   width: 50%;
-  
+
   @media screen and (width <= 1024px) {
     width: 100%;
   }

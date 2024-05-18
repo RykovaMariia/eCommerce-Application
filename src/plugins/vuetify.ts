@@ -29,7 +29,7 @@ const vuetify = createVuetify({
         },
         variables: {
           'disabled-opacity': '0.8',
-        }
+        },
       },
     },
   },
