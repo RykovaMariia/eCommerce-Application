@@ -26,7 +26,7 @@ function login() {
         router.push('/main')
       })
       .catch((error: Error) => {
-        //component mistake
+        //TODO component mistake
       })
   }
 }
