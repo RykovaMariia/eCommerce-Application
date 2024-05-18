@@ -6,6 +6,8 @@ import { InputType } from '@/enums/inputType'
 import { reactive } from 'vue'
 import type { UserLoginData } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
+import { userAuth } from '@/stores/authStore'
+import router from '@/router'
 
 const userLoginData = {
   email: '',
@@ -15,8 +17,17 @@ const userLoginData = {
 const userData: UserLoginData = reactive({ ...userLoginData })
 
 function login() {
-  if (userData.email && userData.password) {
-    authService.login(userData)
+  if (!userData.email || !userData.password) return
+  else {
+    authService
+      .login(userData)
+      .then(() => {
+        userAuth().toogleAuthState()
+        router.push('/main')
+      })
+      .catch((error: Error) => {
+        //TODO component mistake
+      })
   }
 }
 </script>

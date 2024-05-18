@@ -1,3 +1,5 @@
+import { localStorageService } from '@/services/storageService'
+import { userAuth } from '@/stores/authStore'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -42,6 +44,15 @@ const router = createRouter({
       path: '/cart',
       name: 'cart',
       component: () => import('@pages/Cart.vue'),
+    },
+    {
+      path: '/logout',
+      component: () => null,
+      beforeEnter(to, from, next) {
+        userAuth().toogleAuthState()
+        localStorageService.removeData('token')
+        next('/main')
+      },
     },
     { path: '/:pathMatch(.*)*', component: () => import('@pages/404Page.vue') },
   ],
