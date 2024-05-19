@@ -42,21 +42,6 @@ export class AuthService {
         console.warn(error.message)
       })
   }
-
-  user() {
-    try {
-      const userClientData = this.clientService.getApiRoot().me().get().execute()
-      return userClientData
-        .then((data) => {
-          console.warn(data.body)
-        })
-        .catch((error: Error) => {
-          console.warn(error.message)
-        })
-    } catch (e) {
-      console.error(e)
-    }
-  }
 }
 
 export const authService = new AuthService(clientService, localStorageService)
