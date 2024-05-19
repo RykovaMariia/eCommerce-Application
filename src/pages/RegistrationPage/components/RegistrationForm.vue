@@ -68,14 +68,16 @@ const title = computed(() => {
           placeholder=""
           :type="InputType.Text"
           v-model="userData.firstName"
+          class="registration-input"
         />
         <Input
           :label="InputLabel.LastName"
           placeholder=""
           :type="InputType.Text"
           v-model="userData.lastName"
+          class="registration-input"
         />
-        <v-col>
+        <v-col class="registration-input">
           <DateInput
             :label="InputLabel.BirthDate"
             :type="InputType.Text"
@@ -87,6 +89,7 @@ const title = computed(() => {
           placeholder="user@example.com"
           :type="InputType.Text"
           v-model="userData.email"
+          class="registration-input"
         />
         <Input
           :label="InputLabel.Password"
@@ -94,10 +97,16 @@ const title = computed(() => {
           :type="InputType.Password"
           v-model="userData.password"
           icon="mdi-eye-closed"
+          class="registration-input"
         />
       </v-col>
       <v-col class="registration-inner-container">
-        <Input :label="InputLabel.Country" :type="InputType.Text" disabled />
+        <Input
+          :label="InputLabel.Country"
+          :type="InputType.Text"
+          disabled
+          class="registration-input"
+        />
         <v-col>
           <Checkbox
             label="Use the billing address as the shipping address"
@@ -106,7 +115,7 @@ const title = computed(() => {
           />
         </v-col>
         <v-col class="address-container">
-          <v-col style="padding: 0">
+          <v-col class="address-wrapper">
             <v-col>
               <h2 class="address-title">{{ title }}</h2>
             </v-col>
@@ -122,7 +131,7 @@ const title = computed(() => {
               v-model="addressBilling.postalCode"
             />
           </v-col>
-          <v-col style="padding: 0">
+          <v-col class="address-wrapper">
             <div v-if="isSameAddress.isNotSame">
               <v-col>
                 <h2 class="address-title">Shipping address</h2>
@@ -181,5 +190,17 @@ const title = computed(() => {
 .address-title {
   font-size: 1.5rem;
   color: constants.$color-secondary;
+}
+
+.address-wrapper {
+  padding: 0;
+}
+
+.registration-input {
+  width: 50%;
+
+  @media screen and (width <= 1024px) {
+    width: 100%;
+  }
 }
 </style>

@@ -7,7 +7,10 @@ import { reactive } from 'vue'
 import type { UserLoginData } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
 import { userAuth } from '@/stores/authStore'
+import { alertStore } from '@/stores/alertStore'
 import router from '@/router'
+
+const alert = alertStore()
 
 const userLoginData = {
   email: '',
@@ -26,7 +29,11 @@ function login() {
         router.replace({ name: 'main' })
       })
       .catch((error: Error) => {
-        //TODO component mistake
+        alert.setTrue()
+        alert.$patch((state) => {
+          state.message = error.message
+          state.type = 'warning'
+        })
       })
   }
 }

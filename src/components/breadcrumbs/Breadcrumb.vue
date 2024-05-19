@@ -12,11 +12,3 @@ const props = defineProps<{
 <template>
   <v-breadcrumbs :items="props.items"></v-breadcrumbs>
 </template>
-
-<style scoped lang="scss">
-@use '@styles/constants.scss';
-
-.v-breadcrumbs {
-  color: constants.$color-text-breadcrumbs;
-}
-</style>

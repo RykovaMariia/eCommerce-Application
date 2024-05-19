@@ -56,13 +56,16 @@ export function chooseRules(type: string, label: string) {
     return [rules.required, rules.password]
   }
   if (type === InputType.Text && label === InputLabel.Street) {
-    return [rules.required, rules.street]
+    return [rules.street]
   }
   if (type === InputType.Text && label === InputLabel.BirthDate) {
     return [rules.required, rules.birthdate]
   }
+  if (type === InputType.Text && label === InputLabel.City) {
+    return [rules.text]
+  }
   if (type === InputType.Text && label === InputLabel.PostalCode) {
-    return [rules.required, rules.postcode]
+    return [rules.postcode]
   }
   return [rules.required, rules.text]
 }

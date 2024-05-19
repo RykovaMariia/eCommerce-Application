@@ -7,5 +7,10 @@ const data = defineModel()
 </script>
 
 <template>
-  <v-checkbox :label="props.label" color="primary" v-model="data"></v-checkbox>
+  <v-checkbox
+    :label="props.label"
+    color="primary"
+    v-model="data"
+    max-width="max-content"
+  ></v-checkbox>
 </template>
