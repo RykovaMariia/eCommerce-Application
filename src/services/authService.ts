@@ -34,13 +34,9 @@ export class AuthService {
         body: userData,
       })
       .execute()
-    return userClientData
-      .then(() => {
-        return this.login(userData)
-      })
-      .catch((error: Error) => {
-        console.warn(error.message)
-      })
+    return userClientData.then(() => {
+      return this.login(userData)
+    })
   }
 }
 

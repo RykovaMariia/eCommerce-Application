@@ -11,6 +11,8 @@ import type { Address, UserCustomerDraft } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
 import { formateDate } from '@/utils/maxTime'
 import { alertStore } from '@/stores/alertStore'
+import router from '@/router'
+import { userAuth } from '@/stores/authStore'
 
 const alert = alertStore()
 
@@ -28,6 +30,9 @@ const address: { addressShipping: Address; addressBilling: Address } = {
     postalCode: '',
   },
 }
+
+const defaultShipping = ref(false)
+const defaultBilling = ref(false)
 
 const addressShipping = reactive({ ...address.addressShipping })
 const addressBilling = reactive({ ...address.addressBilling })
@@ -56,30 +61,32 @@ function signup() {
   else {
     if (isTheSame.value) {
       userData.addresses.push(addressBilling)
-      userData.defaultBillingAddress = 0
-      userData.defaultShippingAddress = 0
+      if (defaultBilling.value) {
+        userData.defaultBillingAddress = 0
+      }
+      if (defaultShipping.value) {
+        userData.defaultShippingAddress = 0
+      }
     } else {
       userData.addresses.push(addressBilling, addressShipping)
-      userData.defaultBillingAddress = 0
-      userData.defaultShippingAddress = 1
+      if (defaultShipping.value) {
+        userData.defaultShippingAddress = 1
+      }
+      if (defaultBilling.value) {
+        userData.defaultBillingAddress = 0
+      }
     }
     userData.dateOfBirth = formateDate(userData.dateOfBirth)
 
     authService
       .signup(userData)
       .then(() => {
-        alert.setTrue()
-        alert.$patch((state) => {
-          state.message = 'User is registered'
-          state.type = 'success'
-        })
+        userAuth().toggleAuthState()
+        alert.show('User is registered', 'success')
+        router.replace({ name: 'main' })
       })
       .catch((error: Error) => {
-        alert.setTrue()
-        alert.$patch((state) => {
-          state.message = error.message
-          state.type = 'warning'
-        })
+        alert.show(`Error: ${error.message}`, 'warning')
       })
   }
 }
@@ -133,18 +140,28 @@ function signup() {
           disabled
           class="registration-input"
         />
-        <v-col>
-          <Checkbox
-            label="Use the billing address as the shipping address"
-            v-model="isTheSame"
-            @click="toggleState()"
-          />
-        </v-col>
+        <Checkbox
+          label="Use the billing address as the shipping address"
+          v-model="isTheSame"
+          @click="toggleState()"
+        />
         <v-col class="address-container">
           <v-col class="address-wrapper">
             <v-col>
               <h2 class="address-title">{{ title }}</h2>
             </v-col>
+            <Checkbox
+              label="Use as default billing address"
+              v-model="defaultBilling"
+              @click="!defaultBilling"
+            />
+            <div v-if="isTheSame">
+              <Checkbox
+                label="Use as default shipping address"
+                v-model="defaultShipping"
+                @click="!defaultShipping"
+              />
+            </div>
             <Input :label="InputLabel.City" :type="InputType.Text" v-model="addressBilling.city" />
             <Input
               :label="InputLabel.Street"
@@ -157,11 +174,16 @@ function signup() {
               v-model="addressBilling.postalCode"
             />
           </v-col>
-          <v-col style="padding: 0">
+          <v-col class="address-shipping-wrapper">
             <div v-if="!isTheSame">
               <v-col>
                 <h2 class="address-title">Shipping address</h2>
               </v-col>
+              <Checkbox
+                label="Use as default shipping address"
+                v-model="defaultShipping"
+                @click="!defaultShipping"
+              />
               <Input
                 :label="InputLabel.City"
                 :type="InputType.Text"
@@ -228,5 +250,9 @@ function signup() {
   @media screen and (width <= 1024px) {
     width: 100%;
   }
+}
+
+.address-shipping-wrapper {
+  padding: 0;
 }
 </style>

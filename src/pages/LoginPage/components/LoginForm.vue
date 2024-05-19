@@ -25,15 +25,11 @@ function login() {
     authService
       .login(userData)
       .then(() => {
-        userAuth().toogleAuthState()
+        userAuth().toggleAuthState()
         router.replace({ name: 'main' })
       })
       .catch((error: Error) => {
-        alert.setTrue()
-        alert.$patch((state) => {
-          state.message = error.message
-          state.type = 'warning'
-        })
+        alert.show(`Error: ${error.message}`, 'warning')
       })
   }
 }
