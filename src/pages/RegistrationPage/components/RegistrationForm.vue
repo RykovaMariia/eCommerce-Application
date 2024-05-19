@@ -11,6 +11,7 @@ import type { Address, UserCustomerDraft } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
 import { formateDate } from '@/utils/maxTime'
 import { alertStore } from '@/stores/alertStore'
+import router from '@/router'
 
 const alert = alertStore()
 
@@ -68,18 +69,11 @@ function signup() {
     authService
       .signup(userData)
       .then(() => {
-        alert.setTrue()
-        alert.$patch((state) => {
-          state.message = 'User is registered'
-          state.type = 'success'
-        })
+        alert.show('User is registered', 'success')
+        router.replace({ name: 'main' })
       })
       .catch((error: Error) => {
-        alert.setTrue()
-        alert.$patch((state) => {
-          state.message = error.message
-          state.type = 'warning'
-        })
+        alert.show(`Error: ${error.message}`, 'warning')
       })
   }
 }

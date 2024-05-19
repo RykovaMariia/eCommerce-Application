@@ -6,7 +6,7 @@ export const enum InputLabel {
   Password = 'Password',
   Email = 'Email',
   BirthDate = 'Birth date',
-  Country = COUNTRY,
+  Country = `🇬🇧 ${COUNTRY}`,
   City = 'City',
   Street = 'Street',
   PostalCode = 'Postal code',

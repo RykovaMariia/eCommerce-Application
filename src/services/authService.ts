@@ -38,9 +38,6 @@ export class AuthService {
       .then(() => {
         return this.login(userData)
       })
-      .catch((error: Error) => {
-        console.warn(error.message)
-      })
   }
 }
 

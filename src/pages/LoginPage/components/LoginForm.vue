@@ -29,11 +29,7 @@ function login() {
         router.replace({ name: 'main' })
       })
       .catch((error: Error) => {
-        alert.setTrue()
-        alert.$patch((state) => {
-          state.message = error.message
-          state.type = 'warning'
-        })
+        alert.show(`Error: ${error.message}`, 'warning')
       })
   }
 }

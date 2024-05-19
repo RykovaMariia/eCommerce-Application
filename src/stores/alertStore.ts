@@ -19,8 +19,10 @@ export const alertStore = defineStore('Alert', {
       this.isOpenAlert = false
     },
 
-    setTrue() {
+    show(message: string, type: 'info' | 'error' | 'success' | 'warning') {
       this.isOpenAlert = true
-    },
+      this.message = message
+      this.type = type
+    }
   },
 })
