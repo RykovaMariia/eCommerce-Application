@@ -93,12 +93,54 @@ const catalogLinks = [
 
 <style lang="scss" scoped>
 @use '@styles/constants.scss';
+@use '@/styles/mixins.scss';
 
 .v-container.container {
+  @include mixins.media-mobile {
+    padding: 0 1rem;
+  }
   padding: 0 4rem;
 }
 
 footer {
+  @include mixins.media-middle {
+    .logo {
+      order: 1;
+    }
+
+    .contacts {
+      order: 2;
+      margin-top: 3.5rem;
+      padding-left: 3rem;
+    }
+
+    .menu {
+      order: 3;
+    }
+
+    .catalog {
+      order: 4;
+      padding-left: 3rem;
+    }
+  }
+
+  @include mixins.media-mobile {
+    .footer-wrapper {
+      font-size: 0.8rem;
+    }
+
+    .logo,
+    .contacts,
+    .menu {
+      flex: 0 0 50%;
+      max-width: 50%;
+    }
+
+    .contacts,
+    .catalog {
+      padding-left: 0.5rem;
+    }
+  }
   margin-top: auto;
   padding: 3rem 0 1rem;
 
@@ -175,45 +217,6 @@ footer {
   .footer-under-line {
     padding-top: 1rem;
     font-size: 0.75rem;
-  }
-
-  @media screen and (width <= 960px) {
-    .logo {
-      order: 1;
-    }
-
-    .contacts {
-      order: 2;
-      margin-top: 3.5rem;
-      padding-left: 3rem;
-    }
-
-    .menu {
-      order: 3;
-    }
-
-    .catalog {
-      order: 4;
-      padding-left: 3rem;
-    }
-  }
-
-  @media screen and (width <= 600px) {
-    .footer-wrapper {
-      font-size: 0.8rem;
-    }
-
-    .logo,
-    .contacts,
-    .menu {
-      flex: 0 0 50%;
-      max-width: 50%;
-    }
-
-    .contacts,
-    .catalog {
-      padding-left: 0.5rem;
-    }
   }
 }
 </style>

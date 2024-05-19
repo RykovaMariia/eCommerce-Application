@@ -13,17 +13,15 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 </script>
 
 <template>
-  <v-col>
-    <v-btn
-      variant="flat"
-      :class="props.classes"
-      :type="props.buttonType"
-      :size="props.size"
-      :to="props.to"
-    >
-      {{ props.textContent }}
-    </v-btn>
-  </v-col>
+  <v-btn
+    variant="flat"
+    :class="props.classes"
+    :type="props.buttonType"
+    :size="props.size"
+    :to="props.to"
+  >
+    {{ props.textContent }}
+  </v-btn>
 </template>
 
 <style lang="scss" scoped>

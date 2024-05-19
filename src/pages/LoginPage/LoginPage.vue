@@ -32,15 +32,15 @@ const items = [
 
 <style scoped lang="scss">
 @use '@/styles/constants.scss';
+@use '@/styles/mixins.scss';
 
 .container {
+  @include mixins.media-mobile {
+    padding: 0;
+  }
   display: flex;
   flex-direction: column;
   max-width: 1440px;
-
-  @media screen and (width <= 768px) {
-    padding: 0;
-  }
 }
 
 .login-title {
@@ -55,17 +55,14 @@ const items = [
   display: flex;
   justify-content: center;
 
-  margin: 0 10%;
-
   border: 1px solid constants.$color-primary;
   border-radius: 7px;
 }
 
 .login-image {
-  max-width: 60%;
-
-  @media screen and (width <= 1024px) {
+  @include mixins.media-tablet {
     display: none;
   }
+  max-width: 60%;
 }
 </style>

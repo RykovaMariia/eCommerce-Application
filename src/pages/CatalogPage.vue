@@ -1,3 +1,3 @@
 <script setup lang="ts"></script>
 
-<template>Catalog</template>
+<template><h1>Catalog</h1></template>

@@ -1,3 +1,3 @@
 <script setup lang="ts"></script>
 
-<template>Favorites</template>
+<template><h1>Favorites</h1></template>
