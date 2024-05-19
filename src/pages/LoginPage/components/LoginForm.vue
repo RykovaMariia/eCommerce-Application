@@ -23,7 +23,7 @@ function login() {
       .login(userData)
       .then(() => {
         userAuth().toogleAuthState()
-        router.push('/main')
+        router.replace({ name: 'main' })
       })
       .catch((error: Error) => {
         console.warn(error.message)
