@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import VueDevTools from 'vite-plugin-vue-devtools'
+// @ts-ignore
 import eslint from 'vite-plugin-eslint'
 import stylelint from 'vite-plugin-stylelint'
 
@@ -12,11 +13,11 @@ export default defineConfig({
     vue(),
     process.env.NODE_ENV === 'development' ? VueDevTools() : undefined,
     eslint(),
-    stylelint()
+    stylelint(),
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  }
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
 })
