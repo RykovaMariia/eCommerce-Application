@@ -26,6 +26,7 @@ function login() {
         router.push('/main')
       })
       .catch((error: Error) => {
+        console.warn(error.message)
         //TODO component mistake
       })
   }

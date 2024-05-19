@@ -3,21 +3,21 @@ export interface UserLoginData {
   password: string
 }
 
-export interface UserRegistrationData {
+export interface UserCustomerDraft {
   firstName: string
   lastName: string
   birthDate: string
   email: string
   password: string
-  country: string
-  addresses: {
-    addressShipping: Address
-    addressBilling: Address
-  }
-  isSame: boolean
+  addresses: Address[]
+  defaultShippingAddressId?: string
+  shippingAddressIds?: string[]
+  defaultBillingAddressId?: string
+  billingAddressIds?: string[]
 }
 
 export interface Address {
+  country: string
   city: string
   street: string
   postalCode: string
