@@ -7,7 +7,7 @@ import {
   type RefreshAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2'
 
-import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
+import { createApiBuilderFromCtpClient, type MyCustomerDraft } from '@commercetools/platform-sdk'
 
 import { tokenData } from './TokenInfo'
 import { localStorageService } from '@/services/storageService'

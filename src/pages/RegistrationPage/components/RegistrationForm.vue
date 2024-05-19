@@ -10,6 +10,9 @@ import { COUNTRY } from '@/constants/constants'
 import type { Address, UserCustomerDraft } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
 import { formateDate } from '@/utils/maxTime'
+import { alertStore } from '@/stores/alertStore'
+
+const alert = alertStore()
 
 const address: { addressShipping: Address; addressBilling: Address } = {
   addressShipping: {
@@ -51,15 +54,32 @@ const userData: UserCustomerDraft = reactive({
 function signup() {
   if (!userData.email || !userData.password) return
   else {
-    isTheSame.value
-      ? userData.addresses.push(addressBilling)
-      : userData.addresses.push(addressBilling, addressShipping)
+    if (isTheSame.value) {
+      userData.addresses.push(addressBilling)
+      userData.defaultBillingAddress = 0
+      userData.defaultShippingAddress = 0
+    } else {
+      userData.addresses.push(addressBilling, addressShipping)
+      userData.defaultBillingAddress = 0
+      userData.defaultShippingAddress = 1
+    }
     userData.dateOfBirth = formateDate(userData.dateOfBirth)
+
     authService
       .signup(userData)
-      .then(() => {})
+      .then(() => {
+        alert.setTrue()
+        alert.$patch((state) => {
+          state.message = 'User is registered'
+          state.type = 'success'
+        })
+      })
       .catch((error: Error) => {
-        //TODO component mistake
+        alert.setTrue()
+        alert.$patch((state) => {
+          state.message = error.message
+          state.type = 'warning'
+        })
       })
   }
 }

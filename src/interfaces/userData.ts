@@ -10,9 +10,9 @@ export interface UserCustomerDraft {
   email: string
   password: string
   addresses: Address[]
-  defaultShippingAddressId?: string
+  defaultShippingAddress?: number
   shippingAddressIds?: string[]
-  defaultBillingAddressId?: string
+  defaultBillingAddress?: number
   billingAddressIds?: string[]
 }
 

@@ -22,7 +22,7 @@ const vuetify = createVuetify({
           accent: '#82B1FF',
           error: '#ba6559',
           info: '#2196F3',
-          success: '#838a60',
+          success: '#828266',
           warning: '#ba6559',
           surface: '#bb9758',
           'on-surface': '#27291b',

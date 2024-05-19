@@ -35,13 +35,27 @@ export class AuthService {
       })
       .execute()
     return userClientData
-      .then((data) => {
-        console.warn(data.body)
+      .then(() => {
         return this.login(userData)
       })
       .catch((error: Error) => {
         console.warn(error.message)
       })
+  }
+
+  user() {
+    try {
+      const userClientData = this.clientService.getApiRoot().me().get().execute()
+      return userClientData
+        .then((data) => {
+          console.warn(data.body)
+        })
+        .catch((error: Error) => {
+          console.warn(error.message)
+        })
+    } catch (e) {
+      console.error(e)
+    }
   }
 }
 
