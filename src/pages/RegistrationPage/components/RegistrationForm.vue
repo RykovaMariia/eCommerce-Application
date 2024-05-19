@@ -9,18 +9,19 @@ import Checkbox from '@/components/checkbox/Checkbox.vue'
 import { COUNTRY } from '@/constants/constants'
 import type { Address, UserCustomerDraft } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
+import { formateDate } from '@/utils/maxTime'
 
 const address: { addressShipping: Address; addressBilling: Address } = {
   addressShipping: {
     country: COUNTRY,
     city: '',
-    street: '',
+    streetName: '',
     postalCode: '',
   },
   addressBilling: {
     country: COUNTRY,
     city: '',
-    street: '',
+    streetName: '',
     postalCode: '',
   },
 }
@@ -41,10 +42,9 @@ const title = computed(() => {
 const userData: UserCustomerDraft = reactive({
   firstName: '',
   lastName: '',
-  birthDate: '',
+  dateOfBirth: '',
   email: '',
   password: '',
-  //country: COUNTRY,
   addresses: [],
 })
 
@@ -54,6 +54,7 @@ function signup() {
     isTheSame.value
       ? userData.addresses.push(addressBilling)
       : userData.addresses.push(addressBilling, addressShipping)
+    userData.dateOfBirth = formateDate(userData.dateOfBirth)
     authService
       .signup(userData)
       .then(() => {})
@@ -84,7 +85,7 @@ function signup() {
           <DateInput
             :label="InputLabel.BirthDate"
             :type="InputType.Text"
-            @setInput="(value) => (userData.birthDate = value)"
+            @setInput="(value) => (userData.dateOfBirth = value)"
           />
         </v-col>
         <Input
@@ -119,7 +120,7 @@ function signup() {
             <Input
               :label="InputLabel.Street"
               :type="InputType.Text"
-              v-model="addressBilling.street"
+              v-model="addressBilling.streetName"
             />
             <Input
               :label="InputLabel.PostalCode"
@@ -140,7 +141,7 @@ function signup() {
               <Input
                 :label="InputLabel.Street"
                 :type="InputType.Text"
-                v-model="addressShipping.street"
+                v-model="addressShipping.streetName"
               />
               <Input
                 :label="InputLabel.PostalCode"

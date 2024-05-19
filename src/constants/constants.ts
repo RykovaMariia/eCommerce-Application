@@ -1,1 +1,1 @@
-export const COUNTRY = 'United Kingdom'
+export const COUNTRY = 'GB'

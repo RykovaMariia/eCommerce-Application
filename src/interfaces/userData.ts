@@ -6,7 +6,7 @@ export interface UserLoginData {
 export interface UserCustomerDraft {
   firstName: string
   lastName: string
-  birthDate: string
+  dateOfBirth: string
   email: string
   password: string
   addresses: Address[]
@@ -19,6 +19,6 @@ export interface UserCustomerDraft {
 export interface Address {
   country: string
   city: string
-  street: string
+  streetName: string
   postalCode: string
 }
