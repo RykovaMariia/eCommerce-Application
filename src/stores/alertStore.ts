@@ -23,6 +23,6 @@ export const alertStore = defineStore('Alert', {
       this.isOpenAlert = true
       this.message = message
       this.type = type
-    }
+    },
   },
 })

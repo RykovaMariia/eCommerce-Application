@@ -8,7 +8,7 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 
 const store = openBurgerStore()
-const { isLoggined } = storeToRefs(userAuth())
+const { isLoggedIn: isLoggined } = storeToRefs(userAuth())
 
 const accountMenu = computed(() => {
   if (isLoggined.value) {

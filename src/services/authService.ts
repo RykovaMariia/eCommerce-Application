@@ -34,10 +34,9 @@ export class AuthService {
         body: userData,
       })
       .execute()
-    return userClientData
-      .then(() => {
-        return this.login(userData)
-      })
+    return userClientData.then(() => {
+      return this.login(userData)
+    })
   }
 }
 

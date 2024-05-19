@@ -25,7 +25,7 @@ function login() {
     authService
       .login(userData)
       .then(() => {
-        userAuth().toogleAuthState()
+        userAuth().toggleAuthState()
         router.replace({ name: 'main' })
       })
       .catch((error: Error) => {

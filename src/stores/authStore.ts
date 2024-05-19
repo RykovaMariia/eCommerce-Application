@@ -5,13 +5,13 @@ const refreshToken = localStorageService.getData('token')?.refreshToken
 
 export const userAuth = defineStore('user', {
   state: () => ({
-    isLoggined: !!refreshToken,
+    isLoggedIn: !!refreshToken,
     refreshToken: refreshToken ?? '',
   }),
 
   actions: {
-    toogleAuthState() {
-      this.isLoggined = !this.isLoggined
+    toggleAuthState() {
+      this.isLoggedIn = !this.isLoggedIn
     },
   },
 })
