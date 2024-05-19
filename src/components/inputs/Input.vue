@@ -37,8 +37,8 @@ const innerIcon = computed(() =>
       variant="outlined"
       :disabled="$props.disabled"
       v-model="data"
-      base-color="#27291b"
-      color="#27291b"
+      base-color="on-surface"
+      color="on-surface"
     ></v-text-field>
   </v-col>
 </template>

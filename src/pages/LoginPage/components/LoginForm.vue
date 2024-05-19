@@ -10,7 +10,7 @@ import { userAuth } from '@/stores/authStore'
 import { alertStore } from '@/stores/alertStore'
 import router from '@/router'
 
-const isAlert = alertStore()
+const alert = alertStore()
 
 const userLoginData = {
   email: '',
@@ -29,8 +29,8 @@ function login() {
         router.replace({ name: 'main' })
       })
       .catch((error: Error) => {
-        isAlert.setTrue()
-        isAlert.$patch((state) => {
+        alert.setTrue()
+        alert.$patch((state) => {
           state.message = error.message
           state.type = 'warning'
         })
