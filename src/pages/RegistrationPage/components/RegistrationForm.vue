@@ -4,23 +4,27 @@ import Button from '@components/buttons/Button.vue'
 import DateInput from '@/components/inputs/DateInput.vue'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
-import { computed, reactive, watch } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
 import { COUNTRY } from '@/constants/constants'
-import type { Address, UserRegistrationData } from '@/interfaces/userData'
-import { isTheSameAddress } from '@/stores/addressesState'
+import type { Address, UserCustomerDraft } from '@/interfaces/userData'
+import { authService } from '@/services/authService'
+import { formateDate } from '@/utils/maxTime'
+import { alertStore } from '@/stores/alertStore'
 
-const isSameAddress = isTheSameAddress()
+const alert = alertStore()
 
 const address: { addressShipping: Address; addressBilling: Address } = {
   addressShipping: {
+    country: COUNTRY,
     city: '',
-    street: '',
+    streetName: '',
     postalCode: '',
   },
   addressBilling: {
+    country: COUNTRY,
     city: '',
-    street: '',
+    streetName: '',
     postalCode: '',
   },
 }
@@ -28,39 +32,61 @@ const address: { addressShipping: Address; addressBilling: Address } = {
 const addressShipping = reactive({ ...address.addressShipping })
 const addressBilling = reactive({ ...address.addressBilling })
 
-const userData: UserRegistrationData = reactive({
-  firstName: '',
-  lastName: '',
-  birthDate: '',
-  email: '',
-  password: '',
-  country: COUNTRY,
-  addresses: {
-    addressShipping,
-    addressBilling,
-  },
-  isSame: false,
-})
+const isTheSame = ref(false)
 
-watch(isSameAddress, (indicator) => {
-  if (indicator.isNotSame) {
-    userData.addresses.addressShipping = addressShipping
-  } else {
-    userData.addresses.addressShipping = addressBilling
-  }
-})
-
-function submit() {
-  console.warn(userData)
+function toggleState() {
+  isTheSame.value = !isTheSame.value
 }
 
 const title = computed(() => {
-  return isSameAddress.isNotSame ? 'Billing address' : 'Billing / shipping address'
+  return isTheSame.value ? 'Billing / shipping address' : 'Billing address'
 })
+
+const userData: UserCustomerDraft = reactive({
+  firstName: '',
+  lastName: '',
+  dateOfBirth: '',
+  email: '',
+  password: '',
+  addresses: [],
+})
+
+function signup() {
+  if (!userData.email || !userData.password) return
+  else {
+    if (isTheSame.value) {
+      userData.addresses.push(addressBilling)
+      userData.defaultBillingAddress = 0
+      userData.defaultShippingAddress = 0
+    } else {
+      userData.addresses.push(addressBilling, addressShipping)
+      userData.defaultBillingAddress = 0
+      userData.defaultShippingAddress = 1
+    }
+    userData.dateOfBirth = formateDate(userData.dateOfBirth)
+
+    authService
+      .signup(userData)
+      .then(() => {
+        alert.setTrue()
+        alert.$patch((state) => {
+          state.message = 'User is registered'
+          state.type = 'success'
+        })
+      })
+      .catch((error: Error) => {
+        alert.setTrue()
+        alert.$patch((state) => {
+          state.message = error.message
+          state.type = 'warning'
+        })
+      })
+  }
+}
 </script>
 
 <template>
-  <v-form class="registration-form" @submit.prevent="submit">
+  <v-form class="registration-form" @submit.prevent="signup">
     <v-col class="registration-container">
       <v-col class="registration-inner-container">
         <Input
@@ -81,7 +107,7 @@ const title = computed(() => {
           <DateInput
             :label="InputLabel.BirthDate"
             :type="InputType.Text"
-            @setInput="(value) => (userData.birthDate = value)"
+            @setInput="(value) => (userData.dateOfBirth = value)"
           />
         </v-col>
         <Input
@@ -110,8 +136,8 @@ const title = computed(() => {
         <v-col>
           <Checkbox
             label="Use the billing address as the shipping address"
-            v-model="userData.isSame"
-            @click="() => isSameAddress.toggleState()"
+            v-model="isTheSame"
+            @click="toggleState()"
           />
         </v-col>
         <v-col class="address-container">
@@ -123,7 +149,7 @@ const title = computed(() => {
             <Input
               :label="InputLabel.Street"
               :type="InputType.Text"
-              v-model="addressBilling.street"
+              v-model="addressBilling.streetName"
             />
             <Input
               :label="InputLabel.PostalCode"
@@ -131,8 +157,8 @@ const title = computed(() => {
               v-model="addressBilling.postalCode"
             />
           </v-col>
-          <v-col class="address-wrapper">
-            <div v-if="isSameAddress.isNotSame">
+          <v-col style="padding: 0">
+            <div v-if="!isTheSame">
               <v-col>
                 <h2 class="address-title">Shipping address</h2>
               </v-col>
@@ -144,7 +170,7 @@ const title = computed(() => {
               <Input
                 :label="InputLabel.Street"
                 :type="InputType.Text"
-                v-model="addressShipping.street"
+                v-model="addressShipping.streetName"
               />
               <Input
                 :label="InputLabel.PostalCode"
