@@ -66,7 +66,7 @@ router.beforeEach((to, from, next) => {
     userAuth().toggleAuthState()
     localStorageService.removeData('token')
     next({ name: 'main' })
-  } else if (to.name === 'profile' && !userAuth().isLoggined) {
+  } else if (to.name === 'profile' && !userAuth().isLoggedIn) {
     next({ name: 'login', replace: true })
   } else next()
 })
