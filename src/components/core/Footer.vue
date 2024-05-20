@@ -9,10 +9,6 @@ const menuLinks = [
     name: 'About Us',
     href: '/about',
   },
-  {
-    name: 'Contact',
-    href: '/contacts',
-  },
 ]
 const catalogLinks = [
   {

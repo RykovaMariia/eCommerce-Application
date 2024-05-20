@@ -9,6 +9,7 @@ import { authService } from '@/services/authService'
 import { userAuth } from '@/stores/authStore'
 import { alertStore } from '@/stores/alertStore'
 import router from '@/router'
+import type { SubmitEventPromise } from 'vuetify'
 
 const alert = alertStore()
 
@@ -19,24 +20,26 @@ const userLoginData = {
 
 const userData: UserLoginData = reactive({ ...userLoginData })
 
+async function submit(submitEventPromise: SubmitEventPromise) {
+  const { valid } = await submitEventPromise
+  if (valid) login()
+}
+
 function login() {
-  if (!userData.email || !userData.password) return
-  else {
-    authService
-      .login(userData)
-      .then(() => {
-        userAuth().toggleAuthState()
-        router.replace({ name: 'main' })
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
-  }
+  authService
+    .login(userData)
+    .then(() => {
+      userAuth().toggleAuthState()
+      router.replace({ name: 'main' })
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 </script>
 
 <template>
-  <v-form class="login-form" @submit.prevent="login">
+  <v-form class="login-form" @submit.prevent="submit">
     <Input
       :label="InputLabel.Email"
       placeholder="user@example.com"

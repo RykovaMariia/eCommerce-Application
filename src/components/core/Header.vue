@@ -23,10 +23,7 @@ const accountMenu = computed(() => {
   ]
 })
 
-const infoLinks = [
-  { name: 'About us', href: '/about' },
-  { name: 'Contacts', href: '/' },
-]
+const infoLinks = [{ name: 'About us', href: '/about' }]
 
 const catalogMenu = [
   { name: 'Organic cosmetic', href: '/catalog' },

@@ -13,6 +13,7 @@ import { formateDate } from '@/utils/maxTime'
 import { alertStore } from '@/stores/alertStore'
 import router from '@/router'
 import { userAuth } from '@/stores/authStore'
+import type { SubmitEventPromise } from 'vuetify'
 
 const alert = alertStore()
 
@@ -37,6 +38,8 @@ const defaultBilling = ref(false)
 const addressShipping = reactive({ ...address.addressShipping })
 const addressBilling = reactive({ ...address.addressBilling })
 
+const form = ref(null)
+
 const isTheSame = ref(false)
 
 function toggleState() {
@@ -56,44 +59,51 @@ const userData: UserCustomerDraft = reactive({
   addresses: [],
 })
 
-function signup() {
-  if (!userData.email || !userData.password) return
-  else {
-    if (isTheSame.value) {
-      userData.addresses.push(addressBilling)
-      if (defaultBilling.value) {
-        userData.defaultBillingAddress = 0
-      }
-      if (defaultShipping.value) {
-        userData.defaultShippingAddress = 0
-      }
-    } else {
-      userData.addresses.push(addressBilling, addressShipping)
-      if (defaultShipping.value) {
-        userData.defaultShippingAddress = 1
-      }
-      if (defaultBilling.value) {
-        userData.defaultBillingAddress = 0
-      }
-    }
-    userData.dateOfBirth = formateDate(userData.dateOfBirth)
-
-    authService
-      .signup(userData)
-      .then(() => {
-        userAuth().toggleAuthState()
-        alert.show('User is registered', 'success')
-        router.replace({ name: 'main' })
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
+async function submit(submitEventPromise: SubmitEventPromise) {
+  if (isTheSame.value) {
+    addressShipping.city = addressBilling.city
+    addressShipping.streetName = addressBilling.streetName
+    addressShipping.postalCode = addressBilling.postalCode
   }
+  const { valid } = await submitEventPromise
+  if (valid) signup()
+}
+
+function signup() {
+  if (isTheSame.value) {
+    userData.addresses.push(addressBilling)
+    if (defaultBilling.value) {
+      userData.defaultBillingAddress = 0
+    }
+    if (defaultShipping.value) {
+      userData.defaultShippingAddress = 0
+    }
+  } else {
+    userData.addresses.push(addressBilling, addressShipping)
+    if (defaultShipping.value) {
+      userData.defaultShippingAddress = 1
+    }
+    if (defaultBilling.value) {
+      userData.defaultBillingAddress = 0
+    }
+  }
+  userData.dateOfBirth = formateDate(userData.dateOfBirth)
+
+  authService
+    .signup(userData)
+    .then(() => {
+      userAuth().toggleAuthState()
+      alert.show('User is registered', 'success')
+      router.replace({ name: 'main' })
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 </script>
 
 <template>
-  <v-form class="registration-form" @submit.prevent="signup">
+  <v-form class="registration-form" @submit.prevent="submit" ref="form">
     <v-col class="registration-container">
       <v-col class="registration-inner-container">
         <Input

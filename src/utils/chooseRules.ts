@@ -36,7 +36,10 @@ export const rules = {
   },
   birthdate: (value: string) => {
     const maxTime = getMaxTime()
-    return new Date(value).valueOf() < new Date(maxTime).valueOf() || 'Invalid input'
+    return (
+      new Date(value).valueOf() < new Date(maxTime).valueOf() ||
+      'Invalid input. Enter the date according to the format: mm/dd/yyyy. Also you must be 13 y.o. or older '
+    )
   },
   postcode: (value: string) => {
     const pattern = /^[A-Z]{1,2}[0-9][A-Z0-9]? {1}?[0-9][A-Z]{2}$/
@@ -48,7 +51,7 @@ export const rules = {
 }
 
 export function chooseRules(type: string, label: string) {
-  if (label === InputLabel.Country) return
+  if (label === InputLabel.Country) return [true]
   if (type === InputType.Text && label === InputLabel.Email) {
     return [rules.required, rules.email]
   }
@@ -56,16 +59,16 @@ export function chooseRules(type: string, label: string) {
     return [rules.required, rules.password]
   }
   if (type === InputType.Text && label === InputLabel.Street) {
-    return [rules.street]
+    return [rules.required, rules.street]
   }
   if (type === InputType.Text && label === InputLabel.BirthDate) {
     return [rules.required, rules.birthdate]
   }
   if (type === InputType.Text && label === InputLabel.City) {
-    return [rules.text]
+    return [rules.required, rules.text]
   }
   if (type === InputType.Text && label === InputLabel.PostalCode) {
-    return [rules.postcode]
+    return [rules.required, rules.postcode]
   }
   return [rules.required, rules.text]
 }

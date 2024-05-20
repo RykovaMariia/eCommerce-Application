@@ -62,6 +62,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (to.name === 'login' && userAuth().isLoggedIn) {
     next({ name: 'main', replace: true })
+  } else if (to.name === 'registration' && userAuth().isLoggedIn) {
+    next({ name: 'main', replace: true })
   } else if (to.name === 'logout' && userAuth().isLoggedIn) {
     userAuth().toggleAuthState()
     localStorageService.removeData('token')
