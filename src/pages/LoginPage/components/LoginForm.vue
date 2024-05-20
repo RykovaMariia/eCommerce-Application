@@ -50,6 +50,18 @@ function login() {
       v-model="userData.password"
       icon="mdi-eye-closed"
     />
-    <Button textContent="Login" classes="secondary" buttonType="submit" />
+    <v-col class="col-button-link">
+      <Button textContent="Login" classes="secondary" buttonType="submit" />
+      <RouterLink class="link_redirect" to="/registration">create new account</RouterLink>
+    </v-col>
   </v-form>
 </template>
+
+<style lang="scss" scoped>
+.col-button-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+</style>

@@ -43,7 +43,12 @@ const router = createRouter({
     {
       path: '/cart',
       name: 'cart',
-      component: () => import('@pages/Cart.vue'),
+      component: () => import('@pages/CartPage.vue'),
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('@pages/ProfilePage.vue'),
     },
     {
       path: '/logout',
@@ -61,6 +66,8 @@ router.beforeEach((to, from, next) => {
     userAuth().toggleAuthState()
     localStorageService.removeData('token')
     next({ name: 'main' })
+  } else if (to.name === 'profile' && !userAuth().isLoggined) {
+    next({ name: 'login', replace: true })
   } else next()
 })
 

@@ -1,4 +1,5 @@
 @use './constants.scss';
+@use './mixins.scss';
 
 *,
 *::before,
@@ -34,7 +35,7 @@ h6 {
 }
 
 h1 {
-  font-size: 4.5rem;
+  font-size: 3rem;
 }
 
 h2 {
@@ -58,18 +59,18 @@ h6 {
 }
 
 main.v-main {
+  @include mixins.media-mobile {
+    padding: calc(100px + 2rem) 2rem 2rem;
+  }
   padding: calc(100px + 3rem) 4rem 3rem;
 }
 
 .v-container.container {
+  @include mixins.media-mobile {
+    padding: 0;
+  }
   max-width: 1440px;
   padding: 0;
-}
-
-@media screen and (width <= 600px) {
-  .v-container.container {
-    padding: 0 1rem;
-  }
 }
 
 a {
@@ -85,4 +86,11 @@ a {
   background: url('@assets/images/texture.png') !important;
   background-repeat: round !important;
   background-size: 35% !important;
+}
+
+.link_redirect {
+  @include mixins.media-mobile {
+    font-size: 0.8rem;
+  }
+  text-decoration: underline;
 }

@@ -20,18 +20,43 @@ const { isOpenAlert } = storeToRefs(alertStore())
 
 <style lang="scss" scoped>
 @use '@styles/constants.scss';
+@use '@styles/mixins.scss';
 
 header {
+  @include mixins.media-tablet {
+    display: flex;
+    place-items: center;
+    padding-right: calc(var(--section-gap) / 2);
+  }
   max-width: 1440px;
   margin: auto;
 }
 
+header .wrapper {
+  @include mixins.media-tablet {
+    display: flex;
+    flex-wrap: wrap;
+    place-items: flex-start;
+  }
+}
+
 .logo {
+  @include mixins.media-tablet {
+    margin: 0 2rem 0 0;
+  }
   display: block;
   margin: 0 auto 2rem;
 }
 
 nav {
+  @include mixins.media-tablet {
+    margin-top: 1rem;
+    margin-left: -1rem;
+    padding: 1rem 0;
+
+    font-size: 1rem;
+    text-align: left;
+  }
   width: 100%;
   margin-top: 2rem;
   font-size: 12px;
@@ -54,32 +79,5 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
-}
-
-@media (width >= 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    place-items: flex-start;
-  }
-
-  nav {
-    margin-top: 1rem;
-    margin-left: -1rem;
-    padding: 1rem 0;
-
-    font-size: 1rem;
-    text-align: left;
-  }
 }
 </style>

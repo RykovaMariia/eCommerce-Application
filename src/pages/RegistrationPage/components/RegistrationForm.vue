@@ -204,12 +204,33 @@ function signup() {
         </v-col>
       </v-col>
     </v-col>
-    <Button textContent="Sign Up" classes="secondary" buttonType="submit" size="large" />
+    <v-col class="col-button-link">
+      <Button textContent="Sign Up" classes="secondary" buttonType="submit" size="large" />
+      <v-row>
+        <span>Already have an account?</span>
+        <RouterLink class="link_redirect" to="/login">Login</RouterLink>
+      </v-row>
+    </v-col>
   </v-form>
 </template>
 
 <style scoped lang="scss">
 @use '@/styles/constants.scss';
+@use '@/styles/mixins.scss';
+
+.col-button-link {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  width: 100%;
+}
+
+.v-row {
+  @include mixins.media-mobile {
+    font-size: 0.8rem;
+  }
+  gap: 0.5rem;
+}
 
 .registration-form {
   display: flex;
@@ -227,12 +248,11 @@ function signup() {
 }
 
 .address-container {
-  display: flex;
-  padding: 0;
-
-  @media screen and (width <= 768px) {
+  @include mixins.media-middle {
     flex-direction: column;
   }
+  display: flex;
+  padding: 0;
 }
 
 .address-title {
