@@ -6,32 +6,29 @@ import { openBurgerStore } from '@/stores/openBurgerStore'
 import { userAuth } from '@/stores/authStore'
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
+import { CATALOG_MENU } from '@/constants/constants'
 
 const store = openBurgerStore()
 const { isLoggedIn } = storeToRefs(userAuth())
 
+const userLinks = [
+  { name: 'Profile', href: '/profile' },
+  { name: 'Logout', href: '/logout' },
+]
+
+const authLinks = [
+  { name: 'Login', href: '/login' },
+  { name: 'Register', href: '/registration' },
+]
+
 const accountMenu = computed(() => {
   if (isLoggedIn.value) {
-    return [
-      { name: 'Profile', href: '/profile' },
-      { name: 'Logout', href: '/logout' },
-    ]
+    return userLinks
   }
-  return [
-    { name: 'Login', href: '/login' },
-    { name: 'Register', href: '/registration' },
-  ]
+  return authLinks
 })
 
 const infoLinks = [{ name: 'About us', href: '/about' }]
-
-const catalogMenu = [
-  { name: 'Organic cosmetic', href: '/catalog' },
-  { name: 'Hygiene products', href: '/catalog' },
-  { name: 'Shoppers', href: '/catalog' },
-  { name: 'Eco dishes', href: '/catalog' },
-  { name: 'Gift sets', href: '/catalog' },
-]
 
 function openBurger() {
   store.toggleOpenState()
@@ -48,7 +45,7 @@ function openBurger() {
     ></v-app-bar-nav-icon>
     <HoverMenu
       v-if="$vuetify.display.lgAndUp"
-      :menu-items="catalogMenu"
+      :menu-items="CATALOG_MENU"
       menu-trigger-text="Catalog"
     />
 
@@ -83,7 +80,7 @@ function openBurger() {
     </v-btn>
   </v-app-bar>
 
-  <BurgerMenu :account-menu="accountMenu" :catalog-menu="catalogMenu" :info-links="infoLinks" />
+  <BurgerMenu :account-menu="accountMenu" :catalog-menu="CATALOG_MENU" :info-links="infoLinks" />
 </template>
 
 <style lang="scss" scoped>

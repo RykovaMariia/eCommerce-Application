@@ -13,12 +13,10 @@ import type { SubmitEventPromise } from 'vuetify'
 
 const alert = alertStore()
 
-const userLoginData = {
+const userData: UserLoginData = reactive({
   email: '',
   password: '',
-}
-
-const userData: UserLoginData = reactive({ ...userLoginData })
+})
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise

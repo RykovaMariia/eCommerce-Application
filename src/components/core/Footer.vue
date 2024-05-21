@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import IconLogo from '@components/icons/IconLogo.vue'
+import { CATALOG_MENU } from '@/constants/constants';
+
 const menuLinks = [
   {
     name: 'Catalog',
@@ -10,28 +12,7 @@ const menuLinks = [
     href: '/about',
   },
 ]
-const catalogLinks = [
-  {
-    name: 'Organic cosmetic',
-    href: '/catalog',
-  },
-  {
-    name: 'Hygiene products',
-    href: '/catalog',
-  },
-  {
-    name: 'Eco dishes',
-    href: '/catalog',
-  },
-  {
-    name: 'Shoppers',
-    href: '/catalog',
-  },
-  {
-    name: 'Gift sets',
-    href: '/catalog',
-  },
-]
+
 </script>
 <template>
   <footer>
@@ -53,7 +34,7 @@ const catalogLinks = [
 
         <v-col class="v-col-md-3 catalog">
           <div class="footer-wrapper-title">Catalog</div>
-          <div v-for="(link, index) in catalogLinks" :key="index">
+          <div v-for="(link, index) in CATALOG_MENU" :key="index">
             <RouterLink :to="link.href">{{ link.name }}</RouterLink>
           </div>
         </v-col>

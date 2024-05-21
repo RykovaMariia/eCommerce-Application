@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { chooseRules } from '@/utils/chooseRules'
+import { InputLabel } from '@/enums/inputLabel';
 
 const props = defineProps<{
   label: string
@@ -18,10 +19,10 @@ function togglePassword() {
   marker.value = !marker.value
 }
 const fieldType = computed(() =>
-  props.label === 'Password' ? (marker.value ? props.type : 'text') : props.type,
+  props.label === InputLabel.Password ? (marker.value ? props.type : 'text') : props.type,
 )
 const innerIcon = computed(() =>
-  props.label === 'Password' ? (marker.value ? props.icon : 'mdi-eye-outline') : '',
+  props.label === InputLabel.Password ? (marker.value ? props.icon : 'mdi-eye-outline') : '',
 )
 </script>
 

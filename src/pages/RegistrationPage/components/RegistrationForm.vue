@@ -7,7 +7,7 @@ import { InputType } from '@/enums/inputType'
 import { computed, reactive, ref } from 'vue'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
 import { COUNTRY } from '@/constants/constants'
-import type { Address, UserCustomerDraft } from '@/interfaces/userData'
+import type { UserCustomerDraft } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
 import { formateDate } from '@/utils/maxTime'
 import { alertStore } from '@/stores/alertStore'
@@ -18,26 +18,21 @@ import AutocompleteInput from '@/components/inputs/AutocompleteInput.vue'
 
 const alert = alertStore()
 
-const address: { addressShipping: Address; addressBilling: Address } = {
-  addressShipping: {
-    country: COUNTRY,
-    city: '',
-    streetName: '',
-    postalCode: '',
-  },
-  addressBilling: {
-    country: COUNTRY,
-    city: '',
-    streetName: '',
-    postalCode: '',
-  },
-}
-
 const defaultShipping = ref(false)
 const defaultBilling = ref(false)
 
-const addressShipping = reactive({ ...address.addressShipping })
-const addressBilling = reactive({ ...address.addressBilling })
+const addressShipping = reactive({
+  country: COUNTRY,
+  city: '',
+  streetName: '',
+  postalCode: '',
+})
+const addressBilling = reactive({
+  country: COUNTRY,
+  city: '',
+  streetName: '',
+  postalCode: '',
+})
 
 const form = ref(null)
 
@@ -50,6 +45,8 @@ function toggleState() {
 const title = computed(() => {
   return isTheSame.value ? 'Billing / shipping address' : 'Billing address'
 })
+
+const setInput = (value: string) => (userData.dateOfBirth = value)
 
 const userData: UserCustomerDraft = reactive({
   firstName: '',
@@ -71,11 +68,11 @@ async function submit(submitEventPromise: SubmitEventPromise) {
 }
 
 function signup() {
+  if (defaultBilling.value) {
+    userData.defaultBillingAddress = 0
+  }
   if (isTheSame.value) {
     userData.addresses.push(addressBilling)
-    if (defaultBilling.value) {
-      userData.defaultBillingAddress = 0
-    }
     if (defaultShipping.value) {
       userData.defaultShippingAddress = 0
     }
@@ -83,9 +80,6 @@ function signup() {
     userData.addresses.push(addressBilling, addressShipping)
     if (defaultShipping.value) {
       userData.defaultShippingAddress = 1
-    }
-    if (defaultBilling.value) {
-      userData.defaultBillingAddress = 0
     }
   }
   userData.dateOfBirth = formateDate(userData.dateOfBirth)
@@ -125,7 +119,7 @@ function signup() {
           <DateInput
             :label="InputLabel.BirthDate"
             :type="InputType.Text"
-            @setInput="(value) => (userData.dateOfBirth = value)"
+            @setInput="setInput"
           />
         </v-col>
         <Input

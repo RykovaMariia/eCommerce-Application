@@ -2,6 +2,8 @@
 import { alertStore } from '@/stores/alertStore'
 
 const alert = alertStore()
+
+const closeAlert = () => alert.setFalse()
 </script>
 
 <template>
@@ -10,7 +12,7 @@ const alert = alertStore()
     :text="alert.message"
     position="fixed"
     class="alert-window"
-    @click:close="() => alert.setFalse()"
+    @click:close="closeAlert"
     :type="alert.type"
   ></v-alert>
 </template>
