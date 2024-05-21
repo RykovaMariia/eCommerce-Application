@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import IconLogo from '@components/icons/IconLogo.vue'
-import { CATALOG_MENU } from '@/constants/constants';
+import { CATALOG_MENU } from '@/constants/constants'
 
 const menuLinks = [
   {
@@ -12,7 +12,6 @@ const menuLinks = [
     href: '/about',
   },
 ]
-
 </script>
 <template>
   <footer>

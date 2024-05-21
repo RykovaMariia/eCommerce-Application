@@ -116,11 +116,7 @@ function signup() {
           class="registration-input"
         />
         <v-col class="registration-input">
-          <DateInput
-            :label="InputLabel.BirthDate"
-            :type="InputType.Text"
-            @setInput="setInput"
-          />
+          <DateInput :label="InputLabel.BirthDate" :type="InputType.Text" @setInput="setInput" />
         </v-col>
         <Input
           :label="InputLabel.Email"
@@ -140,7 +136,12 @@ function signup() {
       </v-col>
       <v-col class="registration-inner-container">
         <v-col>
-        <AutocompleteInput :label="InputLabel.Country" :items="[COUNTRY]" type="text" class="registration-input"/>
+          <AutocompleteInput
+            :label="InputLabel.Country"
+            :items="[COUNTRY]"
+            type="text"
+            class="registration-input"
+          />
         </v-col>
         <Checkbox
           label="Use the billing address as the shipping address"

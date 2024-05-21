@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { chooseRules } from '@/utils/chooseRules';
-import { computed } from 'vue';
+import { chooseRules } from '@/utils/chooseRules'
+import { computed } from 'vue'
 
 const props = defineProps<{
   type: string

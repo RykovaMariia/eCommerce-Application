@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { chooseRules } from '@/utils/chooseRules'
-import { InputLabel } from '@/enums/inputLabel';
+import { InputLabel } from '@/enums/inputLabel'
 
 const props = defineProps<{
   label: string
