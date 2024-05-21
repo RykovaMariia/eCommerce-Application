@@ -9,7 +9,7 @@ describe('validation rules test', () => {
       'Invalid password. Password must be at least 8 characters long, contain at least one uppercase letter, at least one lowercase letter, at least one digit, at least one special character, must not contain leading or trailing whitespace.',
     street: 'Input must contain at least one character',
     birthdate:
-      'Invalid input. Enter the date according to the format: mm/dd/yyyy. Also you must be 13 y.o. or older ',
+      'Invalid input. You must be 13 y.o. or older ',
     postcode:
       "Postal code doesn't match with the format: AA9A 9AA - A signifies a letter and 9 a digit. Only uppercase letters",
   }

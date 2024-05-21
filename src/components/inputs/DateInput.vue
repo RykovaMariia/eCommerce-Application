@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { chooseRules } from '@/utils/chooseRules'
-import { getMaxTime } from '@/utils/maxTime'
+import { getMaxTime } from '@/utils/dateUtils'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -29,5 +29,6 @@ const rules = computed(() => chooseRules(props.type, props.label))
     variant="outlined"
     prepend-icon=""
     @update:modelValue="emit('setInput', $event)"
+    :readonly="true"
   ></v-date-input>
 </template>

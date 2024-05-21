@@ -1,4 +1,4 @@
-import { getMaxTime } from './maxTime'
+import { getMaxTime } from './dateUtils'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 
@@ -35,11 +35,10 @@ export const rules = {
     return pattern.test(value) || 'Input must contain at least one character'
   },
   birthdate: (value: string) => {
-    const pattern = /^[0-9]{2}[/]{1}[0-9]{2}[/]{1}[0-9]{4}$/
     const maxTime = getMaxTime()
     return (
-      (pattern.test(value) && new Date(value).valueOf() < new Date(maxTime).valueOf()) ||
-      'Invalid input. Enter the date according to the format: mm/dd/yyyy. Also you must be 13 y.o. or older '
+      (new Date(value).valueOf() < new Date(maxTime).valueOf()) ||
+      'Invalid input. You must be 13 y.o. or older '
     )
   },
   postcode: (value: string) => {

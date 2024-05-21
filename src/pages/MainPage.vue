@@ -19,5 +19,9 @@
   flex-direction: column;
   gap: 1rem;
   justify-content: center;
+  
+  a {
+    max-width: max-content;
+  }
 }
 </style>
