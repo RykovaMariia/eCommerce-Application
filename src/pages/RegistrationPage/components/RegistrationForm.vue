@@ -46,8 +46,8 @@ const title = computed(() => {
   return isTheSame.value ? 'Billing / shipping address' : 'Billing address'
 })
 
-const setInput = (value: string) => { 
-  return userData.dateOfBirth = value
+const setInput = (value: string) => {
+  return (userData.dateOfBirth = value)
 }
 
 const userData: UserCustomerDraft = reactive({

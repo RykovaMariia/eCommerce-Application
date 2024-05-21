@@ -37,7 +37,7 @@ export const rules = {
   birthdate: (value: string) => {
     const maxTime = getMaxTime()
     return (
-      (new Date(value).valueOf() < new Date(maxTime).valueOf()) ||
+      new Date(value).valueOf() < new Date(maxTime).valueOf() ||
       'Invalid input. You must be 13 y.o. or older '
     )
   },
