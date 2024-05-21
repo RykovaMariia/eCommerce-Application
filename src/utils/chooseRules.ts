@@ -35,8 +35,10 @@ export const rules = {
     return pattern.test(value) || 'Input must contain at least one character'
   },
   birthdate: (value: string) => {
+    const pattern = /^[0-9]{2}[/]{1}[0-9]{2}[/]{1}[0-9]{4}$/
     const maxTime = getMaxTime()
     return (
+      pattern.test(value) &&
       new Date(value).valueOf() < new Date(maxTime).valueOf() ||
       'Invalid input. Enter the date according to the format: mm/dd/yyyy. Also you must be 13 y.o. or older '
     )
@@ -51,7 +53,6 @@ export const rules = {
 }
 
 export function chooseRules(type: string, label: string) {
-  if (label === InputLabel.Country) return [true]
   if (type === InputType.Text && label === InputLabel.Email) {
     return [rules.required, rules.email]
   }

@@ -71,10 +71,7 @@ describe('validation rules test', () => {
   const dateNow = new Date(Date.now()).toISOString()
 
   const testBirthDate: { value: string; expectedOutput: boolean | string }[] = [
-    { value: '2004-05-12T21:10:59.502Z', expectedOutput: true },
-    { value: '2007-09-01T00:00:00.000Z', expectedOutput: true },
-    { value: '1960-05-05T00:00:00.000Z', expectedOutput: true },
-    { value: '2010-02-29T00:00:00.000Z', expectedOutput: true },
+    { value: '12/05/2004', expectedOutput: true },
     { value: dateNow, expectedOutput: invalidOutput.birthdate },
     { value: '2024-05-12T22:08:58.867Z', expectedOutput: invalidOutput.birthdate },
     { value: '2023-01-01T00:00:00.000Z', expectedOutput: invalidOutput.birthdate },
@@ -104,7 +101,7 @@ describe('validation rules test', () => {
   ]
 
   test.each(testPostalCode)(
-    'rule should handle valid and invalid date format',
+    'rule should handle valid and invalid postal code format',
     ({ value, expectedOutput }) => {
       expect(rules.postcode(value)).toBe(expectedOutput)
     },

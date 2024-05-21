@@ -14,6 +14,7 @@ import { alertStore } from '@/stores/alertStore'
 import router from '@/router'
 import { userAuth } from '@/stores/authStore'
 import type { SubmitEventPromise } from 'vuetify'
+import AutocompleteInput from '@/components/inputs/AutocompleteInput.vue'
 
 const alert = alertStore()
 
@@ -144,12 +145,9 @@ function signup() {
         />
       </v-col>
       <v-col class="registration-inner-container">
-        <Input
-          :label="InputLabel.Country"
-          :type="InputType.Text"
-          disabled
-          class="registration-input"
-        />
+        <v-col>
+        <AutocompleteInput :label="InputLabel.Country" :items="[COUNTRY]" type="text" class="registration-input"/>
+        </v-col>
         <Checkbox
           label="Use the billing address as the shipping address"
           v-model="isTheSame"
