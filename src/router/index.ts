@@ -1,5 +1,4 @@
-import { localStorageService } from '@/services/storageService'
-import { userAuth } from '@/stores/authStore'
+import { userAuth } from '@/stores/userAuth'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -65,8 +64,7 @@ router.beforeEach((to, from, next) => {
   } else if (to.name === 'registration' && userAuth().isLoggedIn) {
     next({ name: 'main', replace: true })
   } else if (to.name === 'logout' && userAuth().isLoggedIn) {
-    userAuth().toggleAuthState()
-    localStorageService.removeData('token')
+    userAuth().logout()
     next({ name: 'main' })
   } else if (to.name === 'profile' && !userAuth().isLoggedIn) {
     next({ name: 'login', replace: true })

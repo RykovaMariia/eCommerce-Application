@@ -12,7 +12,7 @@ import { authService } from '@/services/authService'
 import { formateDate } from '@/utils/dateUtils'
 import { alertStore } from '@/stores/alertStore'
 import router from '@/router'
-import { userAuth } from '@/stores/authStore'
+import { userAuth } from '@/stores/userAuth'
 import type { SubmitEventPromise } from 'vuetify'
 import AutocompleteInput from '@/components/inputs/AutocompleteInput.vue'
 
