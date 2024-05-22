@@ -12,6 +12,8 @@ const menuLinks = [
     href: '/about',
   },
 ]
+
+const creationYear = '2024'
 </script>
 <template>
   <footer>
@@ -57,7 +59,7 @@ const menuLinks = [
         </v-col>
       </v-row>
       <v-row class="footer-under-line" justify="center" no-gutters>
-        <v-col>© {{ new Date().getFullYear() }}</v-col>
+        <v-col>© {{ creationYear }}</v-col>
 
         <v-spacer></v-spacer>
 
