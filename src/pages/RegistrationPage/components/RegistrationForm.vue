@@ -89,7 +89,7 @@ function signup() {
   authService
     .signup(userData)
     .then(() => {
-      userAuth().toggleAuthState()
+      userAuth().login()
       alert.show('User is registered', 'success')
       router.replace({ name: 'main' })
     })
