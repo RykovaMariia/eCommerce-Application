@@ -1,5 +1,6 @@
+import { localStorageService } from '@/services/storageService'
+import { userAuth } from '@/stores/authStore'
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,17 +8,69 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('@pages/MainPage.vue'),
+    },
+    {
+      path: '/main',
+      name: 'main',
+      component: () => import('@pages/MainPage.vue'),
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@pages/LoginPage/LoginPage.vue'),
+    },
+    {
+      path: '/registration',
+      name: 'registration',
+      component: () => import('@pages/RegistrationPage/RegistrationPage.vue'),
+    },
+    {
+      path: '/catalog',
+      name: 'catalog',
+      component: () => import('@pages/CatalogPage.vue'),
     },
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      component: () => import('@pages/AboutPage.vue'),
     },
+    {
+      path: '/favorites',
+      name: 'favorites',
+      component: () => import('@pages/FavoritesPage.vue'),
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('@pages/CartPage.vue'),
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('@pages/ProfilePage.vue'),
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      component: () => null,
+    },
+    { path: '/:pathMatch(.*)*', component: () => import('@pages/404Page.vue') },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.name === 'login' && userAuth().isLoggedIn) {
+    next({ name: 'main', replace: true })
+  } else if (to.name === 'registration' && userAuth().isLoggedIn) {
+    next({ name: 'main', replace: true })
+  } else if (to.name === 'logout' && userAuth().isLoggedIn) {
+    userAuth().toggleAuthState()
+    localStorageService.removeData('token')
+    next({ name: 'main' })
+  } else if (to.name === 'profile' && !userAuth().isLoggedIn) {
+    next({ name: 'login', replace: true })
+  } else next()
 })
 
 export default router

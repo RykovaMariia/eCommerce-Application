@@ -1,0 +1,9 @@
+@use './constants.scss';
+@use './base.scss';
+@import 'vuetify/styles';
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}

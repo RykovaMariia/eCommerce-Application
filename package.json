@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint \"./src/**/*.{vue,cjs,ts}\" --fix --ignore-path .gitignore",
@@ -22,29 +23,37 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@commercetools/platform-sdk": "^7.8.0",
+    "@commercetools/sdk-client-v2": "^2.5.0",
+    "isomorphic-fetch": "^3.0.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
+    "@mdi/font": "^7.4.47",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
+    "@types/isomorphic-fetch": "^0.0.39",
     "@types/jsdom": "^21.1.6",
     "@types/node": "^20.12.5",
     "@vitejs/plugin-vue": "^5.0.4",
+    "@vitest/coverage-v8": "^1.6.0",
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
-    "@vue/test-utils": "^2.4.5",
+    "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.5.1",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",
     "husky": "^9.0.11",
     "jsdom": "^24.0.0",
+    "material-design-icons-iconfont": "^6.7.0",
     "npm-run-all2": "^6.1.2",
     "postcss-html": "^1.6.0",
     "prettier": "^3.2.5",
+    "sass": "^1.76.0",
     "stylelint": "^16.5.0",
     "stylelint-config-clean-order": "^5.4.2",
     "stylelint-config-recommended-scss": "^14.0.0",
@@ -58,6 +67,7 @@
     "vite-plugin-stylelint": "^5.3.1",
     "vite-plugin-vue-devtools": "^7.0.25",
     "vitest": "^1.4.0",
-    "vue-tsc": "^2.0.11"
+    "vue-tsc": "^2.0.11",
+    "vuetify": "^3.6.3"
   }
 }

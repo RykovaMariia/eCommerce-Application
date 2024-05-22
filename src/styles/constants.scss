@@ -1,0 +1,30 @@
+/* color-text */
+$color-text-dark: #27291b;
+$color-text-light: #f4e8da;
+$color-text-accent: #828266;
+$color-text-breadcrumbs: #898b7c;
+$color-text-placeholder: #a8a8a8;
+
+/* color-background */
+$color-background-light: #f4e8da;
+$color-opacity: #f4e8da00;
+
+/* color */
+$color-primary: #838a60;
+$color-secondary: #bb9758;
+$color-sale: #ba6559;
+$color-logo: #6d8e65;
+
+/* font */
+@font-face {
+  font-family: NewYork;
+  src: url('@assets/fonts/NewYork.otf') format('opentype');
+}
+
+$font-base: poppins, sans-serif;
+$font-heading: newyork;
+
+/* width */
+$mobile-width: 600px;
+$middle-width: 960px;
+$tablet-width: 1024px;
