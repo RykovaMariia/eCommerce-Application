@@ -1,34 +1,38 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import type { Address } from '@commercetools/platform-sdk'
 
-const props = defineProps<{
-  items: { text: string }[]
+defineProps<{
+  items: Address[]
+  defaultAddress: string
 }>()
-
-const selected = ref(0)
-
-function handleItemClick(selected: { text: string }) {
-  console.warn(selected.text)
-}
 </script>
 
 <template>
-  <v-list v-model:selected="selected" bg-color="transparent" color="primary">
-    <v-list-item
-      class="item"
-      v-for="(item, i) in props.items"
-      :key="i"
-      :value="item"
-      color="primary"
-    >
+  <v-list bg-color="transparent" color="primary">
+    <v-list-item class="item" v-for="(item, i) in items" :key="i" :value="item" color="primary">
       <v-list-item-title>
-        <div @click="handleItemClick(item)">{{ item.text }}</div>
+        <div>{{ item.city }}, {{ item.streetName }} {{ item.postalCode }}</div>
       </v-list-item-title>
 
       <template v-slot:append>
-        <v-icon icon="mdi-grease-pencil" size="small"></v-icon>
-        <v-icon icon="mdi-delete" size="small"></v-icon>
+        <div class="icons" color="primary">
+          <v-chip v-if="item.id === defaultAddress" color="primary"> Default </v-chip>
+          <v-icon icon="mdi-grease-pencil" size="small"></v-icon>
+          <v-icon icon="mdi-delete" size="small"></v-icon>
+        </div>
       </template>
     </v-list-item>
   </v-list>
 </template>
+
+<style scoped lang="scss">
+@use '@/styles/constants.scss';
+@use '@/styles/mixins.scss';
+
+.icons {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  color: constants.$color-text-dark;
+}
+</style>

@@ -8,6 +8,8 @@ const props = defineProps<{
   type: string
 }>()
 
+const data = defineModel()
+
 const emit = defineEmits({
   setInput(inputData: string) {
     return new Date(inputData).toDateString()
@@ -26,6 +28,7 @@ const rules = computed(() => chooseRules(props.type, props.label))
     :year="yearToShow"
     :type="props.type"
     :rules="rules"
+    v-model="data"
     variant="outlined"
     prepend-icon=""
     @update:modelValue="emit('setInput', $event)"

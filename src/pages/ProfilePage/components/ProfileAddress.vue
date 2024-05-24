@@ -2,12 +2,36 @@
 import { ref } from 'vue'
 import Tab from '@components/tab/Tab.vue'
 import AddressList from '@/pages/ProfilePage/components/AddressList.vue'
+import type { Customer } from '@commercetools/platform-sdk'
+import { computed } from 'vue'
 
 const tab = ref('billing')
 
-const addressBillingItems = ref([{ text: 'Address1' }, { text: 'Address2' }, { text: 'Address3' }])
+const currentUser = defineModel<Customer>('currentUser')
 
-const addressShippingItems = ref([{ text: 'Address4' }, { text: 'Address5' }, { text: 'Address6' }])
+const addressBillingItems = computed(() => {
+  return currentUser.value
+    ? currentUser.value.addresses.filter((item) =>
+        currentUser.value?.billingAddressIds?.includes(item.id || ''),
+      )
+    : []
+})
+
+const addressShippingItems = computed(() => {
+  return currentUser.value
+    ? currentUser.value.addresses.filter((item) =>
+        currentUser.value?.shippingAddressIds?.includes(item.id || ''),
+      )
+    : []
+})
+
+const addressShippingDefault = computed(() => {
+  return currentUser.value ? currentUser.value?.defaultShippingAddressId || '' : ''
+})
+
+const addressBillingDefault = computed(() => {
+  return currentUser.value ? currentUser.value?.defaultBillingAddressId || '' : ''
+})
 </script>
 <template>
   <v-col>
@@ -19,13 +43,13 @@ const addressShippingItems = ref([{ text: 'Address4' }, { text: 'Address5' }, { 
     <v-tabs-window v-model="tab">
       <v-tabs-window-item value="billing">
         <v-col>
-          <AddressList :items="addressBillingItems" />
+          <AddressList :items="addressBillingItems" :defaultAddress="addressBillingDefault" />
         </v-col>
       </v-tabs-window-item>
 
       <v-tabs-window-item value="shipping">
         <v-col>
-          <AddressList :items="addressShippingItems" />
+          <AddressList :items="addressShippingItems" :defaultAddress="addressShippingDefault" />
         </v-col>
       </v-tabs-window-item>
     </v-tabs-window>

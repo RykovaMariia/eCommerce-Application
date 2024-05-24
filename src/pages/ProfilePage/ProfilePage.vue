@@ -3,7 +3,10 @@ import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 import Tab from '@components/tab/Tab.vue'
 import ProfileEditForm from '@/pages/ProfilePage/components/ProfileEditForm.vue'
 import ProfileAddress from '@/pages/ProfilePage/components/ProfileAddress.vue'
-import { ref } from 'vue'
+import { onMounted, ref, type Ref } from 'vue'
+import { customerService } from '@/services/customerService'
+import type { Customer } from '@commercetools/platform-sdk'
+
 const items = [
   {
     title: 'Main',
@@ -17,7 +20,44 @@ const items = [
   },
 ]
 
-const tab = ref('option-2')
+const tab = ref('address')
+
+let customer: Ref<Customer> = ref({
+  id: '',
+  version: 0,
+  createdAt: '',
+  lastModifiedAt: '',
+  lastModifiedBy: {
+    clientId: '',
+    anonymousId: '',
+  },
+  createdBy: {
+    clientId: '',
+    anonymousId: '',
+  },
+  email: '',
+  firstName: '',
+  lastName: '',
+  dateOfBirth: '',
+  password: '',
+  addresses: [],
+  shippingAddressIds: [],
+  billingAddressIds: [],
+  isEmailVerified: false,
+  stores: [],
+  authenticationMode: '',
+})
+
+onMounted(() => {
+  customerService
+    .user()
+    .then((response) => {
+      customer.value = response.body
+    })
+    .catch((error: Error) => {
+      throw new Error(error.message)
+    })
+})
 </script>
 
 <template>
@@ -30,35 +70,35 @@ const tab = ref('option-2')
             <div class="profile-info">
               <div><v-icon size="x-large" icon="mdi-account"></v-icon></div>
               <div class="profile-info__name">
-                <div>Petr Ivanov</div>
-                <div class="info-data">22.03.2000</div>
+                <div>{{ customer.firstName }} {{ customer.lastName }}</div>
+                <div class="info-data">{{ customer.dateOfBirth }}</div>
               </div>
             </div>
           </v-col>
           <v-tabs v-model="tab" color="primary" direction="vertical">
-            <Tab prepend-icon="mdi-account-edit" text="edit profile" value="option-1" />
-            <Tab prepend-icon="mdi-home" text="address" value="option-2" />
-            <Tab prepend-icon="mdi-lock" text="change password" value="option-3" />
+            <Tab prepend-icon="mdi-account-edit" text="edit profile" value="profile" />
+            <Tab prepend-icon="mdi-home" text="address" value="address" />
+            <Tab prepend-icon="mdi-lock" text="change password" value="password" />
           </v-tabs>
         </div>
 
         <v-tabs-window v-model="tab" class="tab-content">
-          <v-tabs-window-item value="option-1">
+          <v-tabs-window-item value="profile">
             <v-col flex-column>
               <div class="user-information">User information</div>
               <div class="user-text">Here you can edit information about yourself</div>
             </v-col>
-            <ProfileEditForm />
+            <ProfileEditForm v-model:current-user="customer" />
           </v-tabs-window-item>
 
-          <v-tabs-window-item value="option-2">
+          <v-tabs-window-item value="address">
             <v-col>
-              <ProfileAddress />
+              <ProfileAddress v-model:current-user="customer" />
             </v-col>
           </v-tabs-window-item>
 
-          <v-tabs-window-item value="option-3">
-            <v-col flat> password </v-col>
+          <v-tabs-window-item value="password">
+            <v-col> password </v-col>
           </v-tabs-window-item>
         </v-tabs-window>
       </div>
