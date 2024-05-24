@@ -20,7 +20,7 @@ const items = [
 <template>
   <v-container class="container">
     <Breadcrumb :items="items" />
-    <div class="login-card">
+    <div class="page-card login-card">
       <v-col>
         <h1 class="login-title">Login</h1>
         <LoginForm />
@@ -45,8 +45,6 @@ const items = [
 
 .login-title {
   margin: 1rem auto;
-  font-size: 36px;
-  color: constants.$color-primary;
   text-align: center;
 }
 
@@ -54,9 +52,6 @@ const items = [
   overflow: hidden;
   display: flex;
   justify-content: center;
-
-  border: 1px solid constants.$color-primary;
-  border-radius: 7px;
 }
 
 .login-image {

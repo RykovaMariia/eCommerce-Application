@@ -18,7 +18,8 @@ export class AuthService {
     const userClientData = this.clientService
       .getApiRoot(this.clientService.getPasswordFlowClient(userData.email, userData.password))
       .me()
-      .get()
+      .login()
+      .post({ body: userData })
       .execute()
     return userClientData.then(() => {
       this.localStorageService.saveData('token', tokenData.get())

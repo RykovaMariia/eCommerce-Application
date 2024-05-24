@@ -18,9 +18,9 @@ const items = [
 <template>
   <v-container class="container">
     <Breadcrumb :items="items" />
-    <v-col class="registration-card">
+    <v-col class="page-card">
       <v-col>
-        <h1 class="registration-title">Registration</h1>
+        <h1>Registration</h1>
       </v-col>
       <RegistrationForm />
     </v-col>
@@ -29,14 +29,4 @@ const items = [
 
 <style scoped lang="scss">
 @use '@/styles/constants.scss';
-
-.registration-card {
-  border: 1px solid constants.$color-primary;
-  border-radius: 6px;
-}
-
-.registration-title {
-  font-size: 36px;
-  color: constants.$color-primary;
-}
 </style>

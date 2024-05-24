@@ -9,8 +9,12 @@ describe('Auth Service', () => {
       return {
         me: () => {
           return {
-            get: () => {
-              return { execute: () => Promise.resolve({}) }
+            login: () => {
+              return {
+                post: () => {
+                  return { execute: () => Promise.resolve({}) }
+                },
+              }
             },
           }
         },
