@@ -57,6 +57,8 @@ const userData: UserCustomerDraft = reactive({
   email: '',
   password: '',
   addresses: [],
+  billingAddresses: [],
+  shippingAddresses: [],
 })
 
 async function submit(submitEventPromise: SubmitEventPromise) {
@@ -75,16 +77,21 @@ function signup() {
   }
   if (isTheSame.value) {
     userData.addresses.push(addressBilling)
+    userData.billingAddresses = userData.shippingAddresses = [0]
     if (defaultShipping.value) {
       userData.defaultShippingAddress = 0
     }
   } else {
     userData.addresses.push(addressBilling, addressShipping)
+    userData.billingAddresses = [0]
+    userData.shippingAddresses = [1]
     if (defaultShipping.value) {
       userData.defaultShippingAddress = 1
     }
   }
   userData.dateOfBirth = formateDate(userData.dateOfBirth)
+
+  console.warn(userData)
 
   authService
     .signup(userData)

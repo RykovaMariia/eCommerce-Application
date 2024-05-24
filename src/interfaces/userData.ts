@@ -1,9 +1,11 @@
+import type { MyCustomerDraft } from '@commercetools/platform-sdk'
+
 export interface UserLoginData {
   email: string
   password: string
 }
 
-export interface UserCustomerDraft {
+export interface UserCustomerDraft extends MyCustomerDraft {
   firstName: string
   lastName: string
   dateOfBirth: string
@@ -11,9 +13,9 @@ export interface UserCustomerDraft {
   password: string
   addresses: Address[]
   defaultShippingAddress?: number
-  shippingAddressIds?: string[]
+  shippingAddresses: number[]
   defaultBillingAddress?: number
-  billingAddressIds?: string[]
+  billingAddresses: number[]
 }
 
 export interface Address {

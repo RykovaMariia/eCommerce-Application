@@ -24,11 +24,11 @@ const tab = ref('option-2')
   <v-container class="container">
     <Breadcrumb :items="items" />
     <v-col class="page-card">
-      <div class="d-flex flex-row">
+      <div class="d-flex flex-row main-content">
         <div class="d-flex flex-column aside-left">
           <v-col>
             <div class="profile-info">
-              <div><v-icon>mdi-panda</v-icon></div>
+              <div><v-icon size="x-large" icon="mdi-account"></v-icon></div>
               <div class="profile-info__name">
                 <div>Petr Ivanov</div>
                 <div class="info-data">22.03.2000</div>
@@ -37,12 +37,12 @@ const tab = ref('option-2')
           </v-col>
           <v-tabs v-model="tab" color="primary" direction="vertical">
             <Tab prepend-icon="mdi-account-edit" text="edit profile" value="option-1" />
-            <Tab prepend-icon="mdi-home" text="adress" value="option-2" />
+            <Tab prepend-icon="mdi-home" text="address" value="option-2" />
             <Tab prepend-icon="mdi-lock" text="change password" value="option-3" />
           </v-tabs>
         </div>
 
-        <v-tabs-window v-model="tab">
+        <v-tabs-window v-model="tab" class="tab-content">
           <v-tabs-window-item value="option-1">
             <v-col flex-column>
               <div class="user-information">User information</div>
@@ -70,16 +70,24 @@ const tab = ref('option-2')
 @use '@/styles/constants.scss';
 @use '@/styles/mixins.scss';
 
+.main-content {
+  min-height: 570px;
+}
+
 .aside-left {
   gap: 15px;
   align-self: flex-start;
-  border-right: 1px solid constants.$color-border-opacity;
+}
+
+.tab-content {
+  border-left: 1px solid constants.$color-border-opacity;
 }
 
 .profile-info {
   display: flex;
   flex-direction: row;
   gap: 8px;
+  align-items: center;
 }
 
 .v-btn {

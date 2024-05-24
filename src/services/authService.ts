@@ -29,7 +29,8 @@ export class AuthService {
   async signup(userData: UserCustomerDraft) {
     const userClientData = this.clientService
       .getApiRoot()
-      .customers()
+      .me()
+      .signup()
       .post({
         body: userData,
       })
