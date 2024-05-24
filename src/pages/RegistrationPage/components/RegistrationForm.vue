@@ -91,8 +91,6 @@ function signup() {
   }
   userData.dateOfBirth = formateDate(userData.dateOfBirth)
 
-  console.warn(userData)
-
   authService
     .signup(userData)
     .then(() => {

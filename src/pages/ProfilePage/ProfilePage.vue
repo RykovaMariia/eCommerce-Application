@@ -151,7 +151,7 @@ onMounted(() => {
 
 .info-data,
 .user-text {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: constants.$color-text-placeholder;
 }
 </style>
