@@ -4,7 +4,9 @@ import Footer from '@components/core/Footer.vue'
 import { alertStore } from '@/stores/alertStore'
 import { storeToRefs } from 'pinia'
 import AlertWindow from '@components/alertWindow/AlertWindow.vue'
+import { productService } from './services/productService'
 const { isOpenAlert } = storeToRefs(alertStore())
+productService.getProduct();
 </script>
 
 <template>
