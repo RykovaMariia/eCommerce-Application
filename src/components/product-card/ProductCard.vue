@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Button from '../buttons/Button.vue'
+import Button from '@components/buttons/Button.vue'
 defineProps<{
   src: string
   name: string
@@ -8,8 +8,10 @@ defineProps<{
   discountedPrice: number
 }>()
 
-function getDiscountPercentage(price: number = 0, discountedPrice: number = 0) {
-  return 100 - Math.ceil((discountedPrice * 100) / price)
+const HUNDRED = 100
+
+function getDiscountPercentage(price: number, discountedPrice: number) {
+  return HUNDRED - Math.ceil((discountedPrice * HUNDRED) / price)
 }
 </script>
 <template>
@@ -18,8 +20,10 @@ function getDiscountPercentage(price: number = 0, discountedPrice: number = 0) {
     <v-card-title>{{ name }}</v-card-title>
     <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>
     <v-card-text
-      ><span class="price_discount" v-if="discountedPrice">€{{ discountedPrice / 100 }}&nbsp;</span>
-      <span :class="discountedPrice ? 'line-through' : 'price'">€{{ price / 100 }}</span>
+      ><span class="price_discount" v-if="discountedPrice"
+        >€{{ discountedPrice / HUNDRED }}&nbsp;</span
+      >
+      <span :class="discountedPrice ? 'line-through' : 'price'">€{{ price / HUNDRED }}</span>
     </v-card-text>
     <v-card-actions>
       <Button textContent="Add to card" />

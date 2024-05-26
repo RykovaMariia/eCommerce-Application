@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import type { ProductProjection } from '@commercetools/platform-sdk'
-import { productsService } from '../services/productsService'
+import type {
+  ClientResponse,
+  ProductProjection,
+  ProductProjectionPagedSearchResponse,
+} from '@commercetools/platform-sdk'
+import { productsService } from '@/services/productsService'
 import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 import ProductCard from '@components/product-card/ProductCard.vue'
 import { computed, onMounted, ref, type Ref } from 'vue'
@@ -17,7 +21,6 @@ const items = [
     href: '/catalog',
   },
 ]
-
 const limit = 20
 const currentPage = ref(1)
 
@@ -30,7 +33,7 @@ const fetchProducts = () => {
   const offset = (currentPage.value - 1) * limit
   productsService
     .products(limit, offset)
-    .then((response) => {
+    .then((response: ClientResponse<ProductProjectionPagedSearchResponse>) => {
       products.value = response.body.results
       productsCount.value = response.body.total || 0
     })
