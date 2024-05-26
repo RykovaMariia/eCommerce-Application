@@ -19,13 +19,14 @@ const items = [
 ]
 
 const limit = 20
+const offset = 30
 
 let products: Ref<ProductProjection[]> = ref([])
 let productsCount: Ref<number> = ref(0)
 
 onMounted(() => {
   productsService
-    .products(limit, 30)
+    .products(limit, offset)
     .then((response) => {
       products.value = response.body.results
       productsCount.value = response.body.total || 0
@@ -45,10 +46,8 @@ onMounted(() => {
       :src="product.masterVariant.images?.[0]?.url"
       :name="product.name['en-GB']"
       :description="product.description?.['en-GB']"
-      :price="(product.masterVariant.prices?.[0]?.value?.centAmount ?? 0) / 100"
-      :discountedPrice="
-        (product.masterVariant.prices?.[0]?.discounted?.value.centAmount ?? 0) / 100
-      "
+      :price="product.masterVariant.prices?.[0]?.value?.centAmount ?? 0"
+      :discountedPrice="product.masterVariant.prices?.[0]?.discounted?.value.centAmount ?? 0"
     />
   </div>
   <v-pagination
