@@ -5,12 +5,41 @@ import DateInput from '@/components/inputs/DateInput.vue'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import type { Customer } from '@commercetools/platform-sdk'
+import { ref } from 'vue'
+import { formateDate } from '@/utils/dateUtils'
+import type { SubmitEventPromise } from 'vuetify'
+import type { Writeable } from '@/interfaces/writeable'
+import { customerService } from '@/services/customerService'
+import { alertStore } from '@/stores/alertStore'
 
-const currentUser = defineModel<Customer>('currentUser')
+const alert = alertStore()
+
+const currentUser = defineModel<Writeable<Customer>>('currentUser')
+
+const dateOfBirth = ref(new Date(formateDate(currentUser.value?.dateOfBirth || '')))
+
+async function submit(submitEventPromise: SubmitEventPromise) {
+  const { valid } = await submitEventPromise
+  if (valid) update()
+}
+
+function update() {
+  if (currentUser.value) currentUser.value.dateOfBirth = dateOfBirth.value.toDateString()
+  console.warn(currentUser.value)
+  if (currentUser.value)
+    customerService
+      .update(currentUser.value)
+      .then(() => {
+        console.warn(111)
+      })
+      .catch((error: Error) => {
+        alert.show(`Error: ${error.message}`, 'warning')
+      })
+}
 </script>
 
 <template>
-  <v-form v-if="currentUser" class="login-form" @submit.prevent="">
+  <v-form v-if="currentUser" class="login-form" ref="form" @submit.prevent="submit">
     <Input
       :label="InputLabel.Email"
       placeholder="user@example.com"
@@ -32,11 +61,7 @@ const currentUser = defineModel<Customer>('currentUser')
       class="registration-input"
     />
     <v-col class="registration-input">
-      <DateInput
-        :label="InputLabel.BirthDate"
-        :type="InputType.Text"
-        v-model="currentUser.dateOfBirth"
-      />
+      <DateInput :label="InputLabel.BirthDate" :type="InputType.Text" v-model="dateOfBirth" />
     </v-col>
     <v-col class="col-button-link">
       <Button textContent="Save" classes="secondary" buttonType="submit" />

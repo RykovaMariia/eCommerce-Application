@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 import Tab from '@components/tab/Tab.vue'
+import UserInfo from '@/pages/ProfilePage/components/UserInfo.vue'
 import ProfileEditForm from '@/pages/ProfilePage/components/ProfileEditForm.vue'
 import ProfileAddress from '@/pages/ProfilePage/components/ProfileAddress.vue'
-import { onMounted, ref, type Ref } from 'vue'
+import { computed, onMounted, ref, type Ref } from 'vue'
 import { customerService } from '@/services/customerService'
 import type { Customer } from '@commercetools/platform-sdk'
 
@@ -66,15 +67,11 @@ onMounted(() => {
     <v-col class="page-card">
       <div class="d-flex flex-row main-content">
         <div class="d-flex flex-column aside-left">
-          <v-col>
-            <div class="profile-info">
-              <div><v-icon size="x-large" icon="mdi-account"></v-icon></div>
-              <div class="profile-info__name">
-                <div>{{ customer.firstName }} {{ customer.lastName }}</div>
-                <div class="info-data">{{ customer.dateOfBirth }}</div>
-              </div>
-            </div>
-          </v-col>
+          <UserInfo
+            :firstName="customer.firstName"
+            :lastName="customer.lastName"
+            :dateOfBirth="customer.dateOfBirth"
+          />
           <v-tabs v-model="tab" color="primary" direction="vertical">
             <Tab prepend-icon="mdi-account-edit" text="edit profile" value="profile" />
             <Tab prepend-icon="mdi-home" text="address" value="address" />
@@ -111,23 +108,16 @@ onMounted(() => {
 @use '@/styles/mixins.scss';
 
 .main-content {
-  min-height: 570px;
+  min-height: 35rem;
 }
 
 .aside-left {
-  gap: 15px;
+  gap: 1rem;
   align-self: flex-start;
 }
 
 .tab-content {
   border-left: 1px solid constants.$color-border-opacity;
-}
-
-.profile-info {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  align-items: center;
 }
 
 .v-btn {
@@ -139,18 +129,7 @@ onMounted(() => {
   margin-left: 1rem;
 }
 
-.profile-info__name {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-information {
-  font-size: 1.5rem;
-  color: constants.$color-primary;
-}
-
-.info-data,
-.user-text {
+.info-data {
   font-size: 0.75rem;
   color: constants.$color-text-placeholder;
 }
