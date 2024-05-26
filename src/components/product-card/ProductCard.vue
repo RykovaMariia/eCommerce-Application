@@ -67,7 +67,6 @@ function getDiscountPercentage(price: number = 0, discountedPrice: number = 0) {
 
   &_discount {
     color: constants.$color-sale;
-    text-decoration: none;
   }
 }
 

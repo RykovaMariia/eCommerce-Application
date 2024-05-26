@@ -3,7 +3,7 @@ import type { ProductProjection } from '@commercetools/platform-sdk'
 import { productsService } from '../services/productsService'
 import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 import ProductCard from '@components/product-card/ProductCard.vue'
-import { onMounted, ref, type Ref } from 'vue'
+import { computed, onMounted, ref, type Ref } from 'vue'
 
 const items = [
   {
@@ -19,12 +19,15 @@ const items = [
 ]
 
 const limit = 20
-const offset = 30
+const currentPage = ref(1)
 
 let products: Ref<ProductProjection[]> = ref([])
-let productsCount: Ref<number> = ref(0)
+let productsCount = ref(0)
 
-onMounted(() => {
+const totalPages = computed(() => Math.ceil(productsCount.value / limit))
+
+const fetchProducts = () => {
+  const offset = (currentPage.value - 1) * limit
   productsService
     .products(limit, offset)
     .then((response) => {
@@ -34,6 +37,10 @@ onMounted(() => {
     .catch((error: Error) => {
       throw new Error(error.message)
     })
+}
+
+onMounted(() => {
+  fetchProducts()
 })
 </script>
 
@@ -51,7 +58,9 @@ onMounted(() => {
     />
   </div>
   <v-pagination
-    :length="Math.ceil(productsCount / limit)"
+    v-model="currentPage"
+    @update:modelValue="fetchProducts"
+    :length="totalPages"
     color="primary"
     density="comfortable"
   ></v-pagination>
