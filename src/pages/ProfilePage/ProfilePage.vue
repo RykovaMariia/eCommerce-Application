@@ -9,6 +9,9 @@ import { customerService } from '@/services/customerService'
 import type { Customer } from '@commercetools/platform-sdk'
 import { userAuth } from '@/stores/userAuth'
 import type { UserData } from '@/interfaces/userData'
+import { alertStore } from '@/stores/alertStore'
+
+const alert = alertStore()
 
 const items = [
   {
@@ -68,7 +71,7 @@ onMounted(() => {
       userAuth().customerVersion = customer.value.version
     })
     .catch((error: Error) => {
-      throw new Error(error.message)
+      alert.show(`Error: ${error.message}`, 'warning')
     })
 })
 </script>
