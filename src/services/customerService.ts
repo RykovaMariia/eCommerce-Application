@@ -1,5 +1,6 @@
 import { ClientService, clientService } from '@/api/ClientService'
 import type { Writeable } from '@/interfaces/writeable'
+import { userAuth } from '@/stores/userAuth'
 import type { Customer } from '@commercetools/platform-sdk'
 
 export class CustomerService {
@@ -15,7 +16,7 @@ export class CustomerService {
       .me()
       .post({
         body: {
-          version: customer.version,
+          version: userAuth().customerVersion,
           actions: [
             {
               action: 'setFirstName',
@@ -24,6 +25,10 @@ export class CustomerService {
             {
               action: 'setLastName',
               lastName: customer.lastName,
+            },
+            {
+              action: 'setDateOfBirth',
+              dateOfBirth: customer.dateOfBirth,
             },
             {
               action: 'changeEmail',

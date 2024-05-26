@@ -5,6 +5,12 @@ export interface UserLoginData {
   password: string
 }
 
+export interface UserData {
+  firstName?: string
+  lastName?: string
+  dateOfBirth?: string
+}
+
 export interface UserCustomerDraft extends MyCustomerDraft {
   firstName: string
   lastName: string

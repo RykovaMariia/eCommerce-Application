@@ -4,9 +4,11 @@ import Tab from '@components/tab/Tab.vue'
 import UserInfo from '@/pages/ProfilePage/components/UserInfo.vue'
 import ProfileEditForm from '@/pages/ProfilePage/components/ProfileEditForm.vue'
 import ProfileAddress from '@/pages/ProfilePage/components/ProfileAddress.vue'
-import { computed, onMounted, ref, type Ref } from 'vue'
+import { onMounted, ref, type Ref } from 'vue'
 import { customerService } from '@/services/customerService'
 import type { Customer } from '@commercetools/platform-sdk'
+import { userAuth } from '@/stores/userAuth'
+import type { UserData } from '@/interfaces/userData'
 
 const items = [
   {
@@ -20,6 +22,12 @@ const items = [
     href: '/profile',
   },
 ]
+
+let userInfo: Ref<UserData> = ref({
+  firstName: '',
+  lastName: '',
+  dateOfBirth: '',
+})
 
 const tab = ref('address')
 
@@ -54,6 +62,10 @@ onMounted(() => {
     .user()
     .then((response) => {
       customer.value = response.body
+      userInfo.value.firstName = response.body.firstName
+      userInfo.value.lastName = response.body.lastName
+      userInfo.value.dateOfBirth = response.body.dateOfBirth
+      userAuth().customerVersion = customer.value.version
     })
     .catch((error: Error) => {
       throw new Error(error.message)
@@ -67,11 +79,7 @@ onMounted(() => {
     <v-col class="page-card">
       <div class="d-flex flex-row main-content">
         <div class="d-flex flex-column aside-left">
-          <UserInfo
-            :firstName="customer.firstName"
-            :lastName="customer.lastName"
-            :dateOfBirth="customer.dateOfBirth"
-          />
+          <UserInfo v-model:user-info="userInfo" />
           <v-tabs v-model="tab" color="primary" direction="vertical">
             <Tab prepend-icon="mdi-account-edit" text="edit profile" value="profile" />
             <Tab prepend-icon="mdi-home" text="address" value="address" />
@@ -129,8 +137,13 @@ onMounted(() => {
   margin-left: 1rem;
 }
 
-.info-data {
+.user-text {
   font-size: 0.75rem;
   color: constants.$color-text-placeholder;
+}
+
+.user-information {
+  font-size: 1.5rem;
+  color: constants.$color-primary;
 }
 </style>

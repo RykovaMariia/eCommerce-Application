@@ -11,6 +11,7 @@ import type { SubmitEventPromise } from 'vuetify'
 import type { Writeable } from '@/interfaces/writeable'
 import { customerService } from '@/services/customerService'
 import { alertStore } from '@/stores/alertStore'
+import { userAuth } from '@/stores/userAuth'
 
 const alert = alertStore()
 
@@ -24,17 +25,18 @@ async function submit(submitEventPromise: SubmitEventPromise) {
 }
 
 function update() {
-  if (currentUser.value) currentUser.value.dateOfBirth = dateOfBirth.value.toDateString()
-  console.warn(currentUser.value)
-  if (currentUser.value)
+  if (currentUser.value) {
+    currentUser.value.dateOfBirth = formateDate(dateOfBirth.value.toDateString())
     customerService
       .update(currentUser.value)
-      .then(() => {
-        console.warn(111)
+      .then((result) => {
+        alert.show(`Data updated successfully`, 'success')
+        userAuth().customerVersion = result.body.version
       })
       .catch((error: Error) => {
         alert.show(`Error: ${error.message}`, 'warning')
       })
+  }
 }
 </script>
 

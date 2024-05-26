@@ -1,18 +1,28 @@
 <script setup lang="ts">
-const props = defineProps<{
-  firstName?: string
-  lastName?: string
-  dateOfBirth?: string
-}>()
+import type { UserData } from '@/interfaces/userData'
+import { computed } from 'vue'
+import { formateDate } from '@/utils/dateUtils'
+
+const user = defineModel<UserData>('userInfo')
+
+const firstName = computed(() => {
+  return user.value ? user.value?.firstName || '' : ''
+})
+const lastName = computed(() => {
+  return user.value ? user.value?.lastName || '' : ''
+})
+const dateOfBirth = computed(() => {
+  return user.value ? formateDate(user.value?.dateOfBirth || '') : ''
+})
 </script>
 
 <template>
   <v-col>
     <div class="profile-info">
       <div><v-icon size="x-large" icon="mdi-account"></v-icon></div>
-      <div class="profile-info__name" v-if="props.firstName">
-        <div>{{ props.firstName }} {{ props.lastName }}</div>
-        <div class="info-data">{{ props.dateOfBirth }}</div>
+      <div class="profile-info__name">
+        <div>{{ firstName }} {{ lastName }}</div>
+        <div class="info-data">{{ dateOfBirth }}</div>
       </div>
     </div>
   </v-col>
@@ -32,11 +42,6 @@ const props = defineProps<{
 .profile-info__name {
   display: flex;
   flex-direction: column;
-}
-
-.user-information {
-  font-size: 1.5rem;
-  color: constants.$color-primary;
 }
 
 .info-data {
