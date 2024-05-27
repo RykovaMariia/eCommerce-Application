@@ -71,7 +71,7 @@ customerService
     alert.show(`Error: ${error.message}`, 'warning')
   })
 
-function updateInfoUser(user: UserData) {
+function updateUserInfo(user: UserData) {
   if (!user) return
   userInfo.value = user
 }
@@ -97,7 +97,7 @@ function updateInfoUser(user: UserData) {
               <div class="user-information">User information</div>
               <div class="user-text">Here you can edit information about yourself</div>
             </v-col>
-            <ProfileEditForm v-model:current-user="customer" @updateUser="updateInfoUser($event)" />
+            <ProfileEditForm v-model:current-user="customer" @updateUser="updateUserInfo($event)" />
           </v-tabs-window-item>
 
           <v-tabs-window-item value="address">
