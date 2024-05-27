@@ -6,7 +6,6 @@ import { type ProductData } from '@/interfaces/productData'
 import { ref } from 'vue'
 
 let source = ref(0)
-
 console.warn(source.value)
 
 let product: ProductData = reactive({
@@ -40,21 +39,21 @@ onMounted(() => {
       <v-sheet max-width="28rem">
         <v-sheet rounded="6px">
           <div class="d-flex fill-height align-center justify-center">
-            <v-img
-              :width="280"
-              cover
-              :src="product.images[source]"
-              rounded="lg"
-            ></v-img>
+            <v-img :width="280" cover :src="product.images[source] ?? product.images[source]" rounded="lg"></v-img>
           </div>
         </v-sheet>
         <v-slide-group v-model="source">
-          <v-slide-group-item v-for="(n, index) in product.images" :source="n" :key="n" v-slot="{ toggle }">
+          <v-slide-group-item
+            v-for="(n, index) in product.images"
+            :source="n"
+            :key="n"
+            v-slot="{ select }"
+          >
             <v-card
               :class="['ma-4']"
               height="100"
               width="100"
-              @click="toggle"
+              @click="select"
               :image="product.images[index]"
             >
             </v-card>
