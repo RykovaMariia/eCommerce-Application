@@ -1,7 +1,6 @@
 import { ClientService, clientService } from '@/api/ClientService'
-import type { Writeable } from '@/interfaces/writeable'
 import { userAuth } from '@/stores/userAuth'
-import type { Customer } from '@commercetools/platform-sdk'
+import type { ICustomer } from '@/types/writable'
 
 export class CustomerService {
   constructor(private clientService: ClientService) {}
@@ -10,7 +9,7 @@ export class CustomerService {
     return this.clientService.getApiRoot().me().get().execute()
   }
 
-  async update(customer: Writeable<Customer>) {
+  async update(customer: ICustomer) {
     return this.clientService
       .getApiRoot()
       .me()

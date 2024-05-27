@@ -4,7 +4,7 @@ import Tab from '@components/tab/Tab.vue'
 import UserInfo from '@/pages/ProfilePage/components/UserInfo.vue'
 import ProfileEditForm from '@/pages/ProfilePage/components/ProfileEditForm.vue'
 import ProfileAddress from '@/pages/ProfilePage/components/ProfileAddress.vue'
-import { onMounted, ref, type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { customerService } from '@/services/customerService'
 import type { Customer } from '@commercetools/platform-sdk'
 import { userAuth } from '@/stores/userAuth'
@@ -60,20 +60,23 @@ let customer: Ref<Customer> = ref({
   authenticationMode: '',
 })
 
-onMounted(() => {
-  customerService
-    .user()
-    .then((response) => {
-      customer.value = response.body
-      userInfo.value.firstName = response.body.firstName
-      userInfo.value.lastName = response.body.lastName
-      userInfo.value.dateOfBirth = response.body.dateOfBirth
-      userAuth().customerVersion = customer.value.version
-    })
-    .catch((error: Error) => {
-      alert.show(`Error: ${error.message}`, 'warning')
-    })
-})
+customerService
+  .user()
+  .then((response) => {
+    customer.value = response.body
+    userInfo.value.firstName = response.body.firstName
+    userInfo.value.lastName = response.body.lastName
+    userInfo.value.dateOfBirth = response.body.dateOfBirth
+    userAuth().customerVersion = customer.value.version
+  })
+  .catch((error: Error) => {
+    alert.show(`Error: ${error.message}`, 'warning')
+  })
+
+function updateInfoUser(user: UserData) {
+  if (!user) return
+  userInfo.value = user
+}
 </script>
 
 <template>
@@ -96,7 +99,7 @@ onMounted(() => {
               <div class="user-information">User information</div>
               <div class="user-text">Here you can edit information about yourself</div>
             </v-col>
-            <ProfileEditForm v-model:current-user="customer" />
+            <ProfileEditForm v-model:current-user="customer" @updateUser="updateInfoUser($event)" />
           </v-tabs-window-item>
 
           <v-tabs-window-item value="address">

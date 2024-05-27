@@ -4,18 +4,24 @@ import Input from '@components/inputs/Input.vue'
 import DateInput from '@/components/inputs/DateInput.vue'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
-import type { Customer } from '@commercetools/platform-sdk'
 import { ref } from 'vue'
 import { formateDate } from '@/utils/dateUtils'
 import type { SubmitEventPromise } from 'vuetify'
-import type { Writeable } from '@/interfaces/writeable'
 import { customerService } from '@/services/customerService'
 import { alertStore } from '@/stores/alertStore'
 import { userAuth } from '@/stores/userAuth'
+import type { ICustomer } from '@/types/writable'
+import type { UserData } from '@/interfaces/userData'
 
 const alert = alertStore()
 
-const currentUser = defineModel<Writeable<Customer>>('currentUser')
+const emit = defineEmits({
+  updateUser(user: UserData) {
+    return user
+  },
+})
+
+const currentUser = defineModel<ICustomer>('currentUser')
 
 const dateOfBirth = ref(new Date(formateDate(currentUser.value?.dateOfBirth || '')))
 
@@ -32,6 +38,7 @@ function update() {
       .then((result) => {
         alert.show(`Data updated successfully`, 'success')
         userAuth().customerVersion = result.body.version
+        emit('updateUser', result.body)
       })
       .catch((error: Error) => {
         alert.show(`Error: ${error.message}`, 'warning')

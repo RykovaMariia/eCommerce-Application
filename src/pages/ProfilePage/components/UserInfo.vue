@@ -20,7 +20,7 @@ const dateOfBirth = computed(() => {
   <v-col>
     <div class="profile-info">
       <div><v-icon size="x-large" icon="mdi-account"></v-icon></div>
-      <div class="profile-info__name">
+      <div class="name">
         <div>{{ firstName }} {{ lastName }}</div>
         <div class="info-data">{{ dateOfBirth }}</div>
       </div>
@@ -37,11 +37,11 @@ const dateOfBirth = computed(() => {
   flex-direction: row;
   gap: 0.8rem;
   align-items: center;
-}
 
-.profile-info__name {
-  display: flex;
-  flex-direction: column;
+  & .name {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .info-data {
