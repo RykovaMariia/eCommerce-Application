@@ -64,9 +64,7 @@ customerService
   .user()
   .then((response) => {
     customer.value = response.body
-    userInfo.value.firstName = response.body.firstName
-    userInfo.value.lastName = response.body.lastName
-    userInfo.value.dateOfBirth = response.body.dateOfBirth
+    userInfo.value = { ...response.body }
     userAuth().customerVersion = customer.value.version
   })
   .catch((error: Error) => {
