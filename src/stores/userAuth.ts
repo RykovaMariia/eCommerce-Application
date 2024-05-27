@@ -8,6 +8,7 @@ export const userAuth = defineStore('user', {
   state: () => ({
     isLoggedIn: !!refreshToken,
     refreshToken: refreshToken ?? '',
+    customerVersion: 0,
   }),
 
   actions: {

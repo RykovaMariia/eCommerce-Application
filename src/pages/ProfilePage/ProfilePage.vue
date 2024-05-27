@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 import Tab from '@components/tab/Tab.vue'
+import UserInfo from '@/pages/ProfilePage/components/UserInfo.vue'
 import ProfileEditForm from '@/pages/ProfilePage/components/ProfileEditForm.vue'
 import ProfileAddress from '@/pages/ProfilePage/components/ProfileAddress.vue'
-import { onMounted, ref, type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { customerService } from '@/services/customerService'
 import type { Customer } from '@commercetools/platform-sdk'
+import { userAuth } from '@/stores/userAuth'
+import type { UserData } from '@/interfaces/userData'
+import { alertStore } from '@/stores/alertStore'
+
+const alert = alertStore()
 
 const items = [
   {
@@ -19,6 +25,12 @@ const items = [
     href: '/profile',
   },
 ]
+
+let userInfo: Ref<UserData> = ref({
+  firstName: '',
+  lastName: '',
+  dateOfBirth: '',
+})
 
 const tab = ref('address')
 
@@ -48,16 +60,21 @@ let customer: Ref<Customer> = ref({
   authenticationMode: '',
 })
 
-onMounted(() => {
-  customerService
-    .user()
-    .then((response) => {
-      customer.value = response.body
-    })
-    .catch((error: Error) => {
-      throw new Error(error.message)
-    })
-})
+customerService
+  .user()
+  .then((response) => {
+    customer.value = response.body
+    userInfo.value = { ...response.body }
+    userAuth().customerVersion = customer.value.version
+  })
+  .catch((error: Error) => {
+    alert.show(`Error: ${error.message}`, 'warning')
+  })
+
+function updateUserInfo(user: UserData) {
+  if (!user) return
+  userInfo.value = user
+}
 </script>
 
 <template>
@@ -66,15 +83,7 @@ onMounted(() => {
     <v-col class="page-card">
       <div class="d-flex flex-row main-content">
         <div class="d-flex flex-column aside-left">
-          <v-col>
-            <div class="profile-info">
-              <div><v-icon size="x-large" icon="mdi-account"></v-icon></div>
-              <div class="profile-info__name">
-                <div>{{ customer.firstName }} {{ customer.lastName }}</div>
-                <div class="info-data">{{ customer.dateOfBirth }}</div>
-              </div>
-            </div>
-          </v-col>
+          <UserInfo v-model:user-info="userInfo" />
           <v-tabs v-model="tab" color="primary" direction="vertical">
             <Tab prepend-icon="mdi-account-edit" text="edit profile" value="profile" />
             <Tab prepend-icon="mdi-home" text="address" value="address" />
@@ -88,7 +97,7 @@ onMounted(() => {
               <div class="user-information">User information</div>
               <div class="user-text">Here you can edit information about yourself</div>
             </v-col>
-            <ProfileEditForm v-model:current-user="customer" />
+            <ProfileEditForm v-model:current-user="customer" @updateUser="updateUserInfo($event)" />
           </v-tabs-window-item>
 
           <v-tabs-window-item value="address">
@@ -111,23 +120,16 @@ onMounted(() => {
 @use '@/styles/mixins.scss';
 
 .main-content {
-  min-height: 570px;
+  min-height: 35rem;
 }
 
 .aside-left {
-  gap: 15px;
+  gap: 1rem;
   align-self: flex-start;
 }
 
 .tab-content {
   border-left: 1px solid constants.$color-border-opacity;
-}
-
-.profile-info {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  align-items: center;
 }
 
 .v-btn {
@@ -139,19 +141,13 @@ onMounted(() => {
   margin-left: 1rem;
 }
 
-.profile-info__name {
-  display: flex;
-  flex-direction: column;
+.user-text {
+  font-size: 0.75rem;
+  color: constants.$color-text-placeholder;
 }
 
 .user-information {
   font-size: 1.5rem;
   color: constants.$color-primary;
-}
-
-.info-data,
-.user-text {
-  font-size: 0.75rem;
-  color: constants.$color-text-placeholder;
 }
 </style>

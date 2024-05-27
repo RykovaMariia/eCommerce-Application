@@ -6,3 +6,5 @@ export const CATALOG_MENU = [
   { name: 'Eco dishes', href: '/catalog' },
   { name: 'Gift sets', href: '/catalog' },
 ]
+
+export const yearToShow = 2000
