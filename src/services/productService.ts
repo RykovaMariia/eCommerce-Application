@@ -1,22 +1,21 @@
 import { ClientService, clientService } from '@/api/ClientService'
 
 export class ProductService {
-  constructor(
-    private clientService: ClientService,
-  ) {}
+  constructor(private clientService: ClientService) {}
 
   async getProduct() {
     const product = this.clientService
-    .getApiRoot()
-    .products()
-    .get({
-      queryArgs: { 
-        where: `key=106`
-      } 
-    })
-    .execute()
+      .getApiRoot()
+      .products()
+      .get({
+        queryArgs: {
+          where: `key=126`,
+        },
+      })
+      .execute()
     return product.then((value) => {
-      return value.body.results[0]
+      console.warn(value.body.results[0].masterData)
+      return value.body.results[0].masterData
     })
   }
 }

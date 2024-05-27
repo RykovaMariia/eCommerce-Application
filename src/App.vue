@@ -6,7 +6,7 @@ import { storeToRefs } from 'pinia'
 import AlertWindow from '@components/alertWindow/AlertWindow.vue'
 import { productService } from './services/productService'
 const { isOpenAlert } = storeToRefs(alertStore())
-productService.getProduct();
+productService.getProduct()
 </script>
 
 <template>

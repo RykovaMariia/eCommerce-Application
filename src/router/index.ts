@@ -50,6 +50,11 @@ const router = createRouter({
       component: () => import('@pages/ProfilePage/ProfilePage.vue'),
     },
     {
+      path: '/product',
+      name: 'product',
+      component: () => import('@pages/ProductPage/ProductPage.vue'),
+    },
+    {
       path: '/logout',
       name: 'logout',
       component: () => null,
