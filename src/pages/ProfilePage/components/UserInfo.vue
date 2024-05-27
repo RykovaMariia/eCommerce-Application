@@ -6,10 +6,10 @@ import { formateDate } from '@/utils/dateUtils'
 const user = defineModel<UserData>('userInfo')
 
 const firstName = computed(() => {
-  return user.value ? user.value?.firstName || '' : ''
+  return user.value?.firstName ?? ''
 })
 const lastName = computed(() => {
-  return user.value ? user.value?.lastName || '' : ''
+  return user.value?.lastName ?? ''
 })
 const dateOfBirth = computed(() => {
   return user.value ? formateDate(user.value?.dateOfBirth || '') : ''
