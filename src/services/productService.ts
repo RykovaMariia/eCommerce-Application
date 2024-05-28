@@ -9,7 +9,7 @@ export class ProductService {
       .products()
       .get({
         queryArgs: {
-          where: `key=126`,
+          where: `key=140`,
         },
       })
       .execute()
