@@ -1,4 +1,4 @@
-import { ClientService, clientService } from '@/api/ClientService'
+import { ClientService } from '@/api/ClientService'
 
 import {
   StorageService,
@@ -41,4 +41,4 @@ export class AuthService {
   }
 }
 
-export const authService = new AuthService(clientService, localStorageService)
+export const authService = new AuthService(new ClientService(), localStorageService)

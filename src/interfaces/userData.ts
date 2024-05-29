@@ -6,6 +6,7 @@ export interface UserLoginData {
 }
 
 export interface UserPasswordsData {
+  email: string
   currentPassword: string
   newPassword: string
   confirmPassword: string

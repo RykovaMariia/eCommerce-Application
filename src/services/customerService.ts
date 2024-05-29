@@ -1,8 +1,9 @@
 import { ClientService } from '@/api/ClientService'
-import type { UserPasswordsData } from '@/interfaces/userData'
+import type { UserLoginData, UserPasswordsData } from '@/interfaces/userData'
 import { userAuth } from '@/stores/userAuth'
 import type { ICustomer } from '@/types/writable'
 import type { Ref } from 'vue'
+import { authService } from './authService'
 
 export class CustomerService {
   constructor(private clientService: ClientService) {}
@@ -42,7 +43,7 @@ export class CustomerService {
   }
 
   async updatePassword(userPasswords: Ref<UserPasswordsData>) {
-    return this.clientService
+    const userPasswordData = this.clientService
       .getApiRoot()
       .me()
       .password()
@@ -54,6 +55,16 @@ export class CustomerService {
         },
       })
       .execute()
+    userPasswordData.then(() => {
+      userAuth().logout()
+      const userData: UserLoginData = {
+        email: userPasswords.value.email,
+        password: userPasswords.value.newPassword,
+      }
+      authService.login(userData)
+    })
+
+    return userPasswordData
   }
 }
 

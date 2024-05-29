@@ -112,7 +112,7 @@ function updateUserInfo(user: UserData) {
               <div class="user-information">Password information</div>
               <div class="user-text">Here you can edit your password</div>
             </v-col>
-            <PasswordEditForm />
+            <PasswordEditForm :email="customer.email" />
           </v-tabs-window-item>
         </v-tabs-window>
       </div>

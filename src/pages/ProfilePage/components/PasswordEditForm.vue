@@ -10,7 +10,13 @@ import type { SubmitEventPromise } from 'vuetify'
 import { ref, type Ref } from 'vue'
 import type { UserPasswordsData } from '@/interfaces/userData'
 
+const props = defineProps<{
+  email: string
+}>()
+
 const alert = alertStore()
+
+const form = ref()
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
@@ -18,10 +24,17 @@ async function submit(submitEventPromise: SubmitEventPromise) {
 }
 
 let userPasswords: Ref<UserPasswordsData> = ref({
+  email: props.email,
   currentPassword: '',
   newPassword: '',
   confirmPassword: '',
 })
+
+const resetForm = () => {
+  if (form.value) {
+    form.value.reset()
+  }
+}
 
 function updatePassword() {
   customerService
@@ -29,6 +42,8 @@ function updatePassword() {
     .then((result) => {
       alert.show(`Password changed successfully`, 'success')
       userAuth().customerVersion = result.body.version
+      userAuth().login()
+      resetForm()
     })
     .catch((error: Error) => {
       if (error.message === 'The given current password does not match.')
