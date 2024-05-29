@@ -5,6 +5,12 @@ export interface UserLoginData {
   password: string
 }
 
+export interface UserPasswordsData {
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
+}
+
 export interface UserData {
   firstName?: string
   lastName?: string

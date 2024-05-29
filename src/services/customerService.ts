@@ -1,6 +1,8 @@
-import { ClientService, clientService } from '@/api/ClientService'
+import { ClientService } from '@/api/ClientService'
+import type { UserPasswordsData } from '@/interfaces/userData'
 import { userAuth } from '@/stores/userAuth'
 import type { ICustomer } from '@/types/writable'
+import type { Ref } from 'vue'
 
 export class CustomerService {
   constructor(private clientService: ClientService) {}
@@ -38,6 +40,21 @@ export class CustomerService {
       })
       .execute()
   }
+
+  async updatePassword(userPasswords: Ref<UserPasswordsData>) {
+    return this.clientService
+      .getApiRoot()
+      .me()
+      .password()
+      .post({
+        body: {
+          version: userAuth().customerVersion,
+          currentPassword: userPasswords.value.currentPassword,
+          newPassword: userPasswords.value.newPassword,
+        },
+      })
+      .execute()
+  }
 }
 
-export const customerService = new CustomerService(clientService)
+export const customerService = new CustomerService(new ClientService())
