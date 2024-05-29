@@ -55,28 +55,23 @@ function updatePassword() {
 let isError = ref(false)
 
 function setMessageClass() {
-  const messageClass = {
+  return {
     'message-incorrect': isError.value,
     'message-correct': !isError.value,
   }
-  return messageClass
 }
 
 function setButtonState() {
-  const state = {
+  return {
     disabled: isError.value,
   }
-  return state
 }
 
 function provePassword() {
   if (!userPasswords.value.confirmPassword || !userPasswords.value.newPassword) return
   else {
-    if (userPasswords.value.newPassword !== userPasswords.value.confirmPassword) {
-      isError.value = true
-    } else {
-      isError.value = false
-    }
+    isError.value =
+      userPasswords.value.newPassword !== userPasswords.value.confirmPassword ? true : false
   }
 }
 </script>
