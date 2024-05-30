@@ -7,7 +7,7 @@ import type {
 import { productsService } from '@/services/productsService'
 import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 import ProductCard from '@components/product-card/ProductCard.vue'
-import { computed, onMounted, ref, type Ref } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 
 const items = [
   {
@@ -21,13 +21,12 @@ const items = [
     href: '/catalog',
   },
 ]
+
 const limit = 20
 const currentPage = ref(1)
-
+const totalPages = computed(() => Math.ceil(productsCount.value / limit))
 let products: Ref<ProductProjection[]> = ref([])
 let productsCount = ref(0)
-
-const totalPages = computed(() => Math.ceil(productsCount.value / limit))
 
 const fetchProducts = () => {
   const offset = (currentPage.value - 1) * limit
@@ -41,14 +40,12 @@ const fetchProducts = () => {
       throw new Error(error.message)
     })
 }
-
-onMounted(() => {
-  fetchProducts()
-})
+fetchProducts()
 </script>
 
 <template>
   <Breadcrumb :items="items" />
+
   <div class="d-flex">
     <ProductCard
       v-for="product in products"
