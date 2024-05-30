@@ -54,11 +54,8 @@ function updatePassword() {
 
 let isError = ref(false)
 
-function setMessageClass() {
-  return {
-    'message-incorrect': isError.value,
-    'message-correct': !isError.value,
-  }
+function isShowMessage() {
+  return isError.value
 }
 
 function setButtonState() {
@@ -105,7 +102,7 @@ function provePassword() {
       @input="provePassword"
     />
 
-    <v-col class="message" :class="setMessageClass()"> Passwords do not match </v-col>
+    <v-col class="message" v-show="isShowMessage()"> Passwords do not match </v-col>
 
     <v-col class="col-button-link">
       <Button
@@ -129,14 +126,6 @@ function provePassword() {
   text-align: right;
 
   transition: 0.5s;
-}
-
-.message-correct {
-  visibility: hidden;
-}
-
-.message-incorrect {
-  visibility: visible;
 }
 
 .disabled {
