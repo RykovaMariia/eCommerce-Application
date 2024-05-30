@@ -4,6 +4,7 @@ import Tab from '@components/tab/Tab.vue'
 import UserInfo from '@/pages/ProfilePage/components/UserInfo.vue'
 import ProfileEditForm from '@/pages/ProfilePage/components/ProfileEditForm.vue'
 import ProfileAddress from '@/pages/ProfilePage/components/ProfileAddress.vue'
+import PasswordEditForm from '@/pages/ProfilePage/components/PasswordEditForm.vue'
 import { ref, type Ref } from 'vue'
 import { customerService } from '@/services/customerService'
 import type { Customer } from '@commercetools/platform-sdk'
@@ -80,7 +81,7 @@ function updateUserInfo(user: UserData) {
 <template>
   <v-container class="container">
     <Breadcrumb :items="items" />
-    <v-col class="page-card">
+    <v-col class="page-card profile-card">
       <div class="d-flex flex-row main-content">
         <div class="d-flex flex-column aside-left">
           <UserInfo v-model:user-info="userInfo" />
@@ -107,7 +108,11 @@ function updateUserInfo(user: UserData) {
           </v-tabs-window-item>
 
           <v-tabs-window-item value="password">
-            <v-col> password </v-col>
+            <v-col flex-column>
+              <div class="user-information">Password information</div>
+              <div class="user-text">Here you can edit your password</div>
+            </v-col>
+            <PasswordEditForm :email="customer.email" />
           </v-tabs-window-item>
         </v-tabs-window>
       </div>
@@ -123,9 +128,16 @@ function updateUserInfo(user: UserData) {
   min-height: 35rem;
 }
 
+.profile-card {
+  width: 100%;
+  max-width: 60rem;
+  margin: auto;
+}
+
 .aside-left {
   gap: 1rem;
   align-self: flex-start;
+  width: 20%;
 }
 
 .tab-content {
