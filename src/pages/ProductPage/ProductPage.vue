@@ -2,19 +2,21 @@
 import { productService } from '@/services/productService'
 import { reactive } from 'vue'
 import Button from '@/components/buttons/Button.vue'
-import { type ProductData, type ProductItem } from '@/interfaces/productData'
+import { type Attribute, type ProductData, type ProductItem } from '@/interfaces/productData'
 import { ref } from 'vue'
 import type { ProductCatalogData } from '@commercetools/platform-sdk'
+import NumberInput from '@/components/inputs/NumberInput.vue'
 
 let source = ref(0)
-console.warn(source.value)
 
 let product: ProductData = reactive({
   description: '',
   name: '',
   images: [],
-  variants: []
+  variants: [],
 })
+
+let attributeValues: Attribute[][] | []
 
 productService
   .getProduct()
@@ -25,14 +27,26 @@ productService
       return url
     })
     product.images = images ?? ''
+
+    const attributeNames = data.current.masterVariant.attributes?.map(({name}) => name)
+    const attributesList = data.current.variants?.map((variant) => {
+      return variant.attributes
+    }).flat()
+    console.warn(attributesList)
+    // const masterAttributeNames = data.current.masterVariant.attributes?.map(() => )
+    attributeValues = attributeNames?.map((attributeName) => {
+      const values: Attribute[] = attributesList?.map((attribute) => {
+      if (attribute?.name === attributeName) return attribute.value[0]['key']
+      })
+      return [...new Set(values)].filter((value) => value).sort()
+    }) ?? []
+    console.warn(attributeValues)
     const masterVariant: ProductItem = {
-      attribute: data.current.masterVariant.attributes ?? [],
       price: data.current.masterVariant.prices?.[0].value.centAmount ?? 0,
-      discountPrice: data.current.masterVariant.prices?.[0].discounted?.value.centAmount ?? 0
+      discountPrice: data.current.masterVariant.prices?.[0].discounted?.value.centAmount ?? 0,
     }
     const variants = data.current.variants?.map((variant) => {
-      return {  
-        attribute: variant.attributes ?? [],
+      return {
         price: variant.prices?.[0].value.centAmount ?? 0,
         discountPrice: variant.prices?.[0].discounted?.value.centAmount ?? 0,
       }
@@ -47,9 +61,9 @@ productService
 <template>
   <div class="product-container">
     <v-col>
-      <v-sheet max-width="28rem">
-        <v-sheet rounded="6px">
-          <div class="d-flex fill-height align-center justify-center">
+      <v-sheet max-width="28rem" class="slider-image">
+        <v-sheet rounded="6px" class="slider-image">
+          <div class="d-flex fill-height align-center justify-center slider-image">
             <v-img
               :width="280"
               cover
@@ -80,33 +94,48 @@ productService
     <v-col>
       <h2>{{ product.name }}</h2>
       <v-col>{{ product.description }}</v-col>
-      <v-col>Price: € {{ product.variants[0].price / 100 }}</v-col>
-      <v-item-group selected-class="bg-primary">
-        <v-container>
-          <v-row>
-            <v-col v-for="(value, n) in product.variants" :key="n" cols="3" md="3">
-              <v-item v-slot="{ isSelected, selectedClass, toggle }">
-                <v-card :class="['d-flex align-center', selectedClass]" height="30" @click="toggle">
-                  <div class="flex-grow-1 text-center">
-                    {{ isSelected ? 'Selected' : 'Click Me!' }}
-                  </div>
-                </v-card>
-              </v-item>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-item-group>
+      <v-col>Price: € {{ 100 }}</v-col>
+      <v-col v-for="(attributesArray, n) in attributeValues" :key="n">
+        <v-item-group selected-class="bg-primary" mandatory>
+          <v-container v-if="attributeValues">
+            <v-row>
+              <v-col v-for="(attribute, i) in attributesArray" :key="i">
+                <v-item v-slot="{ selectedClass, toggle }">
+                  <v-card :class="['d-flex align-center attribute', selectedClass]" @click="toggle">
+                    <div class="flex-grow-1 text-center">
+                      {{ attribute }}
+                    </div>
+                  </v-card>
+                </v-item>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-item-group>
+      </v-col>
+      <NumberInput />
       <Button textContent="Add to cart" />
     </v-col>
   </div>
 </template>
 
 <style lang="scss" scoped>
+@use '@/styles/constants.scss';
+
+.slider-image {
+  box-shadow: none;
+}
+
 .v-sheet {
   background-color: transparent;
 }
 
 .product-container {
   display: flex;
+}
+
+.attribute {
+  background-color: transparent;
+  border: 1px solid constants.$color-primary;
+  box-shadow: none;
 }
 </style>
