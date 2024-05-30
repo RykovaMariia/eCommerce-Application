@@ -4,6 +4,7 @@ import Tab from '@components/tab/Tab.vue'
 import AddressList from '@/pages/ProfilePage/components/AddressList.vue'
 import type { Customer } from '@commercetools/platform-sdk'
 import { computed } from 'vue'
+import AddAddressForm from './AddAddressForm.vue'
 
 const tab = ref('billing')
 
@@ -32,6 +33,8 @@ const addressShippingDefault = computed(() => {
 const addressBillingDefault = computed(() => {
   return currentUser.value ? currentUser.value?.defaultBillingAddressId || '' : ''
 })
+
+function addAddress() {}
 </script>
 <template>
   <v-col>
@@ -54,6 +57,12 @@ const addressBillingDefault = computed(() => {
       </v-tabs-window-item>
     </v-tabs-window>
   </v-col>
+
+  <v-col>
+    <a @click.prevent="addAddress()">Add new</a>
+  </v-col>
+
+  <AddAddressForm />
 </template>
 
 <style scoped lang="scss">
@@ -62,5 +71,9 @@ const addressBillingDefault = computed(() => {
 
 .v-list-item__overlay {
   opacity: 0;
+}
+
+a {
+  text-decoration: underline;
 }
 </style>
