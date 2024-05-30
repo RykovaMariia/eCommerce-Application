@@ -5,8 +5,8 @@ import { InputLabel } from '@/enums/inputLabel'
 
 const props = defineProps<{
   label: string
-  placeholder?: string
   type: string
+  placeholder?: string
   icon?: string
   disabled?: boolean
 }>()
@@ -19,10 +19,24 @@ function togglePassword() {
   marker.value = !marker.value
 }
 const fieldType = computed(() =>
-  props.label === InputLabel.Password ? (marker.value ? props.type : 'text') : props.type,
+  props.label === InputLabel.Password ||
+  InputLabel.CurrentPassword ||
+  InputLabel.NewPassword ||
+  InputLabel.ConfirmPassword
+    ? marker.value
+      ? props.type
+      : 'text'
+    : props.type,
 )
 const innerIcon = computed(() =>
-  props.label === InputLabel.Password ? (marker.value ? props.icon : 'mdi-eye-outline') : '',
+  props.label === InputLabel.Password ||
+  InputLabel.CurrentPassword ||
+  InputLabel.NewPassword ||
+  InputLabel.ConfirmPassword
+    ? marker.value
+      ? props.icon
+      : 'mdi-eye-outline'
+    : '',
 )
 </script>
 

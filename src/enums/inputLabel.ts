@@ -8,4 +8,7 @@ export const enum InputLabel {
   City = 'City',
   Street = 'Street',
   PostalCode = 'Postal code',
+  CurrentPassword = 'Current Password',
+  NewPassword = 'New Password',
+  ConfirmPassword = 'Confirm Password',
 }
