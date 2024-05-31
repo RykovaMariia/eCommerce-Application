@@ -13,9 +13,11 @@ import { addressService } from '@/services/addressService'
 import { alertStore } from '@/stores/alertStore'
 import { userAuth } from '@/stores/userAuth'
 import { reactive } from 'vue'
+import { TypeAction } from '@/enums/typeAction'
 
 const props = defineProps<{
   typeAddress: string
+  typeAction: string
 }>()
 
 const form = ref()
@@ -28,10 +30,14 @@ const isTheSame = ref(false)
 
 const actions: MyCustomerUpdateAction[] = reactive([])
 
-const title = computed(() => {
+const titleCheckbox = computed(() => {
   return props.typeAddress === 'billing'
     ? 'Use the billing address as the shipping address'
     : 'Use the shipping address as the billing address'
+})
+
+const titleForm = computed(() => {
+  return props.typeAction === TypeAction.Add ? 'Add New Address' : 'Edit Address'
 })
 
 const resetForm = () => {
@@ -48,6 +54,9 @@ const emit = defineEmits({
   updateUserInfo(currentUser: Customer) {
     return currentUser
   },
+  cancel() {
+    return true
+  },
 })
 
 const defaultShipping = ref(false)
@@ -55,7 +64,10 @@ const defaultBilling = ref(false)
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
-  if (valid) createAddress()
+  if (valid) {
+    if (props.typeAction === TypeAction.Add) createAddress()
+    if (props.typeAction === TypeAction.Edit && address.value) updateAddress(address.value)
+  }
 }
 
 function createAddress() {
@@ -106,13 +118,38 @@ function createAddress() {
       })
   }
 }
+
+function updateAddress(address: Address) {
+  console.warn(address)
+  if (address) {
+    addressService
+      .update(address)
+      .then((result) => {
+        alert.show('Address updated', 'success')
+        if (result?.body) {
+          userAuth().customerVersion = result?.body.version
+          emit('updateUserInfo', result?.body)
+          resetForm()
+        }
+      })
+      .catch((error: Error) => {
+        alert.show(`Error: ${error.message}`, 'warning')
+      })
+  }
+}
 </script>
 
 <template>
   <v-form v-if="address" class="address-form" @submit.prevent="submit" ref="form">
+    <v-col class="title">{{ titleForm }}</v-col>
     <v-col class="registration-inner-container">
       <v-col>
-        <Checkbox :label="title" v-model="isTheSame" @click="toggleState()" density="compact" />
+        <Checkbox
+          :label="titleCheckbox"
+          v-model="isTheSame"
+          @click="toggleState()"
+          density="compact"
+        />
       </v-col>
       <v-col>
         <AutocompleteInput
@@ -148,6 +185,12 @@ function createAddress() {
       </v-col>
       <v-col class="col-button-link">
         <Button textContent="Save" classes="secondary" buttonType="submit" />
+        <Button
+          textContent="Cansel"
+          classes="secondary"
+          buttonType="button"
+          @click="emit('cancel')"
+        />
       </v-col>
     </v-col>
   </v-form>
@@ -155,6 +198,11 @@ function createAddress() {
 <style scoped lang="scss">
 @use '@/styles/constants.scss';
 @use '@/styles/mixins.scss';
+
+.title {
+  font-size: 1.5rem;
+  color: constants.$color-secondary;
+}
 
 .col-button-link {
   display: flex;
@@ -183,6 +231,10 @@ function createAddress() {
 
 .registration-inner-container {
   padding: 0;
+}
+
+.address-form {
+  border: 1px solid constants.$color-primary;
 }
 
 .address-container {

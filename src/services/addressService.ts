@@ -21,39 +21,8 @@ export class AddressService {
         },
       })
       .execute()
-    // .then((response) => {
-    //   const addressResult = response.body
-    //     ? response?.body?.addresses?.find(
-    //         (item) =>
-    //           item.streetName === address.streetName &&
-    //           item.postalCode === address.postalCode &&
-    //           item.streetNumber === address.streetNumber,
-    //       )
-    //     : ''
-    //   const setTypeAction = type === 'billing' ? 'addBillingAddressId' : 'addShippingAddressId'
-
-    //   if (addressResult)
-    //     return this.clientService
-    //       .getApiRoot()
-    //       .me()
-    //       .post({
-    //         body: {
-    //           version: response.body.version,
-    //           actions: [
-    //             {
-    //               action: setTypeAction,
-    //               addressId: addressResult?.id,
-    //             },
-    //             {
-    //               action: 'setDefaultBillingAddress',
-    //               addressId: addressResult?.id,
-    //             },
-    //           ],
-    //         },
-    //       })
-    //       .execute()
-    // })
   }
+
   async setTypeAddress(actions: MyCustomerUpdateAction[], version: number) {
     return this.clientService
       .getApiRoot()
@@ -62,6 +31,43 @@ export class AddressService {
         body: {
           version,
           actions,
+        },
+      })
+      .execute()
+  }
+
+  async update(address: Address) {
+    return this.clientService
+      .getApiRoot()
+      .me()
+      .post({
+        body: {
+          version: userAuth().customerVersion,
+          actions: [
+            {
+              action: 'changeAddress',
+              addressId: address.id,
+              address: address,
+            },
+          ],
+        },
+      })
+      .execute()
+  }
+
+  async remove(address: Address) {
+    return this.clientService
+      .getApiRoot()
+      .me()
+      .post({
+        body: {
+          version: userAuth().customerVersion,
+          actions: [
+            {
+              action: 'removeAddress',
+              addressId: address.id,
+            },
+          ],
         },
       })
       .execute()

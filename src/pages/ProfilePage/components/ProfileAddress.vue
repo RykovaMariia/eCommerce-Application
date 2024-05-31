@@ -4,13 +4,16 @@ import Tab from '@components/tab/Tab.vue'
 import AddressList from '@/pages/ProfilePage/components/AddressList.vue'
 import type { Customer } from '@commercetools/platform-sdk'
 import { computed } from 'vue'
-import AddAddressForm from './AddAddressForm.vue'
+import AddAddressForm from './AddressForm.vue'
 import type { Address } from '@commercetools/platform-sdk'
 import { COUNTRY } from '@/constants/constants'
+import { TypeAction } from '@/enums/typeAction'
 
 const typeAddress = ref('billing')
 
 let isOpenForm = ref(false)
+
+let typeAction = ref(TypeAction.Add)
 
 let address: Ref<Address> = ref({
   country: COUNTRY,
@@ -45,14 +48,27 @@ const addressBillingDefault = computed(() => {
   return currentUser.value ? currentUser.value?.defaultBillingAddressId || '' : ''
 })
 
-function openForm(item?: Address) {
-  isOpenForm.value = !isOpenForm.value
-  if (item) address.value = item
+function openFormForAddress(item?: Address) {
+  isOpenForm.value = true
+  if (item) {
+    address.value = item
+    typeAction.value = TypeAction.Edit
+  }
 }
 
 function updateUserInfo(user: Customer) {
   currentUser.value = user
-  isOpenForm.value = !isOpenForm.value
+  isOpenForm.value = false
+}
+
+function cancel() {
+  isOpenForm.value = false
+  address.value = {
+    country: COUNTRY,
+    city: '',
+    streetName: '',
+    postalCode: '',
+  }
 }
 </script>
 <template>
@@ -68,7 +84,8 @@ function updateUserInfo(user: Customer) {
           <AddressList
             :items="addressBillingItems"
             :defaultAddress="addressBillingDefault"
-            @editAddress="openForm($event)"
+            @editAddress="openFormForAddress($event)"
+            @updateUserInfo="updateUserInfo($event)"
           />
         </v-col>
       </v-tabs-window-item>
@@ -78,22 +95,25 @@ function updateUserInfo(user: Customer) {
           <AddressList
             :items="addressShippingItems"
             :defaultAddress="addressShippingDefault"
-            @editAddress="openForm($event)"
+            @editAddress="openFormForAddress($event)"
+            @updateUserInfo="updateUserInfo($event)"
           />
         </v-col>
       </v-tabs-window-item>
     </v-tabs-window>
   </v-col>
 
-  <v-col>
-    <a @click.prevent="openForm()">Add new</a>
+  <v-col v-if="!isOpenForm">
+    <a @click.prevent="openFormForAddress()">Add new</a>
   </v-col>
 
   <AddAddressForm
     v-if="isOpenForm"
     :typeAddress="typeAddress"
+    :typeAction="typeAction"
     v-model:address="address"
     @updateUserInfo="updateUserInfo($event)"
+    @cancel="cancel()"
   />
 </template>
 
