@@ -17,5 +17,6 @@ const rules = computed(() => chooseRules(props.type, props.label))
     :items="props.items"
     :rules="rules"
     variant="outlined"
+    density="comfortable"
   ></v-autocomplete>
 </template>

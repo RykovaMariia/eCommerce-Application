@@ -1,14 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import Tab from '@components/tab/Tab.vue'
 import AddressList from '@/pages/ProfilePage/components/AddressList.vue'
 import type { Customer } from '@commercetools/platform-sdk'
 import { computed } from 'vue'
 import AddAddressForm from './AddAddressForm.vue'
+import type { Address } from '@commercetools/platform-sdk'
+import { COUNTRY } from '@/constants/constants'
 
-const tab = ref('billing')
+const typeAddress = ref('billing')
 
-const currentUser = defineModel<Customer>('currentUser')
+let isOpenForm = ref(false)
+
+let address: Ref<Address> = ref({
+  country: COUNTRY,
+  city: '',
+  streetName: '',
+  postalCode: '',
+})
+
+let currentUser = defineModel<Customer>('currentUser')
 
 const addressBillingItems = computed(() => {
   return currentUser.value
@@ -34,35 +45,56 @@ const addressBillingDefault = computed(() => {
   return currentUser.value ? currentUser.value?.defaultBillingAddressId || '' : ''
 })
 
-function addAddress() {}
+function openForm(item?: Address) {
+  isOpenForm.value = !isOpenForm.value
+  if (item) address.value = item
+}
+
+function updateUserInfo(user: Customer) {
+  currentUser.value = user
+  isOpenForm.value = !isOpenForm.value
+}
 </script>
 <template>
   <v-col>
-    <v-tabs v-model="tab" grow>
+    <v-tabs v-model="typeAddress" grow>
       <Tab text="Billing" value="billing" />
       <Tab text="Shipping" value="shipping" />
     </v-tabs>
 
-    <v-tabs-window v-model="tab">
+    <v-tabs-window v-model="typeAddress">
       <v-tabs-window-item value="billing">
         <v-col>
-          <AddressList :items="addressBillingItems" :defaultAddress="addressBillingDefault" />
+          <AddressList
+            :items="addressBillingItems"
+            :defaultAddress="addressBillingDefault"
+            @editAddress="openForm($event)"
+          />
         </v-col>
       </v-tabs-window-item>
 
       <v-tabs-window-item value="shipping">
         <v-col>
-          <AddressList :items="addressShippingItems" :defaultAddress="addressShippingDefault" />
+          <AddressList
+            :items="addressShippingItems"
+            :defaultAddress="addressShippingDefault"
+            @editAddress="openForm($event)"
+          />
         </v-col>
       </v-tabs-window-item>
     </v-tabs-window>
   </v-col>
 
   <v-col>
-    <a @click.prevent="addAddress()">Add new</a>
+    <a @click.prevent="openForm()">Add new</a>
   </v-col>
 
-  <AddAddressForm />
+  <AddAddressForm
+    v-if="isOpenForm"
+    :typeAddress="typeAddress"
+    v-model:address="address"
+    @updateUserInfo="updateUserInfo($event)"
+  />
 </template>
 
 <style scoped lang="scss">
@@ -74,6 +106,9 @@ function addAddress() {}
 }
 
 a {
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: constants.$color-secondary;
   text-decoration: underline;
 }
 </style>

@@ -5,6 +5,12 @@ defineProps<{
   items: Address[]
   defaultAddress: string
 }>()
+
+const emit = defineEmits({
+  editAddress(item: Address) {
+    return item
+  },
+})
 </script>
 
 <template>
@@ -17,7 +23,11 @@ defineProps<{
       <template v-slot:append>
         <div class="icons" color="primary">
           <v-chip v-if="item.id === defaultAddress" color="primary"> Default </v-chip>
-          <v-icon icon="mdi-grease-pencil" size="small"></v-icon>
+          <v-icon
+            icon="mdi-grease-pencil"
+            size="small"
+            @click.prevent="emit('editAddress', item)"
+          ></v-icon>
           <v-icon icon="mdi-delete" size="small"></v-icon>
         </div>
       </template>
@@ -28,6 +38,10 @@ defineProps<{
 <style scoped lang="scss">
 @use '@/styles/constants.scss';
 @use '@/styles/mixins.scss';
+
+.item {
+  border-bottom: 1px solid constants.$color-border-opacity;
+}
 
 .icons {
   display: flex;
