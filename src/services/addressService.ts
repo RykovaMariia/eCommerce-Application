@@ -72,6 +72,19 @@ export class AddressService {
       })
       .execute()
   }
+
+  async setDefault(actions: MyCustomerUpdateAction[]) {
+    return this.clientService
+      .getApiRoot()
+      .me()
+      .post({
+        body: {
+          version: userAuth().customerVersion,
+          actions,
+        },
+      })
+      .execute()
+  }
 }
 
 export const addressService = new AddressService(new ClientService())

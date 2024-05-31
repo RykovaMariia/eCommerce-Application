@@ -53,7 +53,7 @@ function openFormForAddress(item?: Address) {
   if (item) {
     address.value = item
     typeAction.value = TypeAction.Edit
-  }
+  } else typeAction.value = TypeAction.Add
 }
 
 function updateUserInfo(user: Customer) {
@@ -83,6 +83,7 @@ function cancel() {
         <v-col>
           <AddressList
             :items="addressBillingItems"
+            v-model:typeAddress="typeAddress"
             :defaultAddress="addressBillingDefault"
             @editAddress="openFormForAddress($event)"
             @updateUserInfo="updateUserInfo($event)"
@@ -94,6 +95,7 @@ function cancel() {
         <v-col>
           <AddressList
             :items="addressShippingItems"
+            v-model:typeAddress="typeAddress"
             :defaultAddress="addressShippingDefault"
             @editAddress="openFormForAddress($event)"
             @updateUserInfo="updateUserInfo($event)"
@@ -112,6 +114,8 @@ function cancel() {
     :typeAddress="typeAddress"
     :typeAction="typeAction"
     v-model:address="address"
+    :addressBillingDefault="addressBillingDefault"
+    :addressShippingDefault="addressBillingDefault"
     @updateUserInfo="updateUserInfo($event)"
     @cancel="cancel()"
   />

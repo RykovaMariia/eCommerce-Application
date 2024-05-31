@@ -18,6 +18,8 @@ import { TypeAction } from '@/enums/typeAction'
 const props = defineProps<{
   typeAddress: string
   typeAction: string
+  addressBillingDefault: string
+  addressShippingDefault: string
 }>()
 
 const form = ref()
@@ -59,8 +61,20 @@ const emit = defineEmits({
   },
 })
 
-const defaultShipping = ref(false)
 const defaultBilling = ref(false)
+const defaultShipping = ref(false)
+
+// const defaultBilling = ref(
+//   (props.addressBillingDefault === address.value?.id)?  true : false
+// )
+
+// console.warn(defaultBilling.value)
+
+// const defaultShipping = ref(
+//   (props.addressShippingDefault === address.value?.id)?  true : false
+// )
+
+// console.warn(defaultShipping.value)
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
@@ -120,17 +134,42 @@ function createAddress() {
 }
 
 function updateAddress(address: Address) {
-  console.warn(address)
   if (address) {
     addressService
       .update(address)
       .then((result) => {
-        alert.show('Address updated', 'success')
-        if (result?.body) {
-          userAuth().customerVersion = result?.body.version
-          emit('updateUserInfo', result?.body)
-          resetForm()
+        const addressId = address.id
+        if (isTheSame.value) {
+          actions.push({ action: 'addBillingAddressId', addressId })
+          actions.push({ action: 'addShippingAddressId', addressId })
+        } else {
+          const setTypeAction =
+            props.typeAddress === 'billing' ? 'addBillingAddressId' : 'addShippingAddressId'
+          const setTypeActionForRemove =
+            props.typeAddress === 'billing' ? 'removeShippingAddressId' : 'removeBillingAddressId'
+          actions.push({ action: setTypeAction, addressId })
+          actions.push({ action: setTypeActionForRemove, addressId })
         }
+        if (defaultBilling.value) {
+          actions.push({ action: 'setDefaultBillingAddress', addressId })
+        } else {
+          actions.push({ action: 'setDefaultBillingAddress', addressId: undefined })
+        }
+
+        if (defaultShipping.value) {
+          actions.push({ action: 'setDefaultShippingAddress', addressId })
+        } else {
+          actions.push({ action: 'setDefaultShippingAddress', addressId: undefined })
+        }
+
+        addressService.setTypeAddress(actions, result.body.version).then((result) => {
+          alert.show('Address updated', 'success')
+          if (result?.body) {
+            userAuth().customerVersion = result?.body.version
+            emit('updateUserInfo', result?.body)
+            resetForm()
+          }
+        })
       })
       .catch((error: Error) => {
         alert.show(`Error: ${error.message}`, 'warning')
@@ -186,7 +225,7 @@ function updateAddress(address: Address) {
       <v-col class="col-button-link">
         <Button textContent="Save" classes="secondary" buttonType="submit" />
         <Button
-          textContent="Cansel"
+          textContent="Cancel"
           classes="secondary"
           buttonType="button"
           @click="emit('cancel')"

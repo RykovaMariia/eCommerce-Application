@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { addressService } from '@/services/addressService'
-import type { Address, Customer } from '@commercetools/platform-sdk'
+import type { Address, Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
 import { alertStore } from '@/stores/alertStore'
 import { userAuth } from '@/stores/userAuth'
+import { reactive } from 'vue'
 
 const alert = alertStore()
 
@@ -10,6 +11,9 @@ defineProps<{
   items: Address[]
   defaultAddress: string
 }>()
+
+let typeAddress = defineModel<string>('typeAddress')
+const actions: MyCustomerUpdateAction[] = reactive([])
 
 const emit = defineEmits({
   editAddress(item: Address) {
@@ -21,7 +25,6 @@ const emit = defineEmits({
 })
 
 function removeAddress(address: Address) {
-  console.warn(address)
   if (address) {
     addressService
       .remove(address)
@@ -37,12 +40,33 @@ function removeAddress(address: Address) {
       })
   }
 }
+
+function setAsDefault(address: Address) {
+  if (address) {
+    const setTypeAction =
+      typeAddress?.value === 'billing' ? 'setDefaultBillingAddress' : 'setDefaultShippingAddress'
+    actions.push({ action: setTypeAction, addressId: address.id })
+
+    addressService
+      .setDefault(actions)
+      .then((result) => {
+        alert.show('Address set as Default', 'success')
+        if (result?.body) {
+          userAuth().customerVersion = result?.body.version
+          emit('updateUserInfo', result?.body)
+        }
+      })
+      .catch((error: Error) => {
+        alert.show(`Error: ${error.message}`, 'warning')
+      })
+  }
+}
 </script>
 
 <template>
   <v-list bg-color="transparent" color="primary">
     <v-list-item class="item" v-for="(item, i) in items" :key="i" :value="item" color="primary">
-      <v-list-item-title>
+      <v-list-item-title @click="setAsDefault(item)">
         <div>{{ item.city }}, {{ item.streetName }} {{ item.postalCode }}</div>
       </v-list-item-title>
 
@@ -52,9 +76,15 @@ function removeAddress(address: Address) {
           <v-icon
             icon="mdi-grease-pencil"
             size="small"
+            class="icon"
             @click.prevent="emit('editAddress', item)"
           ></v-icon>
-          <v-icon icon="mdi-delete" size="small" @click.prevent="removeAddress(item)"></v-icon>
+          <v-icon
+            icon="mdi-delete"
+            size="small"
+            class="icon"
+            @click.prevent="removeAddress(item)"
+          ></v-icon>
         </div>
       </template>
     </v-list-item>
@@ -74,5 +104,12 @@ function removeAddress(address: Address) {
   gap: 0.5rem;
   align-items: center;
   color: constants.$color-text-dark;
+
+  .icon {
+    &:hover {
+      scale: 1.2;
+      color: constants.$color-secondary;
+    }
+  }
 }
 </style>
