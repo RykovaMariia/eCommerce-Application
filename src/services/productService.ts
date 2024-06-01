@@ -9,12 +9,11 @@ export class ProductService {
       .products()
       .get({
         queryArgs: {
-          where: `key=122`,
+          where: `key=140`,
         },
       })
       .execute()
     return product.then((value) => {
-      console.warn(value.body.results[0].masterData)
       return value.body.results[0].masterData
     })
   }

@@ -1,21 +1,21 @@
 export interface ProductData {
-  description: string;
-  name: string;
-  images: string[] | string;
-  variants: ProductItem[];
+  description: string
+  name: string
+  images: string[] | string
+  variants: ProductItem[]
 }
 
 export interface Attribute {
-  name: string;
-  value: {key: string; label: string}[];
+  name: string
+  value: AttributeValue[]
 }
 
-// interface AttributeValue {
-
-// }
+interface AttributeValue {
+  key: string; label: string
+}
 
 export interface ProductItem {
-  attribute?: Attribute[] | [];
-  price: number;
-  discountPrice: number;
+  attributes: string[] | []
+  price: number
+  discountPrice: number
 }
