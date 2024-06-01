@@ -82,7 +82,7 @@ function updateUserInfo(user: UserData) {
   <v-container class="container">
     <Breadcrumb :items="items" />
     <v-col class="page-card profile-card">
-      <div class="d-flex flex-row main-content">
+      <div class="d-flex main-content">
         <div class="d-flex flex-column aside-left">
           <UserInfo v-model:user-info="userInfo" />
           <v-tabs v-model="tab" color="primary" direction="vertical">
@@ -125,6 +125,10 @@ function updateUserInfo(user: UserData) {
 @use '@/styles/mixins.scss';
 
 .main-content {
+  @include mixins.media-mobile {
+    flex-direction: column;
+  }
+  flex-direction: row;
   min-height: 35rem;
 }
 
@@ -135,12 +139,23 @@ function updateUserInfo(user: UserData) {
 }
 
 .aside-left {
+  @include mixins.media-middle {
+    width: 40%;
+  }
+
+  @include mixins.media-mobile {
+    width: 100%;
+  }
   gap: 1rem;
   align-self: flex-start;
-  width: 20%;
+  width: 23%;
 }
 
 .tab-content {
+  @include mixins.media-mobile {
+    border-top: 1px solid constants.$color-border-opacity;
+    border-left: none;
+  }
   border-left: 1px solid constants.$color-border-opacity;
 }
 

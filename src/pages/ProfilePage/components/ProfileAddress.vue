@@ -2,6 +2,7 @@
 import { ref, type Ref } from 'vue'
 import Tab from '@components/tab/Tab.vue'
 import AddressList from '@/pages/ProfilePage/components/AddressList.vue'
+import Button from '@components/buttons/Button.vue'
 import type { Customer } from '@commercetools/platform-sdk'
 import { computed } from 'vue'
 import AddAddressForm from './AddressForm.vue'
@@ -73,7 +74,7 @@ function cancel() {
 </script>
 <template>
   <v-col>
-    <v-tabs v-model="typeAddress" grow>
+    <v-tabs v-model="typeAddress" grow color="primary">
       <Tab text="Billing" value="billing" />
       <Tab text="Shipping" value="shipping" />
     </v-tabs>
@@ -106,16 +107,23 @@ function cancel() {
   </v-col>
 
   <v-col v-if="!isOpenForm">
-    <a @click.prevent="openFormForAddress()">Add new</a>
+    <Button
+      textContent="Add new"
+      classes="secondary"
+      buttonType="button"
+      @click.prevent="openFormForAddress()"
+    />
   </v-col>
 
   <AddAddressForm
     v-if="isOpenForm"
-    :typeAddress="typeAddress"
-    :typeAction="typeAction"
     v-model:address="address"
-    :addressBillingDefault="addressBillingDefault"
-    :addressShippingDefault="addressBillingDefault"
+    :typeAddress
+    :typeAction
+    :addressBillingDefault
+    :addressShippingDefault
+    :addressesBilling="addressBillingItems"
+    :addressesShipping="addressShippingItems"
     @updateUserInfo="updateUserInfo($event)"
     @cancel="cancel()"
   />

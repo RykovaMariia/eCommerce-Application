@@ -6,7 +6,7 @@ import { COUNTRY } from '@/constants/constants'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import AutocompleteInput from '@/components/inputs/AutocompleteInput.vue'
-import { computed, ref } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import type { Address, Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
 import type { SubmitEventPromise } from 'vuetify'
 import { addressService } from '@/services/addressService'
@@ -20,6 +20,8 @@ const props = defineProps<{
   typeAction: string
   addressBillingDefault: string
   addressShippingDefault: string
+  addressesBilling: Address[]
+  addressesShipping: Address[]
 }>()
 
 const form = ref()
@@ -64,17 +66,18 @@ const emit = defineEmits({
 const defaultBilling = ref(false)
 const defaultShipping = ref(false)
 
-// const defaultBilling = ref(
-//   (props.addressBillingDefault === address.value?.id)?  true : false
-// )
+watchEffect(() => {
+  defaultBilling.value = props.addressBillingDefault === address.value?.id ? true : false
 
-// console.warn(defaultBilling.value)
+  defaultShipping.value = props.addressShippingDefault === address.value?.id ? true : false
 
-// const defaultShipping = ref(
-//   (props.addressShippingDefault === address.value?.id)?  true : false
-// )
-
-// console.warn(defaultShipping.value)
+  if (address.value)
+    isTheSame.value =
+      props.addressesShipping.includes(address.value) &&
+      props.addressesBilling.includes(address.value)
+        ? true
+        : false
+})
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
@@ -139,27 +142,48 @@ function updateAddress(address: Address) {
       .update(address)
       .then((result) => {
         const addressId = address.id
+
         if (isTheSame.value) {
           actions.push({ action: 'addBillingAddressId', addressId })
           actions.push({ action: 'addShippingAddressId', addressId })
         } else {
-          const setTypeAction =
-            props.typeAddress === 'billing' ? 'addBillingAddressId' : 'addShippingAddressId'
-          const setTypeActionForRemove =
-            props.typeAddress === 'billing' ? 'removeShippingAddressId' : 'removeBillingAddressId'
-          actions.push({ action: setTypeAction, addressId })
-          actions.push({ action: setTypeActionForRemove, addressId })
-        }
-        if (defaultBilling.value) {
-          actions.push({ action: 'setDefaultBillingAddress', addressId })
-        } else {
-          actions.push({ action: 'setDefaultBillingAddress', addressId: undefined })
+          if (props.typeAddress === 'billing') {
+            actions.push({ action: 'addBillingAddressId', addressId })
+
+            if (
+              result.body.shippingAddressIds &&
+              addressId &&
+              result.body.shippingAddressIds?.indexOf(addressId) > -1
+            ) {
+              actions.push({ action: 'removeShippingAddressId', addressId })
+            }
+          }
+          if (props.typeAddress === 'shipping') {
+            actions.push({ action: 'addShippingAddressId', addressId })
+
+            if (
+              result.body.billingAddressIds &&
+              addressId &&
+              result.body.billingAddressIds?.indexOf(addressId) > -1
+            ) {
+              actions.push({ action: 'removeBillingAddressId', addressId })
+            }
+          }
         }
 
-        if (defaultShipping.value) {
-          actions.push({ action: 'setDefaultShippingAddress', addressId })
-        } else {
-          actions.push({ action: 'setDefaultShippingAddress', addressId: undefined })
+        if (props.typeAddress === 'billing') {
+          if (defaultBilling.value) {
+            actions.push({ action: 'setDefaultBillingAddress', addressId })
+          } else if (result.body.defaultBillingAddressId === addressId) {
+            actions.push({ action: 'setDefaultBillingAddress', addressId: undefined })
+          }
+        }
+        if (props.typeAddress === 'shipping') {
+          if (defaultShipping.value) {
+            actions.push({ action: 'setDefaultShippingAddress', addressId })
+          } else if (result.body.defaultShippingAddressId === addressId) {
+            actions.push({ action: 'setDefaultShippingAddress', addressId: undefined })
+          }
         }
 
         addressService.setTypeAddress(actions, result.body.version).then((result) => {
@@ -179,60 +203,64 @@ function updateAddress(address: Address) {
 </script>
 
 <template>
-  <v-form v-if="address" class="address-form" @submit.prevent="submit" ref="form">
-    <v-col class="title">{{ titleForm }}</v-col>
-    <v-col class="registration-inner-container">
-      <v-col>
-        <Checkbox
-          :label="titleCheckbox"
-          v-model="isTheSame"
-          @click="toggleState()"
-          density="compact"
-        />
-      </v-col>
-      <v-col>
-        <AutocompleteInput
-          :label="InputLabel.Country"
-          :items="[COUNTRY]"
-          type="text"
-          v-model="address.country"
-          class="registration-input"
-        />
-      </v-col>
-      <v-col class="address-container">
-        <v-col class="address-wrapper">
+  <div class="form-wrapper">
+    <v-form v-if="address" class="address-form" @submit.prevent="submit" ref="form">
+      <v-col class="title">{{ titleForm }}</v-col>
+      <v-col class="registration-inner-container">
+        <v-col>
           <Checkbox
-            v-if="props.typeAddress === 'billing'"
-            label="Use as default billing address"
-            v-model="defaultBilling"
-            @click="!defaultBilling"
+            :label="titleCheckbox"
+            v-model="isTheSame"
+            @click="toggleState()"
+            density="compact"
           />
-          <Checkbox
-            v-if="props.typeAddress === 'shipping'"
-            label="Use as default shipping address"
-            v-model="defaultShipping"
-            @click="!defaultShipping"
+        </v-col>
+        <v-col>
+          <AutocompleteInput
+            :label="InputLabel.Country"
+            :items="[COUNTRY]"
+            type="text"
+            v-model="address.country"
+            class="registration-input"
           />
-          <Input :label="InputLabel.City" :type="InputType.Text" v-model="address.city" />
-          <Input :label="InputLabel.Street" :type="InputType.Text" v-model="address.streetName" />
-          <Input
-            :label="InputLabel.PostalCode"
-            :type="InputType.Text"
-            v-model="address.postalCode"
+        </v-col>
+        <v-col class="address-container">
+          <v-col class="address-wrapper">
+            <v-col>
+              <Checkbox
+                v-if="props.typeAddress === 'billing'"
+                label="Use as default billing address"
+                v-model="defaultBilling"
+                @click="!defaultBilling"
+              />
+            </v-col>
+            <Checkbox
+              v-if="props.typeAddress === 'shipping'"
+              label="Use as default shipping address"
+              v-model="defaultShipping"
+              @click="!defaultShipping"
+            />
+            <Input :label="InputLabel.City" :type="InputType.Text" v-model="address.city" />
+            <Input :label="InputLabel.Street" :type="InputType.Text" v-model="address.streetName" />
+            <Input
+              :label="InputLabel.PostalCode"
+              :type="InputType.Text"
+              v-model="address.postalCode"
+            />
+          </v-col>
+        </v-col>
+        <v-col class="col-button-link">
+          <Button textContent="Save" classes="secondary" buttonType="submit" />
+          <Button
+            textContent="Cancel"
+            classes="secondary"
+            buttonType="button"
+            @click="emit('cancel')"
           />
         </v-col>
       </v-col>
-      <v-col class="col-button-link">
-        <Button textContent="Save" classes="secondary" buttonType="submit" />
-        <Button
-          textContent="Cancel"
-          classes="secondary"
-          buttonType="button"
-          @click="emit('cancel')"
-        />
-      </v-col>
-    </v-col>
-  </v-form>
+    </v-form>
+  </div>
 </template>
 <style scoped lang="scss">
 @use '@/styles/constants.scss';
@@ -272,8 +300,34 @@ function updateAddress(address: Address) {
   padding: 0;
 }
 
+.form-wrapper {
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: constants.$color-border-opacity;
+}
+
 .address-form {
+  @include mixins.media-mobile {
+    max-width: 380px;
+  }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+
+  background-color: constants.$color-background-light;
   border: 1px solid constants.$color-primary;
+  border-radius: 6px;
 }
 
 .address-container {

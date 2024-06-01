@@ -67,7 +67,10 @@ function setAsDefault(address: Address) {
   <v-list bg-color="transparent" color="primary">
     <v-list-item class="item" v-for="(item, i) in items" :key="i" :value="item" color="primary">
       <v-list-item-title @click="setAsDefault(item)">
-        <div>{{ item.city }}, {{ item.streetName }} {{ item.postalCode }}</div>
+        <div class="text">
+          <v-icon color="primary" icon="mdi-home-map-marker" size="small" class="icon"></v-icon>
+          {{ item.city }}, {{ item.streetName }}, {{ item.postalCode }}
+        </div>
       </v-list-item-title>
 
       <template v-slot:append>
@@ -95,13 +98,37 @@ function setAsDefault(address: Address) {
 @use '@/styles/constants.scss';
 @use '@/styles/mixins.scss';
 
+@include mixins.media-middle {
+  .v-list-item--density-default:not(.v-list-item--nav).v-list-item--one-line {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1px;
+  }
+
+  ::v-deep(.v-list-item__content) {
+    align-self: flex-start;
+    width: 100%;
+  }
+
+  ::v-deep(.v-list-item__append) {
+    align-self: flex-end;
+  }
+
+  .text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 .item {
   border-bottom: 1px solid constants.$color-border-opacity;
 }
 
 .icons {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.7rem;
   align-items: center;
   color: constants.$color-text-dark;
 
