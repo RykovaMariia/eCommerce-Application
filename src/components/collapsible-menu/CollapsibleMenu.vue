@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import type { Link } from '@/interfaces/link'
+import type { CategoryLink, Link } from '@/interfaces/link'
 import { ref } from 'vue'
 
 const isOpenMenu = ref([])
 
 const { menuTriggerText, items } = defineProps<{
   menuTriggerText: string
-  items: Link[]
+  items: Link[] | CategoryLink[]
 }>()
 </script>
 
@@ -39,5 +39,9 @@ const { menuTriggerText, items } = defineProps<{
   .mdi-chevron-up {
     color: constants.$color-primary;
   }
+}
+
+::v-deep(.v-list-item-title) {
+  text-transform: capitalize;
 }
 </style>

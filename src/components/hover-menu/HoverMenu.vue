@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { Link } from '@/interfaces/link'
+import type { CategoryLink, Link } from '@/interfaces/link'
 
 defineProps<{
-  menuItems: Link[]
+  menuItems: Link[] | CategoryLink[]
   menuTriggerText?: string
   menuTriggerIcon?: string
 }>()
@@ -27,7 +27,7 @@ defineProps<{
       <RouterLink
         class="dropdown-item"
         v-for="item of menuItems"
-        :key="item.href"
+        :key="item.name"
         :to="item.href"
         >{{ item.name }}</RouterLink
       >
@@ -65,6 +65,8 @@ defineProps<{
 
   width: max-content;
   padding: 20px;
+
+  text-transform: capitalize;
 
   background-color: constants.$color-text-light;
   border: 1px solid constants.$color-primary;

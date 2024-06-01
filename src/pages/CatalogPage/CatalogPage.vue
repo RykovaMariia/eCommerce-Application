@@ -5,33 +5,39 @@ import type {
   ProductProjectionPagedSearchResponse,
 } from '@commercetools/platform-sdk'
 import { productsService } from '@/services/productsService'
-import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 import ProductCard from '@components/product-card/ProductCard.vue'
-import { computed, ref, type Ref } from 'vue'
+import { computed, ref, watchEffect, type Ref } from 'vue'
+import SelectInput from '@components/inputs/SelectInput.vue'
+import { SORTING_ITEMS } from '@/constants/constants'
+import { SortingCommand, type SortBy } from '@/enums/sortingCommand'
+import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { categoriesStore } from '@/stores/categoriesStore'
 
-const items = [
-  {
-    title: 'Main',
-    disabled: false,
-    href: '/',
-  },
-  {
-    title: 'Catalog',
-    disabled: true,
-    href: '/catalog',
-  },
-]
+const route = useRoute()
+const category = ref(route.params.categoryId)
+const { categories } = storeToRefs(categoriesStore())
 
+const categoryId = ref('')
+
+watchEffect(() => {
+  if (categories.value.length) {
+    categoryId.value = categories.value.find((el) => el.key === category.value)?.id ?? ''
+  }
+})
 const limit = 20
 const currentPage = ref(1)
 const totalPages = computed(() => Math.ceil(productsCount.value / limit))
+
 let products: Ref<ProductProjection[]> = ref([])
 let productsCount = ref(0)
+
+const selectedSorting = ref(SortingCommand.default)
 
 const fetchProducts = () => {
   const offset = (currentPage.value - 1) * limit
   productsService
-    .products(limit, offset)
+    .getProducts(limit, offset, selectedSorting.value, categoryId.value)
     .then((response: ClientResponse<ProductProjectionPagedSearchResponse>) => {
       products.value = response.body.results
       productsCount.value = response.body.total || 0
@@ -40,12 +46,30 @@ const fetchProducts = () => {
       throw new Error(error.message)
     })
 }
-fetchProducts()
+
+watchEffect(() => {
+  if (categoryId.value) {
+    fetchProducts()
+  }
+  if (!category.value) {
+    fetchProducts()
+  }
+})
 </script>
 
 <template>
-  <Breadcrumb :items="items" />
-
+  <SelectInput
+    label="Sort by"
+    :items="SORTING_ITEMS"
+    variant="underlined"
+    width="8rem"
+    @update:modelValue="
+      (value: SortBy) => {
+        selectedSorting = SortingCommand[value]
+        fetchProducts()
+      }
+    "
+  />
   <div class="d-flex">
     <ProductCard
       v-for="product in products"

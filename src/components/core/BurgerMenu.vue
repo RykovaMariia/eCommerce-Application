@@ -2,14 +2,18 @@
 import type { Link } from '@/interfaces/link'
 import CollapsibleMenu from '@components/collapsible-menu/CollapsibleMenu.vue'
 import { openBurgerStore } from '@/stores/openBurgerStore'
+import { storeToRefs } from 'pinia'
+import { categoriesStore } from '@/stores/categoriesStore'
 
 const store = openBurgerStore()
 
-const { catalogMenu, infoLinks, accountMenu } = defineProps<{
+const { infoLinks, accountMenu } = defineProps<{
   catalogMenu: Link[]
   infoLinks: Link[]
   accountMenu: Link[]
 }>()
+
+const { categoriesLink } = storeToRefs(categoriesStore())
 </script>
 
 <template>
@@ -20,7 +24,7 @@ const { catalogMenu, infoLinks, accountMenu } = defineProps<{
       }}</v-list-item>
     </v-list>
 
-    <CollapsibleMenu menuTriggerText="Catalog" :items="catalogMenu" />
+    <CollapsibleMenu menuTriggerText="Catalog" :items="categoriesLink" />
 
     <v-list class="nav-list-login">
       <v-list-item v-for="item in accountMenu" :key="item.href" :to="item.href" variant="plain">{{

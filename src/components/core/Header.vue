@@ -7,6 +7,8 @@ import { userAuth } from '@/stores/userAuth'
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { CATALOG_MENU } from '@/constants/constants'
+import { getCategories } from '@/utils/getCategories'
+import { categoriesStore } from '@/stores/categoriesStore'
 
 const store = openBurgerStore()
 const { isLoggedIn } = storeToRefs(userAuth())
@@ -33,6 +35,12 @@ const infoLinks = [{ name: 'About us', href: '/about' }]
 function openBurger() {
   store.toggleOpenState()
 }
+
+getCategories()
+  .then((value) => categoriesStore().setCategories(value))
+  .then(() => categoriesStore().getCategoriesLink())
+
+const { categoriesLink } = storeToRefs(categoriesStore())
 </script>
 
 <template>
@@ -43,12 +51,13 @@ function openBurger() {
       variant="text"
       @click="openBurger"
     ></v-app-bar-nav-icon>
-    <HoverMenu
-      v-if="$vuetify.display.lgAndUp"
-      :menu-items="CATALOG_MENU"
-      menu-trigger-text="Catalog"
-    />
-
+    <template v-if="categoriesLink.length">
+      <HoverMenu
+        v-if="$vuetify.display.lgAndUp"
+        :menu-items="categoriesLink"
+        menu-trigger-text="Catalog"
+      />
+    </template>
     <v-list v-if="$vuetify.display.lgAndUp" class="nav-list">
       <v-list-item v-for="item in infoLinks" :key="item.href"
         ><RouterLink :to="item.href">{{ item.name }}</RouterLink></v-list-item

@@ -1,5 +1,5 @@
 import { userAuth } from '@/stores/userAuth'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteLocationNormalizedLoaded } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,36 +18,64 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('@pages/LoginPage/LoginPage.vue'),
+      meta: { breadcrumb: 'Login' },
     },
     {
       path: '/registration',
       name: 'registration',
       component: () => import('@pages/RegistrationPage/RegistrationPage.vue'),
+      meta: { breadcrumb: 'Registration' },
     },
     {
       path: '/catalog',
       name: 'catalog',
       component: () => import('@pages/CatalogPage/CatalogPage.vue'),
+      meta: { breadcrumb: 'Catalog' },
+      children: [
+        {
+          path: ':categoryId',
+          name: 'category',
+          component: () => import('@pages/CatalogPage/CatalogPage.vue'),
+          props: true,
+          meta: {
+            breadcrumb: (route: RouteLocationNormalizedLoaded) => route.params.categoryId,
+          },
+
+          children: [
+            {
+              path: ':subCategoryId',
+              name: 'SubCategory',
+              component: () => import('@pages/CatalogPage/CatalogPage.vue'),
+              props: true,
+              meta: { breadcrumb: (route: any) => route.params.subCategoryId },
+            },
+          ],
+        },
+      ],
     },
     {
       path: '/about',
       name: 'about',
       component: () => import('@pages/AboutPage.vue'),
+      meta: { breadcrumb: 'About us' },
     },
     {
       path: '/favorites',
       name: 'favorites',
       component: () => import('@pages/FavoritesPage.vue'),
+      meta: { breadcrumb: 'Favorites' },
     },
     {
       path: '/cart',
       name: 'cart',
       component: () => import('@pages/CartPage.vue'),
+      meta: { breadcrumb: 'Cart' },
     },
     {
       path: '/profile',
       name: 'profile',
       component: () => import('@pages/ProfilePage/ProfilePage.vue'),
+      meta: { breadcrumb: 'Profile' },
     },
     {
       path: '/logout',
