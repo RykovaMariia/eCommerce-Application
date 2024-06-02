@@ -11,7 +11,8 @@ export interface Attribute {
 }
 
 interface AttributeValue {
-  key: string; label: string
+  key: string
+  label: string
 }
 
 export interface ProductItem {

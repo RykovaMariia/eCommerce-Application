@@ -7,8 +7,9 @@ import { ref } from 'vue'
 import type { ProductCatalogData, ProductVariant } from '@commercetools/platform-sdk'
 import NumberInput from '@/components/inputs/NumberInput.vue'
 import { getUniqueValues } from '@/utils/getUniqueValues'
+import ModalWindow from './components/ModalWindow.vue'
 
-const source = ref(0)
+const imageIndex = ref(0)
 const multiplier = ref(1)
 const discountIsActive = ref(false)
 
@@ -50,12 +51,9 @@ productService
         .filter((value) => value)
       return getUniqueValues(keys)
     })
-
     const mainVariant: ProductItem = retrieveVariantsData(masterVariant)
-
     const allVariants = variants?.map(retrieveVariantsData)
     product.variants = [mainVariant, ...allVariants]
-
     isProductDataLoaded.value = true
   })
   .catch((error: Error) => {
@@ -63,24 +61,22 @@ productService
   })
 
 const selectedVariants: Ref<string[]> = ref([])
-
 const setVariant = (value: string, index: number) => {
   selectedVariants.value[index] = value
 }
-
-const formPrice = ({price, discountPrice}: ProductItem) => {
+const formPrice = ({ price, discountPrice }: ProductItem) => {
   const formattedPrice = ((price / 100) * multiplier.value).toFixed(2)
   const formattedDiscountPrice = ((discountPrice / 100) * multiplier.value).toFixed(2)
-  const resultFormattedPrice = discountPrice ? {formattedPrice, formattedDiscountPrice} : {formattedPrice}
-  discountPrice ? discountIsActive.value = true : discountIsActive.value = false
+  const resultFormattedPrice = discountPrice
+    ? { formattedPrice, formattedDiscountPrice }
+    : { formattedPrice }
+  discountPrice ? (discountIsActive.value = true) : (discountIsActive.value = false)
   return resultFormattedPrice
 }
-
 const price = computed(() => {
   const variant = product.variants.find(
-    ({attributes}) =>
-      attributes[0] === selectedVariants.value[0] &&
-      attributes[1] === selectedVariants.value[1],
+    ({ attributes }) =>
+      attributes[0] === selectedVariants.value[0] && attributes[1] === selectedVariants.value[1],
   )
   const resultPrice = variant ? formPrice(variant) : formPrice(product.variants[0])
   return resultPrice
@@ -90,34 +86,35 @@ const price = computed(() => {
 <template>
   <div class="product-container">
     <v-col>
-      <v-sheet max-width="28rem" class="slider-image">
+      <v-sheet max-width="28rem" class="mx-auto slider-image">
         <v-sheet rounded="6px" class="slider-image">
-          <div class="d-flex fill-height align-center justify-center slider-image">
-            <v-img
-              :width="280"
-              cover
-              :src="product.images[source] ?? product.images[source]"
-              rounded="lg"
-            ></v-img>
-          </div>
+            <div class="d-flex align-center justify-center slider-image" id="activator">
+              <v-img
+                cover
+                :src="product.images[imageIndex] ?? product.images[imageIndex]"
+                rounded="lg"
+              ></v-img>
+            </div>
         </v-sheet>
-        <v-slide-group v-model="source">
-          <v-slide-group-item
-            v-for="(n, index) in product.images"
-            :source="n"
-            :key="n"
-            v-slot="{ select }"
-          >
-            <v-card
-              :class="['ma-4']"
-              height="100"
-              width="100"
-              @click="select"
-              :image="product.images[index]"
+        <div v-if="product.images.length > 1">
+          <v-slide-group v-model="imageIndex" mobile-breakpoint="md">
+            <v-slide-group-item
+              v-for="(n, index) in product.images"
+              :source="n"
+              :key="n"
+              v-slot="{ select }"
             >
-            </v-card>
-          </v-slide-group-item>
-        </v-slide-group>
+              <v-card
+                :class="['ma-4']"
+                height="100"
+                width="100"
+                @click="select"
+                :image="product.images[index]"
+              >
+              </v-card>
+            </v-slide-group-item>
+          </v-slide-group>
+        </div>
       </v-sheet>
     </v-col>
     <v-col>
@@ -150,19 +147,26 @@ const price = computed(() => {
       <div class="price-wrapper">
         <NumberInput v-model="multiplier" />
         <div v-if="isProductDataLoaded" class="price-wrapper">
-          <div class="price_discount" v-if="price.formattedDiscountPrice">€ {{ price.formattedDiscountPrice }}</div>
-          <div class="price" :class="{'price_line-through': discountIsActive}">€ {{ price.formattedPrice }}</div>
+          <div class="price_discount" v-if="price.formattedDiscountPrice">
+            € {{ price.formattedDiscountPrice }}
+          </div>
+          <div class="price" :class="{ 'price_line-through': discountIsActive }">
+            € {{ price.formattedPrice }}
+          </div>
         </div>
       </div>
       <Button textContent="Add to cart" />
     </v-col>
+    <ModalWindow activator="#activator" :productImages="product.images"/>
   </div>
 </template>
 
 <style lang="scss" scoped>
 @use '@/styles/constants.scss';
+@use '@styles/mixins.scss';
 
 .slider-image {
+  max-width: 27rem;
   box-shadow: none;
 }
 
@@ -172,6 +176,17 @@ const price = computed(() => {
 
 .product-container {
   display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@include mixins.media-middle {
+  .product-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .attribute {
@@ -193,6 +208,7 @@ const price = computed(() => {
   display: flex;
   gap: 1rem;
   justify-content: space-between;
+  flex-wrap: wrap;
   padding: 1rem 0;
 }
 
