@@ -134,7 +134,7 @@ function setAsDefault(address: Address) {
 
   .icon {
     &:hover {
-      scale: 1.2;
+      transform: scale(1.2);
       color: constants.$color-secondary;
     }
   }
