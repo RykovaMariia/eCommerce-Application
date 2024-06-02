@@ -44,10 +44,12 @@ const router = createRouter({
           children: [
             {
               path: ':subCategoryId',
-              name: 'SubCategory',
+              name: 'subCategory',
               component: () => import('@pages/CatalogPage/CatalogPage.vue'),
               props: true,
-              meta: { breadcrumb: (route: any) => route.params.subCategoryId },
+              meta: {
+                breadcrumb: (route: RouteLocationNormalizedLoaded) => route.params.subCategoryId,
+              },
             },
           ],
         },

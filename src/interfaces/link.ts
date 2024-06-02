@@ -5,12 +5,18 @@ export interface Link {
 
 export interface LinkByName {
   name: string
+  href: string | HrefByName
+}
+
+export interface HrefByName {
+  name: string
   params?: {
     categoryId?: string
+    subCategoryId?: string
   }
 }
 
 export interface CategoryLink {
-  name: string | undefined
-  href: LinkByName
+  parent: Link | LinkByName
+  children?: Link[] | LinkByName[]
 }

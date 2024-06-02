@@ -6,7 +6,7 @@ import type {
 } from '@commercetools/platform-sdk'
 import { productsService } from '@/services/productsService'
 import ProductCard from '@components/product-card/ProductCard.vue'
-import { computed, ref, watchEffect, type Ref } from 'vue'
+import { computed, ref, watch, type Ref } from 'vue'
 import SelectInput from '@components/inputs/SelectInput.vue'
 import { SORTING_ITEMS } from '@/constants/constants'
 import { SortingCommand, type SortBy } from '@/enums/sortingCommand'
@@ -15,16 +15,24 @@ import { storeToRefs } from 'pinia'
 import { categoriesStore } from '@/stores/categoriesStore'
 
 const route = useRoute()
-const category = ref(route.params.categoryId)
 const { categories } = storeToRefs(categoriesStore())
-
 const categoryId = ref('')
 
-watchEffect(() => {
+const updateCategory = () => {
+  const category = route.params.categoryId
+  const subCategory = route.params.subCategoryId
+
   if (categories.value.length) {
-    categoryId.value = categories.value.find((el) => el.key === category.value)?.id ?? ''
+    categoryId.value = categories.value.find((el) => el.parent.key === category)?.parent.id ?? ''
+
+    if (subCategory) {
+      categoryId.value =
+        categories.value
+          .find((el) => el.parent.key === category)
+          ?.children.find((subEl) => subEl.key === subCategory)?.id ?? ''
+    }
   }
-})
+}
 const limit = 20
 const currentPage = ref(1)
 const totalPages = computed(() => Math.ceil(productsCount.value / limit))
@@ -37,7 +45,7 @@ const selectedSorting = ref(SortingCommand.default)
 const fetchProducts = () => {
   const offset = (currentPage.value - 1) * limit
   productsService
-    .getProducts(limit, offset, selectedSorting.value, categoryId.value)
+    .getProducts(limit, offset, selectedSorting.value, categoryId?.value)
     .then((response: ClientResponse<ProductProjectionPagedSearchResponse>) => {
       products.value = response.body.results
       productsCount.value = response.body.total || 0
@@ -47,14 +55,14 @@ const fetchProducts = () => {
     })
 }
 
-watchEffect(() => {
-  if (categoryId.value) {
+watch(
+  route,
+  () => {
+    updateCategory()
     fetchProducts()
-  }
-  if (!category.value) {
-    fetchProducts()
-  }
-})
+  },
+  { immediate: true },
+)
 </script>
 
 <template>

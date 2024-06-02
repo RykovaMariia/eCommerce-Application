@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import HoverMenu from '@components/hover-menu/HoverMenu.vue'
 import IconLogo from '@components/icons/IconLogo.vue'
-import BurgerMenu from './BurgerMenu.vue'
+import BurgerMenu from '@components/core/BurgerMenu.vue'
 import { openBurgerStore } from '@/stores/openBurgerStore'
 import { userAuth } from '@/stores/userAuth'
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { CATALOG_MENU } from '@/constants/constants'
+import { CATALOG_MENU, ALL_PRODUCTS } from '@/constants/constants'
 import { getCategories } from '@/utils/getCategories'
 import { categoriesStore } from '@/stores/categoriesStore'
 
@@ -54,7 +54,7 @@ const { categoriesLink } = storeToRefs(categoriesStore())
     <template v-if="categoriesLink.length">
       <HoverMenu
         v-if="$vuetify.display.lgAndUp"
-        :menu-items="categoriesLink"
+        :menuItemsWithSubItems="[ALL_PRODUCTS, ...categoriesLink]"
         menu-trigger-text="Catalog"
       />
     </template>

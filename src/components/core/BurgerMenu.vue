@@ -4,6 +4,7 @@ import CollapsibleMenu from '@components/collapsible-menu/CollapsibleMenu.vue'
 import { openBurgerStore } from '@/stores/openBurgerStore'
 import { storeToRefs } from 'pinia'
 import { categoriesStore } from '@/stores/categoriesStore'
+import { ALL_PRODUCTS } from '@/constants/constants'
 
 const store = openBurgerStore()
 
@@ -24,7 +25,10 @@ const { categoriesLink } = storeToRefs(categoriesStore())
       }}</v-list-item>
     </v-list>
 
-    <CollapsibleMenu menuTriggerText="Catalog" :items="categoriesLink" />
+    <CollapsibleMenu
+      menuTriggerText="Catalog"
+      :itemsWithSubItems="[ALL_PRODUCTS, ...categoriesLink]"
+    />
 
     <v-list class="nav-list-login">
       <v-list-item v-for="item in accountMenu" :key="item.href" :to="item.href" variant="plain">{{

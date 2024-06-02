@@ -4,7 +4,6 @@ import { ResizeObserverMock, getAppWrapper, vuetify } from '@/utils/testUtils'
 import { createPinia } from 'pinia'
 import router from '@/router'
 import { VAppBarNavIcon } from 'vuetify/components'
-import HoverMenu from '@/components/hover-menu/HoverMenu.vue'
 import Header from '@/components/core/Header.vue'
 
 describe('should render components within Header with a large screen width', () => {
