@@ -9,7 +9,6 @@ import { ALL_PRODUCTS } from '@/constants/constants'
 const store = openBurgerStore()
 
 const { infoLinks, accountMenu } = defineProps<{
-  catalogMenu: Link[]
   infoLinks: Link[]
   accountMenu: Link[]
 }>()

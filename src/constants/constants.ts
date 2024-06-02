@@ -2,11 +2,6 @@ import type { SortBy } from '@/enums/sortingCommand'
 
 export const COUNTRY = 'GB'
 
-export const CATALOG_MENU = [
-  { name: 'All', href: '/catalog' },
-  { name: 'Kitchen', href: 'catalog/kitchen' },
-  { name: 'Bath&body', href: 'catalog/bath-body' },
-]
 export const SORTING_ITEMS: SortBy[] = ['Price ascending', 'Price descending', 'Name A-Z']
 
 export const CATEGORY_ID = {

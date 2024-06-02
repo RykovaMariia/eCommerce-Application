@@ -6,7 +6,7 @@ import { openBurgerStore } from '@/stores/openBurgerStore'
 import { userAuth } from '@/stores/userAuth'
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { CATALOG_MENU, ALL_PRODUCTS } from '@/constants/constants'
+import { ALL_PRODUCTS } from '@/constants/constants'
 import { getCategories } from '@/utils/getCategories'
 import { categoriesStore } from '@/stores/categoriesStore'
 
@@ -89,7 +89,7 @@ const { categoriesLink } = storeToRefs(categoriesStore())
     </v-btn>
   </v-app-bar>
 
-  <BurgerMenu :account-menu="accountMenu" :catalog-menu="CATALOG_MENU" :info-links="infoLinks" />
+  <BurgerMenu :account-menu="accountMenu" :info-links="infoLinks" />
 </template>
 
 <style lang="scss" scoped>
