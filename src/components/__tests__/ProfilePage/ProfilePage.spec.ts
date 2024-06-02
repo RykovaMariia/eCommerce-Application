@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest'
+import { describe, it, expect, beforeAll, vitest } from 'vitest'
 import { mount } from '@vue/test-utils'
 import ProfileEditForm from '@/pages/ProfilePage/components/ProfileEditForm.vue'
 import ProfileAddress from '@/pages/ProfilePage/components/ProfileAddress.vue'
