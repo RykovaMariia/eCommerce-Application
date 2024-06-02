@@ -31,9 +31,6 @@ describe('should render components within Header with a large screen width', () 
           createPinia(),
           vuetify,
           router,
-          createPinia(),
-          vuetify,
-          router,
           createTestingPinia({
             initialState: {
               categories: [],
