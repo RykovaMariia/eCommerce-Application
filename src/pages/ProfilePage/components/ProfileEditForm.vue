@@ -48,7 +48,7 @@ function update() {
 </script>
 
 <template>
-  <v-form v-if="currentUser" class="login-form" ref="form" @submit.prevent="submit">
+  <v-form v-if="currentUser" class="form" ref="form" @submit.prevent="submit">
     <Input
       :label="InputLabel.Email"
       placeholder="user@example.com"

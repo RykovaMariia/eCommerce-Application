@@ -1,13 +1,29 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import Tab from '@components/tab/Tab.vue'
 import AddressList from '@/pages/ProfilePage/components/AddressList.vue'
+import Button from '@components/buttons/Button.vue'
 import type { Customer } from '@commercetools/platform-sdk'
 import { computed } from 'vue'
+import AddAddressForm from './AddressForm.vue'
+import type { Address } from '@commercetools/platform-sdk'
+import { COUNTRY } from '@/constants/constants'
+import { TypeAction } from '@/enums/typeAction'
 
-const tab = ref('billing')
+const typeAddress = ref('billing')
 
-const currentUser = defineModel<Customer>('currentUser')
+let isOpenForm = ref(false)
+
+let typeAction = ref(TypeAction.Add)
+
+let address: Ref<Address> = ref({
+  country: COUNTRY,
+  city: '',
+  streetName: '',
+  postalCode: '',
+})
+
+let currentUser = defineModel<Customer>('currentUser')
 
 const addressBillingItems = computed(() => {
   return currentUser.value
@@ -32,28 +48,85 @@ const addressShippingDefault = computed(() => {
 const addressBillingDefault = computed(() => {
   return currentUser.value ? currentUser.value?.defaultBillingAddressId || '' : ''
 })
+
+function openFormForAddress(item?: Address) {
+  isOpenForm.value = true
+  if (item) {
+    address.value = item
+    typeAction.value = TypeAction.Edit
+  } else typeAction.value = TypeAction.Add
+}
+
+function updateUserInfo(user: Customer) {
+  currentUser.value = user
+  isOpenForm.value = false
+}
+
+function cancel() {
+  isOpenForm.value = false
+  address.value = {
+    country: COUNTRY,
+    city: '',
+    streetName: '',
+    postalCode: '',
+  }
+}
 </script>
 <template>
   <v-col>
-    <v-tabs v-model="tab" grow>
+    <v-tabs v-model="typeAddress" grow color="primary">
       <Tab text="Billing" value="billing" />
       <Tab text="Shipping" value="shipping" />
     </v-tabs>
 
-    <v-tabs-window v-model="tab">
+    <v-tabs-window v-model="typeAddress">
       <v-tabs-window-item value="billing">
         <v-col>
-          <AddressList :items="addressBillingItems" :defaultAddress="addressBillingDefault" />
+          <AddressList
+            :items="addressBillingItems"
+            v-model:typeAddress="typeAddress"
+            :defaultAddress="addressBillingDefault"
+            @editAddress="openFormForAddress($event)"
+            @updateUserInfo="updateUserInfo($event)"
+          />
         </v-col>
       </v-tabs-window-item>
 
       <v-tabs-window-item value="shipping">
         <v-col>
-          <AddressList :items="addressShippingItems" :defaultAddress="addressShippingDefault" />
+          <AddressList
+            :items="addressShippingItems"
+            v-model:typeAddress="typeAddress"
+            :defaultAddress="addressShippingDefault"
+            @editAddress="openFormForAddress($event)"
+            @updateUserInfo="updateUserInfo($event)"
+          />
         </v-col>
       </v-tabs-window-item>
     </v-tabs-window>
   </v-col>
+
+  <v-col v-if="!isOpenForm">
+    <Button
+      textContent="Add new"
+      classes="secondary"
+      buttonType="button"
+      @click.prevent="openFormForAddress()"
+    />
+  </v-col>
+
+  <AddAddressForm
+    v-if="isOpenForm"
+    v-model:address="address"
+    :typeAddress
+    :typeAction
+    :addressBillingDefault
+    :addressShippingDefault
+    :addressesBilling="addressBillingItems"
+    :addressesShipping="addressShippingItems"
+    @updateUserInfo="updateUserInfo($event)"
+    @cancel="cancel()"
+  />
 </template>
 
 <style scoped lang="scss">
@@ -62,5 +135,12 @@ const addressBillingDefault = computed(() => {
 
 .v-list-item__overlay {
   opacity: 0;
+}
+
+a {
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: constants.$color-secondary;
+  text-decoration: underline;
 }
 </style>

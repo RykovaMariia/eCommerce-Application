@@ -12,5 +12,6 @@ const data = defineModel()
     color="primary"
     v-model="data"
     max-width="max-content"
+    density="comfortable"
   ></v-checkbox>
 </template>

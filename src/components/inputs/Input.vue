@@ -54,6 +54,7 @@ const innerIcon = computed(() =>
       v-model="data"
       base-color="on-surface"
       color="on-surface"
+      density="comfortable"
     ></v-text-field>
   </v-col>
 </template>

@@ -17,15 +17,13 @@ const dateOfBirth = computed(() => {
 </script>
 
 <template>
-  <v-col>
-    <div class="profile-info">
-      <div><v-icon size="x-large" icon="mdi-account"></v-icon></div>
-      <div class="name">
-        <div>{{ firstName }} {{ lastName }}</div>
-        <div class="info-data">{{ dateOfBirth }}</div>
-      </div>
+  <div class="profile-info">
+    <div><v-icon size="x-large" icon="mdi-account"></v-icon></div>
+    <div class="name">
+      <div>{{ firstName }} {{ lastName }}</div>
+      <div class="info-data">{{ dateOfBirth }}</div>
     </div>
-  </v-col>
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -37,6 +35,8 @@ const dateOfBirth = computed(() => {
   flex-direction: row;
   gap: 0.8rem;
   align-items: center;
+
+  padding: 12px 1px;
 
   & .name {
     display: flex;
