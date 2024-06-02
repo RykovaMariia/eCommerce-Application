@@ -2,18 +2,23 @@
 import Input from '@components/inputs/Input.vue'
 import Button from '@components/buttons/Button.vue'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
+import SelectInput from '@/components/inputs/SelectInput.vue'
 import { COUNTRY } from '@/constants/constants'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import { computed, ref, watchEffect } from 'vue'
-import type { Address, Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
+import type {
+  Address,
+  ClientResponse,
+  Customer,
+  MyCustomerUpdateAction,
+} from '@commercetools/platform-sdk'
 import type { SubmitEventPromise } from 'vuetify'
 import { addressService } from '@/services/addressService'
 import { alertStore } from '@/stores/alertStore'
 import { userAuth } from '@/stores/userAuth'
 import { reactive } from 'vue'
 import { TypeAction } from '@/enums/typeAction'
-import type SelectInput from '@/components/inputs/SelectInput.vue'
 
 const props = defineProps<{
   typeAddress: string
@@ -87,6 +92,23 @@ async function submit(submitEventPromise: SubmitEventPromise) {
   }
 }
 
+function setActionsForCreate(addressId: string) {
+  if (defaultBilling.value) {
+    actions.push({ action: 'setDefaultBillingAddress', addressId })
+  }
+  if (defaultShipping.value) {
+    actions.push({ action: 'setDefaultShippingAddress', addressId })
+  }
+  if (isTheSame.value) {
+    actions.push({ action: 'addBillingAddressId', addressId })
+    actions.push({ action: 'addShippingAddressId', addressId })
+  } else {
+    const setTypeAction =
+      props.typeAddress === 'billing' ? 'addBillingAddressId' : 'addShippingAddressId'
+    actions.push({ action: setTypeAction, addressId })
+  }
+}
+
 function createAddress() {
   if (address.value) {
     addressService
@@ -102,22 +124,7 @@ function createAddress() {
           : ''
 
         if (addressResult && addressResult.id) {
-          const addressId = addressResult.id
-
-          if (defaultBilling.value) {
-            actions.push({ action: 'setDefaultBillingAddress', addressId })
-          }
-          if (defaultShipping.value) {
-            actions.push({ action: 'setDefaultShippingAddress', addressId })
-          }
-          if (isTheSame.value) {
-            actions.push({ action: 'addBillingAddressId', addressId })
-            actions.push({ action: 'addShippingAddressId', addressId })
-          } else {
-            const setTypeAction =
-              props.typeAddress === 'billing' ? 'addBillingAddressId' : 'addShippingAddressId'
-            actions.push({ action: setTypeAction, addressId })
-          }
+          setActionsForCreate(addressResult.id)
 
           addressService.setTypeAddress(actions, result.body.version).then((result) => {
             alert.show('Address created', 'success')
@@ -136,55 +143,58 @@ function createAddress() {
   }
 }
 
+function setActionsForUpdate(result: ClientResponse<Customer>, addressId: string) {
+  if (isTheSame.value) {
+    actions.push({ action: 'addBillingAddressId', addressId })
+    actions.push({ action: 'addShippingAddressId', addressId })
+  } else {
+    if (props.typeAddress === 'billing') {
+      actions.push({ action: 'addBillingAddressId', addressId })
+
+      if (
+        result.body.shippingAddressIds &&
+        addressId &&
+        result.body.shippingAddressIds?.indexOf(addressId) > -1
+      ) {
+        actions.push({ action: 'removeShippingAddressId', addressId })
+      }
+    }
+    if (props.typeAddress === 'shipping') {
+      actions.push({ action: 'addShippingAddressId', addressId })
+
+      if (
+        result.body.billingAddressIds &&
+        addressId &&
+        result.body.billingAddressIds?.indexOf(addressId) > -1
+      ) {
+        actions.push({ action: 'removeBillingAddressId', addressId })
+      }
+    }
+  }
+
+  if (props.typeAddress === 'billing') {
+    if (defaultBilling.value) {
+      actions.push({ action: 'setDefaultBillingAddress', addressId })
+    } else if (result.body.defaultBillingAddressId === addressId) {
+      actions.push({ action: 'setDefaultBillingAddress', addressId: undefined })
+    }
+  }
+  if (props.typeAddress === 'shipping') {
+    if (defaultShipping.value) {
+      actions.push({ action: 'setDefaultShippingAddress', addressId })
+    } else if (result.body.defaultShippingAddressId === addressId) {
+      actions.push({ action: 'setDefaultShippingAddress', addressId: undefined })
+    }
+  }
+}
+
 function updateAddress(address: Address) {
   if (address) {
     addressService
       .update(address)
       .then((result) => {
         const addressId = address.id
-
-        if (isTheSame.value) {
-          actions.push({ action: 'addBillingAddressId', addressId })
-          actions.push({ action: 'addShippingAddressId', addressId })
-        } else {
-          if (props.typeAddress === 'billing') {
-            actions.push({ action: 'addBillingAddressId', addressId })
-
-            if (
-              result.body.shippingAddressIds &&
-              addressId &&
-              result.body.shippingAddressIds?.indexOf(addressId) > -1
-            ) {
-              actions.push({ action: 'removeShippingAddressId', addressId })
-            }
-          }
-          if (props.typeAddress === 'shipping') {
-            actions.push({ action: 'addShippingAddressId', addressId })
-
-            if (
-              result.body.billingAddressIds &&
-              addressId &&
-              result.body.billingAddressIds?.indexOf(addressId) > -1
-            ) {
-              actions.push({ action: 'removeBillingAddressId', addressId })
-            }
-          }
-        }
-
-        if (props.typeAddress === 'billing') {
-          if (defaultBilling.value) {
-            actions.push({ action: 'setDefaultBillingAddress', addressId })
-          } else if (result.body.defaultBillingAddressId === addressId) {
-            actions.push({ action: 'setDefaultBillingAddress', addressId: undefined })
-          }
-        }
-        if (props.typeAddress === 'shipping') {
-          if (defaultShipping.value) {
-            actions.push({ action: 'setDefaultShippingAddress', addressId })
-          } else if (result.body.defaultShippingAddressId === addressId) {
-            actions.push({ action: 'setDefaultShippingAddress', addressId: undefined })
-          }
-        }
+        if (addressId) setActionsForUpdate(result, addressId)
 
         addressService.setTypeAddress(actions, result.body.version).then((result) => {
           alert.show('Address updated', 'success')
