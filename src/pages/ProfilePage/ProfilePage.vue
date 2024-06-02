@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 import Tab from '@components/tab/Tab.vue'
 import UserInfo from '@/pages/ProfilePage/components/UserInfo.vue'
 import ProfileEditForm from '@/pages/ProfilePage/components/ProfileEditForm.vue'
@@ -13,19 +12,6 @@ import type { UserData } from '@/interfaces/userData'
 import { alertStore } from '@/stores/alertStore'
 
 const alert = alertStore()
-
-const items = [
-  {
-    title: 'Main',
-    disabled: false,
-    href: '/',
-  },
-  {
-    title: 'Profile',
-    disabled: true,
-    href: '/profile',
-  },
-]
 
 let userInfo: Ref<UserData> = ref({
   firstName: '',
@@ -80,7 +66,6 @@ function updateUserInfo(user: UserData) {
 
 <template>
   <v-container class="container">
-    <Breadcrumb :items="items" />
     <v-col class="page-card profile-card">
       <div class="d-flex flex-row main-content">
         <div class="d-flex flex-column aside-left">
