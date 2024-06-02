@@ -1,8 +1,18 @@
+import type { SortBy } from '@/enums/sortingCommand'
+
 export const COUNTRY = 'GB'
-export const CATALOG_MENU = [
-  { name: 'Organic cosmetic', href: '/catalog' },
-  { name: 'Hygiene products', href: '/catalog' },
-  { name: 'Shoppers', href: '/catalog' },
-  { name: 'Eco dishes', href: '/catalog' },
-  { name: 'Gift sets', href: '/catalog' },
-]
+
+export const SORTING_ITEMS: SortBy[] = ['Price ascending', 'Price descending', 'Name A-Z']
+
+export const CATEGORY_ID = {
+  'both-body': '2ae408b2-75ad-43cf-b8c9-b0496bcbd037',
+}
+
+export const ALL_PRODUCTS = {
+  parent: {
+    name: 'All products',
+    href: '/catalog',
+  },
+}
+
+export const yearToShow = 2000

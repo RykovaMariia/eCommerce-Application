@@ -2,21 +2,14 @@
 import { chooseRules } from '@/utils/chooseRules'
 import { getMaxTime } from '@/utils/dateUtils'
 import { computed } from 'vue'
+import { yearToShow } from '@/constants/constants'
 
 const props = defineProps<{
   label: string
   type: string
 }>()
 
-const data = defineModel()
-
-const emit = defineEmits({
-  setInput(inputData: string) {
-    return new Date(inputData).toDateString()
-  },
-})
-
-const yearToShow = '2000'
+const dateOfBirth = defineModel()
 
 const rules = computed(() => chooseRules(props.type, props.label))
 </script>
@@ -28,10 +21,9 @@ const rules = computed(() => chooseRules(props.type, props.label))
     :year="yearToShow"
     :type="props.type"
     :rules="rules"
-    v-model="data"
     variant="outlined"
+    v-model="dateOfBirth"
     prepend-icon=""
-    @update:modelValue="emit('setInput', $event)"
     :readonly="true"
   ></v-date-input>
 </template>

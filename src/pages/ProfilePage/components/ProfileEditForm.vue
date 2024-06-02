@@ -4,13 +4,51 @@ import Input from '@components/inputs/Input.vue'
 import DateInput from '@/components/inputs/DateInput.vue'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
-import type { Customer } from '@commercetools/platform-sdk'
+import { ref } from 'vue'
+import { formateDate } from '@/utils/dateUtils'
+import type { SubmitEventPromise } from 'vuetify'
+import { customerService } from '@/services/customerService'
+import { alertStore } from '@/stores/alertStore'
+import { userAuth } from '@/stores/userAuth'
+import type { ICustomer } from '@/types/writable'
+import type { UserData } from '@/interfaces/userData'
 
-const currentUser = defineModel<Customer>('currentUser')
+const alert = alertStore()
+
+const emit = defineEmits({
+  updateUser(user: UserData) {
+    return user
+  },
+})
+
+const currentUser = defineModel<ICustomer>('currentUser')
+
+const dateOfBirth = ref(new Date(formateDate(currentUser.value?.dateOfBirth || '')))
+
+async function submit(submitEventPromise: SubmitEventPromise) {
+  const { valid } = await submitEventPromise
+  if (valid) update()
+}
+
+function update() {
+  if (currentUser.value) {
+    currentUser.value.dateOfBirth = formateDate(dateOfBirth.value.toDateString())
+    customerService
+      .update(currentUser.value)
+      .then((result) => {
+        alert.show(`Data updated successfully`, 'success')
+        userAuth().customerVersion = result.body.version
+        emit('updateUser', result.body)
+      })
+      .catch((error: Error) => {
+        alert.show(`Error: ${error.message}`, 'warning')
+      })
+  }
+}
 </script>
 
 <template>
-  <v-form v-if="currentUser" class="login-form" @submit.prevent="">
+  <v-form v-if="currentUser" class="login-form" ref="form" @submit.prevent="submit">
     <Input
       :label="InputLabel.Email"
       placeholder="user@example.com"
@@ -32,11 +70,7 @@ const currentUser = defineModel<Customer>('currentUser')
       class="registration-input"
     />
     <v-col class="registration-input">
-      <DateInput
-        :label="InputLabel.BirthDate"
-        :type="InputType.Text"
-        v-model="currentUser.dateOfBirth"
-      />
+      <DateInput :label="InputLabel.BirthDate" :type="InputType.Text" v-model="dateOfBirth" />
     </v-col>
     <v-col class="col-button-link">
       <Button textContent="Save" classes="secondary" buttonType="submit" />

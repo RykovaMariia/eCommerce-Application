@@ -6,7 +6,7 @@ import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import { computed, reactive, ref } from 'vue'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
-import { COUNTRY } from '@/constants/constants'
+import { COUNTRY, yearToShow } from '@/constants/constants'
 import type { UserCustomerDraft } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
 import { formateDate } from '@/utils/dateUtils'
@@ -14,7 +14,7 @@ import { alertStore } from '@/stores/alertStore'
 import router from '@/router'
 import { userAuth } from '@/stores/userAuth'
 import type { SubmitEventPromise } from 'vuetify'
-import AutocompleteInput from '@/components/inputs/AutocompleteInput.vue'
+import SelectInput from '@components/inputs/SelectInput.vue'
 
 const alert = alertStore()
 
@@ -46,10 +46,6 @@ const title = computed(() => {
   return isTheSame.value ? 'Billing / shipping address' : 'Billing address'
 })
 
-const setInput = (value: string) => {
-  return (userData.dateOfBirth = value)
-}
-
 const userData: UserCustomerDraft = reactive({
   firstName: '',
   lastName: '',
@@ -60,6 +56,9 @@ const userData: UserCustomerDraft = reactive({
   billingAddresses: [],
   shippingAddresses: [],
 })
+
+const currentDate = new Date()
+const dateOfBirth = ref(new Date(yearToShow, currentDate.getMonth(), currentDate.getDate()))
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   if (isTheSame.value) {
@@ -89,7 +88,7 @@ function signup() {
       userData.defaultShippingAddress = 1
     }
   }
-  userData.dateOfBirth = formateDate(userData.dateOfBirth)
+  userData.dateOfBirth = formateDate(dateOfBirth.value.toDateString())
 
   authService
     .signup(userData)
@@ -123,7 +122,7 @@ function signup() {
           class="registration-input"
         />
         <v-col class="registration-input">
-          <DateInput :label="InputLabel.BirthDate" :type="InputType.Text" @setInput="setInput" />
+          <DateInput :label="InputLabel.BirthDate" :type="InputType.Text" v-model="dateOfBirth" />
         </v-col>
         <Input
           :label="InputLabel.Email"
@@ -143,10 +142,11 @@ function signup() {
       </v-col>
       <v-col class="registration-inner-container">
         <v-col>
-          <AutocompleteInput
+          <SelectInput
             :label="InputLabel.Country"
             :items="[COUNTRY]"
             type="text"
+            isValidation
             class="registration-input"
           />
         </v-col>

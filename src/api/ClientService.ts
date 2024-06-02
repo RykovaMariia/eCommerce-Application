@@ -8,14 +8,14 @@ import {
 } from '@commercetools/sdk-client-v2'
 
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
-
 import { tokenData } from './TokenInfo'
 import { localStorageService } from '@/services/storageService'
-const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
 
 const userClientBuilder = new ClientBuilder()
 
 export class ClientService {
+  private refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
+
   private projectKey = import.meta.env.VITE_CTP_PROJECT_KEY
   private authUri = import.meta.env.VITE_CTP_AUTH_URL
   private baseUri = import.meta.env.VITE_CTP_API_URL
@@ -43,7 +43,7 @@ export class ClientService {
       clientId: this.clientId,
       clientSecret: this.clientSecret,
     },
-    refreshToken: refreshToken,
+    refreshToken: this.refreshToken,
     tokenCache: tokenData,
     fetch,
   }
@@ -86,7 +86,7 @@ export class ClientService {
   }
 
   getClient() {
-    if (refreshToken) {
+    if (this.refreshToken) {
       return this.getDefaultClient().withRefreshTokenFlow(this.refreshAuthMiddlewareOptions).build()
     }
     return this.getDefaultClient().build()

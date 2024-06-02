@@ -5,6 +5,19 @@ export interface UserLoginData {
   password: string
 }
 
+export interface UserPasswordsData {
+  email: string
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
+}
+
+export interface UserData {
+  firstName?: string
+  lastName?: string
+  dateOfBirth?: string
+}
+
 export interface UserCustomerDraft extends MyCustomerDraft {
   firstName: string
   lastName: string
