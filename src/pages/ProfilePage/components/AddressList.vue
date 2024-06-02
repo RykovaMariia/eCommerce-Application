@@ -31,7 +31,7 @@ defineProps<{
 
 .icons {
   display: flex;
-  gap: 5px;
+  gap: 0.5rem;
   align-items: center;
   color: constants.$color-text-dark;
 }

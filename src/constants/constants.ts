@@ -14,3 +14,5 @@ export const ALL_PRODUCTS = {
     href: '/catalog',
   },
 }
+
+export const yearToShow = 2000
