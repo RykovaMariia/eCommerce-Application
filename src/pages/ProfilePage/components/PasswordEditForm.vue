@@ -74,49 +74,55 @@ function provePassword() {
 </script>
 
 <template>
-  <v-form class="login-form" ref="form" @submit.prevent="submit">
-    <Input
-      :label="InputLabel.CurrentPassword"
-      placeholder=""
-      :type="InputType.Password"
-      icon="mdi-eye-closed"
-      v-model="userPasswords.currentPassword"
-      class="registration-input"
-    />
-    <Input
-      :label="InputLabel.NewPassword"
-      placeholder=""
-      :type="InputType.Password"
-      icon="mdi-eye-closed"
-      v-model="userPasswords.newPassword"
-      class="registration-input"
-      @input="provePassword"
-    />
-    <Input
-      :label="InputLabel.ConfirmPassword"
-      placeholder=""
-      :type="InputType.Password"
-      icon="mdi-eye-closed"
-      class="registration-input"
-      v-model="userPasswords.confirmPassword"
-      @input="provePassword"
-    />
-
-    <v-col class="message" v-show="isShowMessage()"> Passwords do not match </v-col>
-
-    <v-col class="col-button-link">
-      <Button
-        textContent="Save"
-        classes="secondary"
-        buttonType="submit"
-        :class="setButtonState()"
+  <v-form class="password-form" ref="form" @submit.prevent="submit">
+    <v-col>
+      <Input
+        :label="InputLabel.CurrentPassword"
+        placeholder=""
+        :type="InputType.Password"
+        icon="mdi-eye-closed"
+        v-model="userPasswords.currentPassword"
+        class="registration-input"
       />
+      <Input
+        :label="InputLabel.NewPassword"
+        placeholder=""
+        :type="InputType.Password"
+        icon="mdi-eye-closed"
+        v-model="userPasswords.newPassword"
+        class="registration-input"
+        @input="provePassword"
+      />
+      <Input
+        :label="InputLabel.ConfirmPassword"
+        placeholder=""
+        :type="InputType.Password"
+        icon="mdi-eye-closed"
+        class="registration-input"
+        v-model="userPasswords.confirmPassword"
+        @input="provePassword"
+      />
+
+      <v-col class="message" v-show="isShowMessage()"> Passwords do not match </v-col>
+
+      <v-col class="col-button-link">
+        <Button
+          textContent="Save"
+          classes="secondary"
+          buttonType="submit"
+          :class="setButtonState()"
+        />
+      </v-col>
     </v-col>
   </v-form>
 </template>
 
 <style scoped lang="scss">
 @use '@styles/constants.scss';
+
+.password-form {
+  max-width: 650px;
+}
 
 .message {
   padding: 0 12px;
