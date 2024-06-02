@@ -1,25 +1,10 @@
 <script setup lang="ts">
 import path from '@assets/images/login/login.jpg'
 import LoginForm from '@pages/LoginPage/components/LoginForm.vue'
-import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
-
-const items = [
-  {
-    title: 'Main',
-    disabled: false,
-    href: '/',
-  },
-  {
-    title: 'Login',
-    disabled: true,
-    href: '/login',
-  },
-]
 </script>
 
 <template>
   <v-container class="container">
-    <Breadcrumb :items="items" />
     <div class="page-card login-card">
       <v-col>
         <h1 class="login-title">Login</h1>

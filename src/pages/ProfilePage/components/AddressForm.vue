@@ -5,7 +5,6 @@ import Checkbox from '@/components/checkbox/Checkbox.vue'
 import { COUNTRY } from '@/constants/constants'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
-import AutocompleteInput from '@/components/inputs/AutocompleteInput.vue'
 import { computed, ref, watchEffect } from 'vue'
 import type { Address, Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
 import type { SubmitEventPromise } from 'vuetify'
@@ -14,6 +13,7 @@ import { alertStore } from '@/stores/alertStore'
 import { userAuth } from '@/stores/userAuth'
 import { reactive } from 'vue'
 import { TypeAction } from '@/enums/typeAction'
+import type SelectInput from '@/components/inputs/SelectInput.vue'
 
 const props = defineProps<{
   typeAddress: string
@@ -216,7 +216,7 @@ function updateAddress(address: Address) {
           />
         </v-col>
         <v-col>
-          <AutocompleteInput
+          <SelectInput
             :label="InputLabel.Country"
             :items="[COUNTRY]"
             type="text"

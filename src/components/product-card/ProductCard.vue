@@ -41,6 +41,17 @@ function getDiscountPercentage(price: number, discountedPrice: number) {
   cursor: pointer;
   display: flex;
   flex-direction: column;
+
+  &:hover {
+    ::v-deep(.v-img__img--cover) {
+      transform: scale(1.1);
+    }
+  }
+}
+
+::v-deep(.v-img__img--cover) {
+  transform: scale(1);
+  transition: all 0.6s ease 0s;
 }
 
 .v-img {

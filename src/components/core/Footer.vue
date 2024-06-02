@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import IconLogo from '@components/icons/IconLogo.vue'
-import { CATALOG_MENU } from '@/constants/constants'
+import { ALL_PRODUCTS } from '@/constants/constants'
+import { storeToRefs } from 'pinia'
+import { categoriesStore } from '@/stores/categoriesStore'
 
 const menuLinks = [
   {
@@ -12,7 +14,7 @@ const menuLinks = [
     href: '/about',
   },
 ]
-
+const { categoriesLink } = storeToRefs(categoriesStore())
 const creationYear = '2024'
 </script>
 <template>
@@ -35,8 +37,12 @@ const creationYear = '2024'
 
         <v-col class="v-col-md-3 catalog">
           <div class="footer-wrapper-title">Catalog</div>
-          <div v-for="(link, index) in CATALOG_MENU" :key="index">
-            <RouterLink :to="link.href">{{ link.name }}</RouterLink>
+          <div
+            v-for="(link, index) in [ALL_PRODUCTS, ...categoriesLink]"
+            :key="index"
+            class="category"
+          >
+            <RouterLink :to="link.parent.href">{{ link.parent.name }}</RouterLink>
           </div>
         </v-col>
 
@@ -196,5 +202,9 @@ footer {
     padding-top: 1rem;
     font-size: 0.75rem;
   }
+}
+
+.category {
+  text-transform: capitalize;
 }
 </style>

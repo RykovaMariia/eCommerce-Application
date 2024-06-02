@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Breadcrumb from '@components/breadcrumbs/Breadcrumb.vue'
 import Tab from '@components/tab/Tab.vue'
 import UserInfo from '@/pages/ProfilePage/components/UserInfo.vue'
 import ProfileEditForm from '@/pages/ProfilePage/components/ProfileEditForm.vue'

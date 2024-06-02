@@ -14,7 +14,7 @@ import { alertStore } from '@/stores/alertStore'
 import router from '@/router'
 import { userAuth } from '@/stores/userAuth'
 import type { SubmitEventPromise } from 'vuetify'
-import AutocompleteInput from '@/components/inputs/AutocompleteInput.vue'
+import SelectInput from '@components/inputs/SelectInput.vue'
 
 const alert = alertStore()
 
@@ -142,10 +142,11 @@ function signup() {
       </v-col>
       <v-col class="registration-inner-container">
         <v-col>
-          <AutocompleteInput
+          <SelectInput
             :label="InputLabel.Country"
             :items="[COUNTRY]"
             type="text"
+            isValidation
             class="registration-input"
           />
         </v-col>
