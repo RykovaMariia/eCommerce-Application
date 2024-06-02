@@ -2,7 +2,7 @@ import type { CategoryLink } from '@/interfaces/link'
 import type { Category } from '@commercetools/platform-sdk'
 import { defineStore } from 'pinia'
 
-interface Categories {
+export interface Categories {
   parent: Category
   children: Category[]
 }

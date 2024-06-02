@@ -51,13 +51,11 @@ const { categoriesLink } = storeToRefs(categoriesStore())
       variant="text"
       @click="openBurger"
     ></v-app-bar-nav-icon>
-    <template v-if="categoriesLink.length">
-      <HoverMenu
-        v-if="$vuetify.display.lgAndUp"
-        :menuItemsWithSubItems="[ALL_PRODUCTS, ...categoriesLink]"
-        menu-trigger-text="Catalog"
-      />
-    </template>
+    <HoverMenu
+      v-if="$vuetify.display.lgAndUp"
+      :menuItemsWithSubItems="[ALL_PRODUCTS, ...categoriesLink]"
+      menu-trigger-text="Catalog"
+    />
     <v-list v-if="$vuetify.display.lgAndUp" class="nav-list">
       <v-list-item v-for="item in infoLinks" :key="item.href"
         ><RouterLink :to="item.href">{{ item.name }}</RouterLink></v-list-item
