@@ -65,9 +65,14 @@ const selectedVariants: Ref<string[]> = ref([])
 const setVariant = (value: string, index: number) => {
   selectedVariants.value[index] = value
 }
-const formPrice = ({ price, discountPrice }: ProductItem) => {
-  const formattedPrice = ((price / 100) * multiplier.value).toFixed(2)
-  const formattedDiscountPrice = ((discountPrice / 100) * multiplier.value).toFixed(2)
+
+const formatPrice = (price: number) => {
+  return ((price / 100) * multiplier.value).toFixed(2)
+}
+
+const definePrice = ({ price, discountPrice }: ProductItem) => {
+  const formattedPrice = formatPrice(price)
+  const formattedDiscountPrice = formatPrice(discountPrice)
   const resultFormattedPrice = discountPrice
     ? { formattedPrice, formattedDiscountPrice }
     : { formattedPrice }
@@ -79,7 +84,7 @@ const price = computed(() => {
     ({ attributes }) =>
       attributes[0] === selectedVariants.value[0] && attributes[1] === selectedVariants.value[1],
   )
-  const resultPrice = variant ? formPrice(variant) : formPrice(product.variants[0])
+  const resultPrice = variant ? definePrice(variant) : definePrice(product.variants[0])
   return resultPrice
 })
 </script>
@@ -89,13 +94,13 @@ const price = computed(() => {
     <v-col>
       <v-sheet max-width="28rem" class="mx-auto slider-image">
         <v-sheet rounded="6px" class="slider-image">
-            <div class="d-flex align-center justify-center slider-image" id="activator">
-              <v-img
-                cover
-                :src="product.images[imageIndex] ?? product.images[imageIndex]"
-                rounded="lg"
-              ></v-img>
-            </div>
+          <div class="d-flex align-center justify-center slider-image" id="activator">
+            <v-img
+              cover
+              :src="product.images[imageIndex] ?? product.images[imageIndex]"
+              rounded="lg"
+            ></v-img>
+          </div>
         </v-sheet>
         <div v-if="product.images.length > 1">
           <v-slide-group v-model="imageIndex" mobile-breakpoint="md">
@@ -158,7 +163,7 @@ const price = computed(() => {
       </div>
       <Button textContent="Add to cart" />
     </v-col>
-    <ModalWindow activator="#activator" :productImages="product.images"/>
+    <ModalWindow activator="#activator" :productImages="product.images" />
   </div>
 </template>
 
@@ -177,16 +182,16 @@ const price = computed(() => {
 
 .product-container {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 
 @include mixins.media-middle {
   .product-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
   }
 }
 
@@ -207,9 +212,10 @@ const price = computed(() => {
 
 .price-wrapper {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   justify-content: space-between;
-  flex-wrap: wrap;
+
   padding: 1rem 0;
 }
 

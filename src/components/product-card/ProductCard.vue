@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Button from '@components/buttons/Button.vue'
-import { productKeyStore } from '@/stores/productKeyStore';
+import { productKeyStore } from '@/stores/productKeyStore'
 
 const props = defineProps<{
   src: string
@@ -18,10 +18,19 @@ const href = { name: 'productId', params: { productId: props.productSlug } }
 function getDiscountPercentage(price: number, discountedPrice: number) {
   return HUNDRED - Math.ceil((discountedPrice * HUNDRED) / price)
 }
-const passProductKey = () => { productKeyStore().key = props.productKey }
+const passProductKey = () => {
+  productKeyStore().key = props.productKey
+}
 </script>
 <template>
-  <v-card elevation="0" max-width="290" variant="text" class="product-card" :to="href" @click="passProductKey">
+  <v-card
+    elevation="0"
+    max-width="290"
+    variant="text"
+    class="product-card"
+    :to="href"
+    @click="passProductKey"
+  >
     <v-img height="340" :src="src" cover></v-img>
     <v-card-title>{{ name }}</v-card-title>
     <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>
