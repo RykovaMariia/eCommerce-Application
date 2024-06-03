@@ -10,18 +10,20 @@ const props = defineProps<{
     open-on-click
     :activator="props.activator"
     scroll-strategy="block"
-    class="d-flex fill-height justify-center align-center"
+    class="d-flex justify-center align-center mx-auto"
   >
-    <v-card width="500">
-      <v-carousel>
-        <v-carousel-item
-          v-for="(url, i) in productImages"
-          :key="i"
-          :src="url"
-          cover
-        ></v-carousel-item>
-      </v-carousel>
-    </v-card>
+    <v-sheet>
+      <v-card :width="$vuetify.display.smAndDown ? '90svw' : '60svw'">
+        <v-carousel :height="$vuetify.display.smAndDown ? '80svh' : '90svh'">
+          <v-carousel-item
+            v-for="(url, i) in productImages"
+            :key="i"
+            :src="url"
+            cover
+          ></v-carousel-item>
+        </v-carousel>
+      </v-card>
+    </v-sheet>
   </v-overlay>
 </template>
 

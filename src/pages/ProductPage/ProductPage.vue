@@ -8,11 +8,12 @@ import type { ProductCatalogData, ProductVariant } from '@commercetools/platform
 import NumberInput from '@/components/inputs/NumberInput.vue'
 import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
-import { productKeyStore } from '@/stores/productKeyStore'
+import { localStorageService } from '@/services/storageService'
 
 const imageIndex = ref(0)
 const multiplier = ref(1)
 const discountIsActive = ref(false)
+const isMainAttribute = ref(true)
 
 let product: ProductData = reactive({
   description: '',
@@ -33,8 +34,11 @@ function retrieveVariantsData({ attributes, prices }: ProductVariant) {
   }
 }
 
+const productKey = localStorageService.getData('productKey')
+const selectedVariants: Ref<string[]> = ref([])
+
 productService
-  .getProduct(productKeyStore().key)
+  .getProduct(productKey)
   .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
     product.description = description?.['en-GB'] ?? ''
     product.name = name?.['en-GB']
@@ -56,12 +60,12 @@ productService
     const allVariants = variants?.map(retrieveVariantsData)
     product.variants = [mainVariant, ...allVariants]
     isProductDataLoaded.value = true
+    selectedVariants.value = product.variants[0].attributes.map((value) => value)
   })
   .catch((error: Error) => {
     console.warn(`Error: ${error.message}`, 'warning')
   })
 
-const selectedVariants: Ref<string[]> = ref([])
 const setVariant = (value: string, index: number) => {
   selectedVariants.value[index] = value
 }
@@ -134,9 +138,13 @@ const price = computed(() => {
               <div v-for="(attribute, i) in attributesArray" :key="i">
                 <v-item v-slot="{ selectedClass, toggle }">
                   <v-card
-                    :class="['value-container attribute', selectedClass]"
+                    :class="[
+                      'value-container attribute',
+                      isMainAttribute && i === 0 ? 'selected-group' : selectedClass,
+                    ]"
                     @click="
                       setVariant(attribute, n);
+                      isMainAttribute = false;
                       toggle?.()
                     "
                   >

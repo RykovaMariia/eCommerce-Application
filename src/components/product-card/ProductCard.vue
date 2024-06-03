@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Button from '@components/buttons/Button.vue'
-import { productKeyStore } from '@/stores/productKeyStore'
+import { localStorageService } from '@/services/storageService';
 
 const props = defineProps<{
   src: string
@@ -19,7 +19,7 @@ function getDiscountPercentage(price: number, discountedPrice: number) {
   return HUNDRED - Math.ceil((discountedPrice * HUNDRED) / price)
 }
 const passProductKey = () => {
-  productKeyStore().key = props.productKey
+  localStorageService.saveData('productKey', props.productKey)
 }
 </script>
 <template>
