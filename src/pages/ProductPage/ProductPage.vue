@@ -103,7 +103,7 @@ const price = computed(() => {
           </div>
         </v-sheet>
         <div v-if="product.images.length > 1">
-          <v-slide-group v-model="imageIndex" mobile-breakpoint="md">
+          <v-slide-group v-model="imageIndex">
             <v-slide-group-item
               v-for="(n, index) in product.images"
               :source="n"
