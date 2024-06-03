@@ -37,6 +37,7 @@ function retrieveVariantsData({ attributes, prices }: ProductVariant) {
 const productKey = localStorageService.getData('productKey')
 const selectedVariants: Ref<string[]> = ref([])
 
+if (productKey !== null) {
 productService
   .getProduct(productKey)
   .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
@@ -65,6 +66,7 @@ productService
   .catch((error: Error) => {
     console.warn(`Error: ${error.message}`, 'warning')
   })
+}
 
 const setVariant = (value: string, index: number) => {
   selectedVariants.value[index] = value

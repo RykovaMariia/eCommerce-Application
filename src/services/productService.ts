@@ -3,7 +3,7 @@ import { ClientService, clientService } from '@/api/ClientService'
 export class ProductService {
   constructor(private clientService: ClientService) {}
 
-  getProduct(key: string | null) {
+  getProduct(key: string) {
     const product = this.clientService
       .getApiRoot()
       .products()

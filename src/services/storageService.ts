@@ -46,7 +46,7 @@ export class StorageService<T> {
 }
 
 export type LocalStorageState = {
-  token: TokenStore,
+  token: TokenStore
   productKey: string
 }
 
