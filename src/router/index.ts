@@ -55,6 +55,16 @@ const router = createRouter({
         },
       ],
     },
+
+    {
+      path: '/product/:productId',
+      name: 'productId',
+      component: () => import('@pages/ProductPage/ProductPage.vue'),
+      meta: {
+        breadcrumb: (route: RouteLocationNormalizedLoaded) => route.params.productId,
+      },
+    },
+
     {
       path: '/about',
       name: 'about',
@@ -78,11 +88,6 @@ const router = createRouter({
       name: 'profile',
       component: () => import('@pages/ProfilePage/ProfilePage.vue'),
       meta: { breadcrumb: 'Profile' },
-    },
-    {
-      path: '/product',
-      name: 'product',
-      component: () => import('@pages/ProductPage/ProductPage.vue'),
     },
     {
       path: '/logout',

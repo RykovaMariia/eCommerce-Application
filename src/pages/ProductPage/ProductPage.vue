@@ -8,6 +8,7 @@ import type { ProductCatalogData, ProductVariant } from '@commercetools/platform
 import NumberInput from '@/components/inputs/NumberInput.vue'
 import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
+import { productKeyStore } from '@/stores/productKeyStore'
 
 const imageIndex = ref(0)
 const multiplier = ref(1)
@@ -33,7 +34,7 @@ function retrieveVariantsData({ attributes, prices }: ProductVariant) {
 }
 
 productService
-  .getProduct()
+  .getProduct(productKeyStore().key)
   .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
     product.description = description?.['en-GB'] ?? ''
     product.name = name?.['en-GB']

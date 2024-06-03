@@ -3,13 +3,13 @@ import { ClientService, clientService } from '@/api/ClientService'
 export class ProductService {
   constructor(private clientService: ClientService) {}
 
-  async getProduct() {
+  async getProduct(key: string) {
     const product = this.clientService
       .getApiRoot()
       .products()
       .get({
         queryArgs: {
-          where: `key=140`,
+          where: `key=${key}`,
         },
       })
       .execute()
