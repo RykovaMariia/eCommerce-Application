@@ -55,6 +55,16 @@ const router = createRouter({
         },
       ],
     },
+
+    {
+      path: '/product/:productId',
+      name: 'productId',
+      component: () => import('@pages/ProductPage/ProductPage.vue'),
+      meta: {
+        breadcrumb: (route: RouteLocationNormalizedLoaded) => route.params.productId,
+      },
+    },
+
     {
       path: '/about',
       name: 'about',

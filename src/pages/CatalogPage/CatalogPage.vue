@@ -87,6 +87,8 @@ watch(
       :description="product.description?.['en-GB']"
       :price="product.masterVariant.prices?.[0]?.value?.centAmount ?? 0"
       :discountedPrice="product.masterVariant.prices?.[0]?.discounted?.value.centAmount ?? 0"
+      :productSlug="product.slug['en-GB']"
+      :productKey="product.key"
     />
   </div>
   <v-pagination

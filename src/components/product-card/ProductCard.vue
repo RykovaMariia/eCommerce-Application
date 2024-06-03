@@ -1,21 +1,36 @@
 <script setup lang="ts">
 import Button from '@components/buttons/Button.vue'
-defineProps<{
+import { localStorageService } from '@/services/storageService';
+
+const props = defineProps<{
   src: string
   name: string
   description: string
   price: number
   discountedPrice: number
+  productSlug: string
+  productKey: string
 }>()
 
 const HUNDRED = 100
 
+const href = { name: 'productId', params: { productId: props.productSlug } }
 function getDiscountPercentage(price: number, discountedPrice: number) {
   return HUNDRED - Math.ceil((discountedPrice * HUNDRED) / price)
 }
+const passProductKey = () => {
+  localStorageService.saveData('productKey', props.productKey)
+}
 </script>
 <template>
-  <v-card elevation="0" max-width="290" variant="text" class="product-card">
+  <v-card
+    elevation="0"
+    max-width="290"
+    variant="text"
+    class="product-card"
+    :to="href"
+    @click="passProductKey"
+  >
     <v-img height="340" :src="src" cover></v-img>
     <v-card-title>{{ name }}</v-card-title>
     <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>

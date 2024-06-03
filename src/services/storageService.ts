@@ -47,6 +47,7 @@ export class StorageService<T> {
 
 export type LocalStorageState = {
   token: TokenStore
+  productKey: string
 }
 
 export const localStorageService = new StorageService<LocalStorageState>('ECommerce_')

@@ -10,6 +10,7 @@
     <RouterLink to="/cart">Cart</RouterLink>
     <RouterLink to="/about">About us</RouterLink>
     <RouterLink to="/favorites">Favorites</RouterLink>
+    <RouterLink to="/product">Product</RouterLink>
   </div>
 </template>
 
