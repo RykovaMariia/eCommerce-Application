@@ -42,7 +42,7 @@ export class CustomerService {
       .execute()
   }
 
-  updatePassword(userPasswords: Ref<UserPasswordsData>) {
+  updatePassword(userPasswords: UserPasswordsData) {
     const userPasswordData = this.clientService
       .getApiRoot()
       .me()
@@ -50,16 +50,16 @@ export class CustomerService {
       .post({
         body: {
           version: userAuth().customerVersion,
-          currentPassword: userPasswords.value.currentPassword,
-          newPassword: userPasswords.value.newPassword,
+          currentPassword: userPasswords.currentPassword,
+          newPassword: userPasswords.newPassword,
         },
       })
       .execute()
     userPasswordData.then(() => {
       userAuth().logout()
       const userData: UserLoginData = {
-        email: userPasswords.value.email,
-        password: userPasswords.value.newPassword,
+        email: userPasswords.email,
+        password: userPasswords.newPassword,
       }
       authService.login(userData)
     })

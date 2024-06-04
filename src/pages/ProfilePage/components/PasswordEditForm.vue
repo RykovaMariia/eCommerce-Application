@@ -38,7 +38,7 @@ const resetForm = () => {
 
 function updatePassword() {
   customerService
-    .updatePassword(userPasswords)
+    .updatePassword(userPasswords.value)
     .then((result) => {
       alert.show(`Password changed successfully`, 'success')
       userAuth().customerVersion = result.body.version
