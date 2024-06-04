@@ -11,15 +11,10 @@ import { customerService } from '@/services/customerService'
 import { alertStore } from '@/stores/alertStore'
 import { userAuth } from '@/stores/userAuth'
 import type { ICustomer } from '@/types/writable'
-import type { UserData } from '@/interfaces/userData'
 
 const alert = alertStore()
 
-const emit = defineEmits({
-  updateUser(user: UserData) {
-    return user
-  },
-})
+const emit = defineEmits(['updateUser'])
 
 const currentUser = defineModel<ICustomer>('currentUser')
 

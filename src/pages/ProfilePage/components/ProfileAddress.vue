@@ -64,12 +64,6 @@ function updateUserInfo(user: Customer) {
 
 function cancel() {
   isOpenForm.value = false
-  address.value = {
-    country: COUNTRY,
-    city: '',
-    streetName: '',
-    postalCode: '',
-  }
 }
 </script>
 <template>

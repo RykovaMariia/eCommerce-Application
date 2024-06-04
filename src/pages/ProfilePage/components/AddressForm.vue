@@ -30,7 +30,7 @@ const props = defineProps<{
   addressesShipping: Address[]
 }>()
 
-const address = { ...props.address }
+const address = reactive({ ...props.address })
 
 const form = ref()
 
@@ -60,26 +60,20 @@ function toggleState() {
   isTheSame.value = !isTheSame.value
 }
 
-const emit = defineEmits({
-  updateUserInfo(currentUser: Customer) {
-    return currentUser
-  },
-  cancel() {
-    return true
-  },
-})
+const emit = defineEmits(['updateUserInfo', 'cancel'])
 
 const defaultBilling = ref(false)
 const defaultShipping = ref(false)
 
 watchEffect(() => {
-  defaultBilling.value = props.addressBillingDefault === address?.id ? true : false
+  defaultBilling.value = props.addressBillingDefault === props.address?.id ? true : false
 
-  defaultShipping.value = props.addressShippingDefault === address?.id ? true : false
+  defaultShipping.value = props.addressShippingDefault === props.address?.id ? true : false
 
-  if (address)
+  if (props.address)
     isTheSame.value =
-      props.addressesShipping.includes(address) && props.addressesBilling.includes(address)
+      props.addressesShipping.includes(props.address) &&
+      props.addressesBilling.includes(props.address)
         ? true
         : false
 })
