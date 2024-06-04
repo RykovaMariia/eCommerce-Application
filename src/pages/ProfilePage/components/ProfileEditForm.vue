@@ -54,6 +54,7 @@ function update() {
       placeholder="user@example.com"
       :type="InputType.Text"
       v-model="currentUser.email"
+      is-validation
     />
     <Input
       :label="InputLabel.FirstName"
@@ -61,6 +62,7 @@ function update() {
       :type="InputType.Text"
       v-model="currentUser.firstName"
       class="registration-input"
+      is-validation
     />
     <Input
       :label="InputLabel.LastName"
@@ -68,6 +70,7 @@ function update() {
       :type="InputType.Text"
       v-model="currentUser.lastName"
       class="registration-input"
+      is-validation
     />
     <v-col class="registration-input">
       <DateInput :label="InputLabel.BirthDate" :type="InputType.Text" v-model="dateOfBirth" />

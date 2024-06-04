@@ -234,6 +234,7 @@ function updateAddress(address: Address) {
             type="text"
             v-model="address.country"
             class="registration-input"
+            is-validation
           />
         </v-col>
         <v-col class="address-container">
@@ -252,12 +253,23 @@ function updateAddress(address: Address) {
               v-model="defaultShipping"
               @click="!defaultShipping"
             />
-            <Input :label="InputLabel.City" :type="InputType.Text" v-model="address.city" />
-            <Input :label="InputLabel.Street" :type="InputType.Text" v-model="address.streetName" />
+            <Input
+              :label="InputLabel.City"
+              :type="InputType.Text"
+              v-model="address.city"
+              is-validation
+            />
+            <Input
+              :label="InputLabel.Street"
+              :type="InputType.Text"
+              v-model="address.streetName"
+              is-validation
+            />
             <Input
               :label="InputLabel.PostalCode"
               :type="InputType.Text"
               v-model="address.postalCode"
+              is-validation
             />
           </v-col>
         </v-col>

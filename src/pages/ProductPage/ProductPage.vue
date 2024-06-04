@@ -144,11 +144,7 @@ const price = computed(() => {
                       'value-container attribute',
                       isMainAttribute && i === 0 ? 'selected-group' : selectedClass,
                     ]"
-                    @click="
-                      setVariant(attribute, n),
-                      isMainAttribute = false,
-                      toggle?.()
-                    "
+                    @click="setVariant(attribute, n), (isMainAttribute = false), toggle?.()"
                   >
                     <div class="d-flex flex-grow-1 text-center">
                       {{ attribute }}

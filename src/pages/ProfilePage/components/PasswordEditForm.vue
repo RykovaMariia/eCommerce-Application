@@ -82,6 +82,7 @@ function provePassword() {
         icon="mdi-eye-closed"
         v-model="userPasswords.currentPassword"
         class="registration-input"
+        is-validation
       />
       <Input
         :label="InputLabel.NewPassword"
@@ -91,6 +92,7 @@ function provePassword() {
         v-model="userPasswords.newPassword"
         class="registration-input"
         @input="provePassword"
+        is-validation
       />
       <Input
         :label="InputLabel.ConfirmPassword"
@@ -100,6 +102,7 @@ function provePassword() {
         class="registration-input"
         v-model="userPasswords.confirmPassword"
         @input="provePassword"
+        is-validation
       />
 
       <v-col class="message" v-show="isShowMessage()"> Passwords do not match </v-col>

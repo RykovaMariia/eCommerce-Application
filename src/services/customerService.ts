@@ -2,7 +2,6 @@ import { ClientService, clientService } from '@/api/ClientService'
 import type { UserLoginData, UserPasswordsData } from '@/interfaces/userData'
 import { userAuth } from '@/stores/userAuth'
 import type { ICustomer } from '@/types/writable'
-import type { Ref } from 'vue'
 import { authService } from './authService'
 
 export class CustomerService {
