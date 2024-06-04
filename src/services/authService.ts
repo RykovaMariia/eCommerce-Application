@@ -14,7 +14,7 @@ export class AuthService {
     private localStorageService: StorageService<LocalStorageState>,
   ) {}
 
-  async login(userData: UserLoginData) {
+  login(userData: UserLoginData) {
     const userClientData = this.clientService
       .getApiRoot(this.clientService.getPasswordFlowClient(userData.email, userData.password))
       .me()
@@ -26,7 +26,7 @@ export class AuthService {
     })
   }
 
-  async signup(userData: UserCustomerDraft) {
+  signup(userData: UserCustomerDraft) {
     const userClientData = this.clientService
       .getApiRoot()
       .me()

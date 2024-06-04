@@ -1,11 +1,11 @@
-import { ClientService } from '@/api/ClientService'
+import { ClientService, clientService } from '@/api/ClientService'
 import { userAuth } from '@/stores/userAuth'
 import type { Address, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
 
 export class AddressService {
   constructor(private clientService: ClientService) {}
 
-  async create(address: Address) {
+  create(address: Address) {
     return this.clientService
       .getApiRoot()
       .me()
@@ -15,7 +15,7 @@ export class AddressService {
           actions: [
             {
               action: 'addAddress',
-              address: address,
+              address,
             },
           ],
         },
@@ -23,7 +23,7 @@ export class AddressService {
       .execute()
   }
 
-  async setTypeAddress(actions: MyCustomerUpdateAction[], version: number) {
+  setTypeAddress(actions: MyCustomerUpdateAction[], version: number) {
     return this.clientService
       .getApiRoot()
       .me()
@@ -36,7 +36,7 @@ export class AddressService {
       .execute()
   }
 
-  async update(address: Address) {
+  update(address: Address) {
     return this.clientService
       .getApiRoot()
       .me()
@@ -47,7 +47,7 @@ export class AddressService {
             {
               action: 'changeAddress',
               addressId: address.id,
-              address: address,
+              address,
             },
           ],
         },
@@ -55,7 +55,7 @@ export class AddressService {
       .execute()
   }
 
-  async remove(address: Address) {
+  remove(address: Address) {
     return this.clientService
       .getApiRoot()
       .me()
@@ -73,7 +73,7 @@ export class AddressService {
       .execute()
   }
 
-  async setDefault(actions: MyCustomerUpdateAction[]) {
+  setDefault(actions: MyCustomerUpdateAction[]) {
     return this.clientService
       .getApiRoot()
       .me()
@@ -87,4 +87,4 @@ export class AddressService {
   }
 }
 
-export const addressService = new AddressService(new ClientService())
+export const addressService = new AddressService(clientService)

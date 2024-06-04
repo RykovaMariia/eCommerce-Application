@@ -16,7 +16,7 @@ let isOpenForm = ref(false)
 
 let typeAction = ref(TypeAction.Add)
 
-let address: Ref<Address> = ref({
+const address: Ref<Address> = ref({
   country: COUNTRY,
   city: '',
   streetName: '',
@@ -117,7 +117,7 @@ function cancel() {
 
   <AddAddressForm
     v-if="isOpenForm"
-    v-model:address="address"
+    :address
     :typeAddress
     :typeAction
     :addressBillingDefault

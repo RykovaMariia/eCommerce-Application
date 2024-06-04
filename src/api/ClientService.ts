@@ -4,7 +4,6 @@ import {
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
   type PasswordAuthMiddlewareOptions,
-  type RefreshAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2'
 
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
@@ -36,21 +35,23 @@ export class ClientService {
     fetch,
   }
 
-  private refreshAuthMiddlewareOptions: RefreshAuthMiddlewareOptions = {
-    host: this.authUri,
-    projectKey: this.projectKey,
-    credentials: {
-      clientId: this.clientId,
-      clientSecret: this.clientSecret,
-    },
-    refreshToken: this.refreshToken,
-    tokenCache: tokenData,
-    fetch,
-  }
-
   private httpMiddlewareOptions: HttpMiddlewareOptions = {
     host: this.baseUri,
     fetch,
+  }
+
+  getRefreshAuthMiddlewareOptions = (refreshToken: string) => {
+    return {
+      host: this.authUri,
+      projectKey: this.projectKey,
+      credentials: {
+        clientId: this.clientId,
+        clientSecret: this.clientSecret,
+      },
+      refreshToken: refreshToken,
+      tokenCache: tokenData,
+      fetch,
+    }
   }
 
   getPasswordAuthMiddlewareOptions(email: string, password: string): PasswordAuthMiddlewareOptions {
@@ -86,8 +87,12 @@ export class ClientService {
   }
 
   getClient() {
-    if (this.refreshToken) {
-      return this.getDefaultClient().withRefreshTokenFlow(this.refreshAuthMiddlewareOptions).build()
+    const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
+
+    if (refreshToken) {
+      return this.getDefaultClient()
+        .withRefreshTokenFlow(this.getRefreshAuthMiddlewareOptions(refreshToken))
+        .build()
     }
     return this.getDefaultClient().build()
   }

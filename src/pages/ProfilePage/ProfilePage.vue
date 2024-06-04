@@ -13,7 +13,7 @@ import { alertStore } from '@/stores/alertStore'
 
 const alert = alertStore()
 
-let userInfo: Ref<UserData> = ref({
+const userInfo: Ref<UserData> = ref({
   firstName: '',
   lastName: '',
   dateOfBirth: '',
@@ -21,7 +21,7 @@ let userInfo: Ref<UserData> = ref({
 
 const tab = ref('address')
 
-let customer: Ref<Customer> = ref({
+const customer: Ref<Customer> = ref({
   id: '',
   version: 0,
   createdAt: '',
@@ -50,7 +50,7 @@ let customer: Ref<Customer> = ref({
 customerService
   .user()
   .then((response) => {
-    customer.value = response.body
+    customer.value = { ...response.body }
     userInfo.value = { ...response.body }
     userAuth().customerVersion = customer.value.version
   })

@@ -23,7 +23,7 @@ async function submit(submitEventPromise: SubmitEventPromise) {
   if (valid) updatePassword()
 }
 
-let userPasswords: Ref<UserPasswordsData> = ref({
+const userPasswords: Ref<UserPasswordsData> = ref({
   email: props.email,
   currentPassword: '',
   newPassword: '',
@@ -38,7 +38,7 @@ const resetForm = () => {
 
 function updatePassword() {
   customerService
-    .updatePassword(userPasswords)
+    .updatePassword(userPasswords.value)
     .then((result) => {
       alert.show(`Password changed successfully`, 'success')
       userAuth().customerVersion = result.body.version
@@ -52,7 +52,7 @@ function updatePassword() {
     })
 }
 
-let isError = ref(false)
+const isError = ref(false)
 
 function isShowMessage() {
   return isError.value
@@ -67,8 +67,7 @@ function setButtonState() {
 function provePassword() {
   if (!userPasswords.value.confirmPassword || !userPasswords.value.newPassword) return
   else {
-    isError.value =
-      userPasswords.value.newPassword !== userPasswords.value.confirmPassword ? true : false
+    isError.value = userPasswords.value.newPassword !== userPasswords.value.confirmPassword
   }
 }
 </script>
