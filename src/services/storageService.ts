@@ -50,6 +50,7 @@ export type LocalStorageState = {
   token: TokenStore
   sorting: SortBy
   priceFilter: number[]
+  productKey: string
 }
 
 export const localStorageService = new StorageService<LocalStorageState>('ECommerce_')
