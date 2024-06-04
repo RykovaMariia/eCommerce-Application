@@ -49,11 +49,11 @@ let colorItems: Ref<string[]> = ref([])
 let quantityItems: Ref<string[]> = ref([])
 let range: Ref<string[]> = ref([])
 
-const selectedColor: Ref<string[]> = ref((route.query.color as string[]) ?? [])
 const selectedSorting: Ref<SortBy> = ref((route.query.sorting as SortBy) ?? 'default')
+const selectedColor: Ref<string[]> = ref((route.query.color as string[]) ?? [])
 const selectedQuantity: Ref<string[]> = ref((route.query.quantity as string[]) ?? [])
 const selectedPrice: Ref<[string, string]> = ref((route.query.price as [string, string]) ?? [])
-const searchString = ref('')
+let searchString = route.query.search as string
 
 const fetchProducts = () => {
   const offset = (currentPage.value - 1) * limit
@@ -67,14 +67,16 @@ const fetchProducts = () => {
       selectedColor.value,
       selectedQuantity.value,
       selectedPrice.value,
-      searchString.value,
+      searchString,
     )
     .then((response: ClientResponse<ProductProjectionPagedSearchResponse>) => {
-      products.value = response.body.results
+      products.value = response.body.results || []
       productsCount.value = response.body.total || 0
+
       colorItems.value = (response.body.facets[Facet.color] as TermFacetResult).terms.map(
         (el) => el.term,
       ) as string[]
+
       quantityItems.value = (response.body.facets[Facet.quantity] as TermFacetResult).terms.map(
         (el) => el.term,
       ) as string[]
@@ -82,7 +84,9 @@ const fetchProducts = () => {
       const prices = (response.body.facets[Facet.price] as TermFacetResult).terms
         .map((el) => +el.term / HUNDRED)
         .sort((a, b) => a - b)
-      range.value = [prices[0].toString(), prices[prices.length - 1].toString()]
+      if (prices.length === 2) {
+        range.value = [prices[0].toString(), prices[prices.length - 1].toString()]
+      }
     })
     .catch((error: Error) => {
       throw new Error(error.message)
@@ -115,7 +119,7 @@ const selectPrice = (value: { from: string; to: string }) => {
 
 const search = (value: string) => {
   router.replace({ query: { ...route.query, search: value } })
-  searchString.value = value
+  searchString = value
   fetchProducts()
 }
 
@@ -124,6 +128,7 @@ watchEffect(() => {
   selectedColor.value = route.query.color as string[]
   selectedQuantity.value = route.query.quantity as string[]
   selectedPrice.value = route.query.price as [string, string]
+  searchString = route.query.search as string
   fetchProducts()
 })
 </script>
@@ -142,9 +147,9 @@ watchEffect(() => {
     :items="colorItems"
     v-model="selectedColor"
     variant="underlined"
-    chips
-    clearable
-    multiple
+    is-chips
+    is-clearable
+    is-multiple
     @update:modelValue="selectColor"
   />
 
@@ -152,9 +157,9 @@ watchEffect(() => {
     label="Quantity"
     :items="quantityItems"
     variant="underlined"
-    chips
-    clearable
-    multiple
+    is-chips
+    is-clearable
+    is-multiple
     @update:modelValue="selectQuantity"
   />
   <PriceForm @priceFilterUpdated="selectPrice" :priceRange="range" />

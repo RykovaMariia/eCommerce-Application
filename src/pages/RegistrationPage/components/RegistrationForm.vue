@@ -113,6 +113,7 @@ function signup() {
           :type="InputType.Text"
           v-model="userData.firstName"
           class="registration-input"
+          is-validation
         />
         <Input
           :label="InputLabel.LastName"
@@ -120,6 +121,7 @@ function signup() {
           :type="InputType.Text"
           v-model="userData.lastName"
           class="registration-input"
+          is-validation
         />
         <v-col class="registration-input">
           <DateInput :label="InputLabel.BirthDate" :type="InputType.Text" v-model="dateOfBirth" />
@@ -130,6 +132,7 @@ function signup() {
           :type="InputType.Text"
           v-model="userData.email"
           class="registration-input"
+          is-validation
         />
         <Input
           :label="InputLabel.Password"
@@ -138,6 +141,7 @@ function signup() {
           v-model="userData.password"
           icon="mdi-eye-closed"
           class="registration-input"
+          is-validation
         />
       </v-col>
       <v-col class="registration-inner-container">
@@ -146,7 +150,7 @@ function signup() {
             :label="InputLabel.Country"
             :items="[COUNTRY]"
             type="text"
-            isValidation
+            is-validation
             class="registration-input"
           />
         </v-col>
@@ -172,16 +176,23 @@ function signup() {
                 @click="!defaultShipping"
               />
             </div>
-            <Input :label="InputLabel.City" :type="InputType.Text" v-model="addressBilling.city" />
+            <Input
+              :label="InputLabel.City"
+              :type="InputType.Text"
+              v-model="addressBilling.city"
+              is-validation
+            />
             <Input
               :label="InputLabel.Street"
               :type="InputType.Text"
               v-model="addressBilling.streetName"
+              is-validation
             />
             <Input
               :label="InputLabel.PostalCode"
               :type="InputType.Text"
               v-model="addressBilling.postalCode"
+              is-validation
             />
           </v-col>
           <v-col class="address-shipping-wrapper">
@@ -198,16 +209,19 @@ function signup() {
                 :label="InputLabel.City"
                 :type="InputType.Text"
                 v-model="addressShipping.city"
+                is-validation
               />
               <Input
                 :label="InputLabel.Street"
                 :type="InputType.Text"
                 v-model="addressShipping.streetName"
+                is-validation
               />
               <Input
                 :label="InputLabel.PostalCode"
                 :type="InputType.Text"
                 v-model="addressShipping.postalCode"
+                is-validation
               />
             </div>
           </v-col>

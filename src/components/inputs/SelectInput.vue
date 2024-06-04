@@ -15,11 +15,14 @@ const props = defineProps<{
     | 'solo-filled'
   isValidation?: boolean
   type?: string
+  isChips?: boolean
+  isClearable?: boolean
+  isMultiple?: boolean
 }>()
 
 const rules = computed(() => chooseRules(props.type ?? '', props.label))
 
-const data = defineModel<string>()
+const data = defineModel<string | string[]>()
 </script>
 
 <template>
@@ -29,5 +32,8 @@ const data = defineModel<string>()
     :rules="isValidation ? rules : [true]"
     :variant="props.variant ? props.variant : 'outlined'"
     v-model="data"
+    :chips="isChips"
+    :clearable="isClearable"
+    :multiple="isMultiple"
   ></v-select>
 </template>
