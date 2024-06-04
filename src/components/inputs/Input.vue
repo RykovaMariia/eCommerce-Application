@@ -9,6 +9,9 @@ const props = defineProps<{
   placeholder?: string
   icon?: string
   disabled?: boolean
+  isValidation?: boolean
+  isHideDetails?: boolean | 'auto'
+  isClearable?: boolean
 }>()
 
 const data = defineModel()
@@ -45,7 +48,7 @@ const innerIcon = computed(() =>
     <v-text-field
       :label="props.label"
       :placeholder="props.placeholder"
-      :rules="rules"
+      :rules="isValidation ? rules : [true]"
       :type="fieldType"
       :append-inner-icon="innerIcon"
       @click:append-inner="togglePassword()"
@@ -55,6 +58,9 @@ const innerIcon = computed(() =>
       base-color="on-surface"
       color="on-surface"
       density="comfortable"
+      :hide-details="isHideDetails"
+      :clearable="isClearable"
+      :clear-icon="isClearable ? '$clear' : ''"
     ></v-text-field>
   </v-col>
 </template>

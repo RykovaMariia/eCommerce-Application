@@ -1,3 +1,4 @@
+import type { SortBy } from '@/enums/sortingCommand'
 import type { TokenStore } from '@commercetools/sdk-client-v2'
 
 export class StorageService<T> {
@@ -47,6 +48,8 @@ export class StorageService<T> {
 
 export type LocalStorageState = {
   token: TokenStore
+  sorting: SortBy
+  priceFilter: number[]
 }
 
 export const localStorageService = new StorageService<LocalStorageState>('ECommerce_')

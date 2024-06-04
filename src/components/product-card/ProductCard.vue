@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { HUNDRED } from '@/constants/constants'
 import Button from '@components/buttons/Button.vue'
 defineProps<{
   src: string
@@ -7,8 +8,6 @@ defineProps<{
   price: number
   discountedPrice: number
 }>()
-
-const HUNDRED = 100
 
 function getDiscountPercentage(price: number, discountedPrice: number) {
   return HUNDRED - Math.ceil((discountedPrice * HUNDRED) / price)

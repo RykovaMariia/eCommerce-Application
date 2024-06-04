@@ -18,6 +18,8 @@ const props = defineProps<{
 }>()
 
 const rules = computed(() => chooseRules(props.type ?? '', props.label))
+
+const data = defineModel()
 </script>
 
 <template>
@@ -26,5 +28,6 @@ const rules = computed(() => chooseRules(props.type ?? '', props.label))
     :items="props.items"
     :rules="isValidation ? rules : [true]"
     :variant="props.variant ? props.variant : 'outlined'"
+    v-model="data"
   ></v-select>
 </template>
