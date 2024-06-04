@@ -1,5 +1,8 @@
 import { ClientService, clientService } from '@/api/ClientService'
+import { HUNDRED } from '@/constants/constants'
+import { Facet } from '@/enums/facet'
 import type { QueryParam } from '@commercetools/sdk-client-v2'
+import { SortingCommand, type SortBy } from '@/enums/sortingCommand'
 
 interface QueryArgs {
   fuzzy?: boolean
@@ -52,12 +55,52 @@ export class ProductsService {
       .execute()
   }
 
-  getProducts(limit: number, offset: number, sorting: string, categoryId?: string) {
-    let queryArgs: QueryArgs = { limit, offset, sort: sorting }
+  getProducts(
+    limit: number,
+    offset: number,
+    sorting: SortBy,
+    categoryId?: string,
+    colorFilter?: string[],
+    quantityFilter?: string[],
+    priceFilter?: [string, string],
+    searchString?: string,
+  ) {
+    const sortingCommand = sorting ? SortingCommand[sorting] : SortingCommand.default
+
+    let queryArgs: QueryArgs = {
+      limit,
+      offset,
+      sort: sortingCommand,
+      facet: [Facet.color, Facet.quantity, Facet.price],
+      fuzzy: true,
+    }
+
+    const filter = []
+
+    if (searchString) {
+      filter.push(`name.en:"Bamboo"`)
+    }
+
     if (categoryId) {
+      filter.push(`${categoryId ? `categories.id:subtree("${categoryId}")` : ''}`)
+    }
+    if (colorFilter?.length) {
+      filter.push(`${Facet.color}: ${colorFilter.map((el) => `"${el}"`).join(',')}`)
+    }
+    if (quantityFilter?.length) {
+      filter.push(`${Facet.quantity}: ${quantityFilter.map((el) => `"${el}"`).join(',')}`)
+    }
+
+    if (priceFilter?.length) {
+      filter.push(
+        `${Facet.price}: range(${+priceFilter[0] * HUNDRED} to ${+priceFilter[1] * HUNDRED})`,
+      )
+    }
+
+    if (filter.length) {
       queryArgs = {
         ...queryArgs,
-        'filter.query': `${categoryId ? `categories.id:subtree("${categoryId}")` : ''}`,
+        'filter.query': filter,
       }
     }
 

@@ -14,5 +14,6 @@ export const ALL_PRODUCTS = {
     href: '/catalog',
   },
 }
+export const HUNDRED = 100
 
 export const yearToShow = 2000

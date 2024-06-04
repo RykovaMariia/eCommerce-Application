@@ -43,6 +43,7 @@ function login() {
       placeholder="user@example.com"
       :type="InputType.Text"
       v-model="userData.email"
+      is-validation
     />
     <Input
       :label="InputLabel.Password"
@@ -50,6 +51,7 @@ function login() {
       :type="InputType.Password"
       v-model="userData.password"
       icon="mdi-eye-closed"
+      is-validation
     />
     <v-col class="col-button-link">
       <Button textContent="Login" classes="secondary" buttonType="submit" />
