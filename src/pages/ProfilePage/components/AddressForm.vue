@@ -110,7 +110,8 @@ function setActionsForCreate(addressId: string) {
 }
 
 function createAddress() {
-  if (address) {
+  if (!address) return
+  else {
     addressService
       .create(address)
       .then((result) => {
@@ -189,7 +190,8 @@ function setActionsForUpdate(result: ClientResponse<Customer>, addressId: string
 }
 
 function updateAddress(address: Address) {
-  if (address) {
+  if (!address) return
+  else {
     addressService
       .update(address)
       .then((result) => {
