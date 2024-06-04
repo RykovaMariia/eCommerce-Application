@@ -4,9 +4,8 @@ import Input from '@components/inputs/Input.vue'
 import { InputType } from '@/enums/inputType'
 import { reactive } from 'vue'
 
-const props = defineProps<{
-  priceRange: string[]
-}>()
+const maxPrice = 170
+const minPrice = 2.99
 
 const emit = defineEmits(['priceFilterUpdated'])
 
@@ -16,15 +15,12 @@ const priceData = reactive({
 })
 
 function submit() {
-  if (!priceData.from || +priceData.from < +props.priceRange[0]) {
-    priceData.from = props.priceRange[0]
+  if (!priceData.from || +priceData.from < minPrice) {
+    priceData.from = minPrice.toString()
   }
 
-  if (
-    !priceData.to ||
-    (+priceData.to > +props.priceRange[1] && +priceData.to < +props.priceRange[0])
-  ) {
-    priceData.to = props.priceRange[1]
+  if (!priceData.to || (+priceData.to > maxPrice && +priceData.to < maxPrice)) {
+    priceData.to = maxPrice.toString()
   }
 
   emit('priceFilterUpdated', priceData)

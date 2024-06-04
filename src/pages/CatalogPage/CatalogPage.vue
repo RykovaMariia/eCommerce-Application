@@ -9,7 +9,7 @@ import { productsService } from '@/services/productsService'
 import ProductCard from '@components/product-card/ProductCard.vue'
 import { computed, ref, watchEffect, type Ref } from 'vue'
 import SelectInput from '@components/inputs/SelectInput.vue'
-import { HUNDRED, SORTING_ITEMS } from '@/constants/constants'
+import { SORTING_ITEMS } from '@/constants/constants'
 import { type SortBy } from '@/enums/sortingCommand'
 import { useRoute, useRouter } from 'vue-router'
 import { Facet } from '@/enums/facet'
@@ -17,6 +17,7 @@ import PriceForm from './PriceForm.vue'
 import { storeToRefs } from 'pinia'
 import { categoriesStore } from '@/stores/categoriesStore'
 import Input from '@/components/inputs/Input.vue'
+import { debounce } from '@/utils/debounce'
 
 const route = useRoute()
 const router = useRouter()
@@ -47,13 +48,12 @@ let products: Ref<ProductProjection[]> = ref([])
 let productsCount = ref(0)
 let colorItems: Ref<string[]> = ref([])
 let quantityItems: Ref<string[]> = ref([])
-let range: Ref<string[]> = ref([])
 
 const selectedSorting: Ref<SortBy> = ref((route.query.sorting as SortBy) ?? 'default')
 const selectedColor: Ref<string[]> = ref((route.query.color as string[]) ?? [])
 const selectedQuantity: Ref<string[]> = ref((route.query.quantity as string[]) ?? [])
 const selectedPrice: Ref<[string, string]> = ref((route.query.price as [string, string]) ?? [])
-let searchString = route.query.search as string
+const searchString = ref(route.query.search as string)
 
 const fetchProducts = () => {
   const offset = (currentPage.value - 1) * limit
@@ -67,7 +67,7 @@ const fetchProducts = () => {
       selectedColor.value,
       selectedQuantity.value,
       selectedPrice.value,
-      searchString,
+      searchString.value,
     )
     .then((response: ClientResponse<ProductProjectionPagedSearchResponse>) => {
       products.value = response.body.results || []
@@ -80,13 +80,6 @@ const fetchProducts = () => {
       quantityItems.value = (response.body.facets[Facet.quantity] as TermFacetResult).terms.map(
         (el) => el.term,
       ) as string[]
-
-      const prices = (response.body.facets[Facet.price] as TermFacetResult).terms
-        .map((el) => +el.term / HUNDRED)
-        .sort((a, b) => a - b)
-      if (prices.length === 2) {
-        range.value = [prices[0].toString(), prices[prices.length - 1].toString()]
-      }
     })
     .catch((error: Error) => {
       throw new Error(error.message)
@@ -119,16 +112,17 @@ const selectPrice = (value: { from: string; to: string }) => {
 
 const search = (value: string) => {
   router.replace({ query: { ...route.query, search: value } })
-  searchString = value
+  searchString.value = value
   fetchProducts()
 }
+
+const searchWithDebounce = debounce(search)
 
 watchEffect(() => {
   selectedSorting.value = route.query.sorting as SortBy
   selectedColor.value = route.query.color as string[]
   selectedQuantity.value = route.query.quantity as string[]
   selectedPrice.value = route.query.price as [string, string]
-  searchString = route.query.search as string
   fetchProducts()
 })
 </script>
@@ -162,7 +156,7 @@ watchEffect(() => {
     is-multiple
     @update:modelValue="selectQuantity"
   />
-  <PriceForm @priceFilterUpdated="selectPrice" :priceRange="range" />
+  <PriceForm @priceFilterUpdated="selectPrice" />
 
   <Input
     label="Search"
@@ -171,7 +165,8 @@ watchEffect(() => {
     icon="mdi-magnify"
     isHideDetails
     isClearable
-    @update:modelValue="search"
+    v-model="searchString"
+    @update:modelValue="searchWithDebounce"
   />
 
   <div class="d-flex">

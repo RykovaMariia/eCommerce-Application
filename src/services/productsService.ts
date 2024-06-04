@@ -71,7 +71,7 @@ export class ProductsService {
       limit,
       offset,
       sort: sortingCommand,
-      facet: [Facet.color, Facet.quantity, Facet.price],
+      facet: [Facet.color, Facet.quantity],
     }
 
     const filter = []
