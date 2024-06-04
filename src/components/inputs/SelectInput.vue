@@ -19,7 +19,7 @@ const props = defineProps<{
 
 const rules = computed(() => chooseRules(props.type ?? '', props.label))
 
-const data = defineModel()
+const data = defineModel<string>()
 </script>
 
 <template>
