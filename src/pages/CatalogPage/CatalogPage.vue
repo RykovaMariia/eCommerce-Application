@@ -58,8 +58,6 @@ const searchString = ref('')
 const fetchProducts = () => {
   const offset = (currentPage.value - 1) * limit
 
-  console.warn(searchString.value)
-
   productsService
     .getProducts(
       limit,

@@ -13,8 +13,6 @@ const props = defineProps<{
   productKey: string
 }>()
 
-const HUNDRED = 100
-
 const href = { name: 'productId', params: { productId: props.productSlug } }
 
 function getDiscountPercentage(price: number, discountedPrice: number) {
