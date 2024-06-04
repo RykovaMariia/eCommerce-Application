@@ -1,4 +1,4 @@
-import { ClientService } from '@/api/ClientService'
+import { ClientService, clientService } from '@/api/ClientService'
 import type { UserLoginData, UserPasswordsData } from '@/interfaces/userData'
 import { userAuth } from '@/stores/userAuth'
 import type { ICustomer } from '@/types/writable'
@@ -8,11 +8,11 @@ import { authService } from './authService'
 export class CustomerService {
   constructor(private clientService: ClientService) {}
 
-  async user() {
+  user() {
     return this.clientService.getApiRoot().me().get().execute()
   }
 
-  async update(customer: ICustomer) {
+  update(customer: ICustomer) {
     return this.clientService
       .getApiRoot()
       .me()
@@ -42,7 +42,7 @@ export class CustomerService {
       .execute()
   }
 
-  async updatePassword(userPasswords: Ref<UserPasswordsData>) {
+  updatePassword(userPasswords: Ref<UserPasswordsData>) {
     const userPasswordData = this.clientService
       .getApiRoot()
       .me()
@@ -68,4 +68,4 @@ export class CustomerService {
   }
 }
 
-export const customerService = new CustomerService(new ClientService())
+export const customerService = new CustomerService(clientService)

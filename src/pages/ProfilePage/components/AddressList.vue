@@ -3,7 +3,6 @@ import { addressService } from '@/services/addressService'
 import type { Address, Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
 import { alertStore } from '@/stores/alertStore'
 import { userAuth } from '@/stores/userAuth'
-import { reactive } from 'vue'
 
 const alert = alertStore()
 
@@ -13,7 +12,7 @@ defineProps<{
 }>()
 
 let typeAddress = defineModel<string>('typeAddress')
-const actions: MyCustomerUpdateAction[] = reactive([])
+const actions: MyCustomerUpdateAction[] = []
 
 const emit = defineEmits({
   editAddress(item: Address) {
@@ -25,7 +24,8 @@ const emit = defineEmits({
 })
 
 function removeAddress(address: Address) {
-  if (address) {
+  if (!address) return
+  else {
     addressService
       .remove(address)
       .then((result) => {
@@ -42,7 +42,8 @@ function removeAddress(address: Address) {
 }
 
 function setAsDefault(address: Address) {
-  if (address) {
+  if (!address) return
+  else {
     const setTypeAction =
       typeAddress?.value === 'billing' ? 'setDefaultBillingAddress' : 'setDefaultShippingAddress'
     actions.push({ action: setTypeAction, addressId: address.id })

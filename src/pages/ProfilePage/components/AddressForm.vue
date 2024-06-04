@@ -21,6 +21,7 @@ import { reactive } from 'vue'
 import { TypeAction } from '@/enums/typeAction'
 
 const props = defineProps<{
+  address: Address
   typeAddress: string
   typeAction: string
   addressBillingDefault: string
@@ -29,11 +30,11 @@ const props = defineProps<{
   addressesShipping: Address[]
 }>()
 
+const address = { ...props.address }
+
 const form = ref()
 
 const alert = alertStore()
-
-const address = defineModel<Address>('address')
 
 const isTheSame = ref(false)
 
@@ -72,14 +73,13 @@ const defaultBilling = ref(false)
 const defaultShipping = ref(false)
 
 watchEffect(() => {
-  defaultBilling.value = props.addressBillingDefault === address.value?.id ? true : false
+  defaultBilling.value = props.addressBillingDefault === address?.id ? true : false
 
-  defaultShipping.value = props.addressShippingDefault === address.value?.id ? true : false
+  defaultShipping.value = props.addressShippingDefault === address?.id ? true : false
 
-  if (address.value)
+  if (address)
     isTheSame.value =
-      props.addressesShipping.includes(address.value) &&
-      props.addressesBilling.includes(address.value)
+      props.addressesShipping.includes(address) && props.addressesBilling.includes(address)
         ? true
         : false
 })
@@ -88,7 +88,7 @@ async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
   if (valid) {
     if (props.typeAction === TypeAction.Add) createAddress()
-    if (props.typeAction === TypeAction.Edit && address.value) updateAddress(address.value)
+    if (props.typeAction === TypeAction.Edit && address) updateAddress(address)
   }
 }
 
@@ -110,16 +110,16 @@ function setActionsForCreate(addressId: string) {
 }
 
 function createAddress() {
-  if (address.value) {
+  if (address) {
     addressService
-      .create(address.value)
+      .create(address)
       .then((result) => {
         const addressResult = result.body
           ? result?.body?.addresses?.find(
               (item) =>
-                item.streetName === address.value?.streetName &&
-                item.postalCode === address.value?.postalCode &&
-                item.streetNumber === address.value?.streetNumber,
+                item.streetName === address?.streetName &&
+                item.postalCode === address?.postalCode &&
+                item.streetNumber === address?.streetNumber,
             )
           : ''
 
