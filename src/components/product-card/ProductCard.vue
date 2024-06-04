@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { HUNDRED } from '@/constants/constants'
 import Button from '@components/buttons/Button.vue'
-import { localStorageService } from '@/services/storageService';
+import { localStorageService } from '@/services/storageService'
 
 const props = defineProps<{
   src: string
