@@ -38,34 +38,34 @@ const productKey = localStorageService.getData('productKey')
 const selectedVariants: Ref<string[]> = ref([])
 
 if (productKey !== null) {
-productService
-  .getProduct(productKey)
-  .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
-    product.description = description?.['en-GB'] ?? ''
-    product.name = name?.['en-GB']
-    product.images = masterVariant.images?.map(({ url }) => url) ?? []
-    masterAttributeNames = masterVariant.attributes?.map(({ name }) => name) ?? []
-    const variantAttributes = variants?.map((variant) => variant.attributes).flat()
-    const attributesList = [masterVariant.attributes, ...variantAttributes].flat()
-    attributeValues = masterAttributeNames.map((attributeName) => {
-      const keys: string[] = attributesList
-        .map((attribute) => {
-          if (attribute?.name === attributeName) {
-            return attribute.value[0]['key']
-          }
-        })
-        .filter((value) => value)
-      return getUniqueValues(keys)
+  productService
+    .getProduct(productKey)
+    .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
+      product.description = description?.['en-GB'] ?? ''
+      product.name = name?.['en-GB']
+      product.images = masterVariant.images?.map(({ url }) => url) ?? []
+      masterAttributeNames = masterVariant.attributes?.map(({ name }) => name) ?? []
+      const variantAttributes = variants?.map((variant) => variant.attributes).flat()
+      const attributesList = [masterVariant.attributes, ...variantAttributes].flat()
+      attributeValues = masterAttributeNames.map((attributeName) => {
+        const keys: string[] = attributesList
+          .map((attribute) => {
+            if (attribute?.name === attributeName) {
+              return attribute.value[0]['key']
+            }
+          })
+          .filter((value) => value)
+        return getUniqueValues(keys)
+      })
+      const mainVariant: ProductItem = retrieveVariantsData(masterVariant)
+      const allVariants = variants?.map(retrieveVariantsData)
+      product.variants = [mainVariant, ...allVariants]
+      isProductDataLoaded.value = true
+      selectedVariants.value = product.variants[0].attributes.map((value) => value)
     })
-    const mainVariant: ProductItem = retrieveVariantsData(masterVariant)
-    const allVariants = variants?.map(retrieveVariantsData)
-    product.variants = [mainVariant, ...allVariants]
-    isProductDataLoaded.value = true
-    selectedVariants.value = product.variants[0].attributes.map((value) => value)
-  })
-  .catch((error: Error) => {
-    console.warn(`Error: ${error.message}`, 'warning')
-  })
+    .catch((error: Error) => {
+      console.warn(`Error: ${error.message}`, 'warning')
+    })
 }
 
 const setVariant = (value: string, index: number) => {
@@ -145,8 +145,8 @@ const price = computed(() => {
                       isMainAttribute && i === 0 ? 'selected-group' : selectedClass,
                     ]"
                     @click="
-                      setVariant(attribute, n);
-                      isMainAttribute = false;
+                      setVariant(attribute, n),
+                      isMainAttribute = false,
                       toggle?.()
                     "
                   >

@@ -71,14 +71,17 @@ export class ProductsService {
       limit,
       offset,
       sort: sortingCommand,
-      facet: [Facet.color, Facet.quantity, Facet.price],
-      fuzzy: true,
+      facet: [Facet.color, Facet.quantity],
     }
 
     const filter = []
 
     if (searchString) {
-      filter.push(`name.en:"Bamboo"`)
+      queryArgs = {
+        ...queryArgs,
+        'text.en-GB': `"${searchString}"`,
+        fuzzy: true,
+      }
     }
 
     if (categoryId) {
