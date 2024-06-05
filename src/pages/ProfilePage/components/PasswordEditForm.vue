@@ -16,7 +16,7 @@ const props = defineProps<{
 
 const alert = alertStore()
 
-const form = ref()
+const passwordForm: Ref<HTMLFormElement | undefined> = ref()
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
@@ -31,8 +31,8 @@ const userPasswords: Ref<UserPasswordsData> = ref({
 })
 
 const resetForm = () => {
-  if (form.value) {
-    form.value.reset()
+  if (passwordForm.value) {
+    passwordForm.value.reset()
   }
 }
 
@@ -73,7 +73,7 @@ function provePassword() {
 </script>
 
 <template>
-  <v-form class="password-form" ref="form" @submit.prevent="submit">
+  <v-form class="password-form" ref="passwordForm" @submit.prevent="submit">
     <v-col>
       <Input
         :label="InputLabel.CurrentPassword"

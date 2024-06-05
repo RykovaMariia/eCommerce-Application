@@ -6,7 +6,7 @@ import SelectInput from '@/components/inputs/SelectInput.vue'
 import { COUNTRY } from '@/constants/constants'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect, type Ref } from 'vue'
 import type {
   Address,
   ClientResponse,
@@ -32,7 +32,7 @@ const props = defineProps<{
 
 const address = reactive({ ...props.address })
 
-const form = ref()
+const addressForm: Ref<HTMLFormElement | undefined> = ref()
 
 const alert = alertStore()
 
@@ -51,8 +51,8 @@ const titleForm = computed(() => {
 })
 
 const resetForm = () => {
-  if (form.value) {
-    form.value.reset()
+  if (addressForm.value) {
+    addressForm.value.reset()
   }
 }
 
@@ -138,6 +138,10 @@ function createAddress() {
   }
 }
 
+function checkIncludesAddressInCustomersAddress(addressId: string, arrayAddresses?: string[]) {
+  return arrayAddresses && addressId && arrayAddresses.includes(addressId)
+}
+
 function setActionsForUpdate(result: ClientResponse<Customer>, addressId: string) {
   if (isTheSame.value) {
     actions.push({ action: 'addBillingAddressId', addressId })
@@ -146,22 +150,14 @@ function setActionsForUpdate(result: ClientResponse<Customer>, addressId: string
     if (props.typeAddress === 'billing') {
       actions.push({ action: 'addBillingAddressId', addressId })
 
-      if (
-        result.body.shippingAddressIds &&
-        addressId &&
-        result.body.shippingAddressIds?.indexOf(addressId) > -1
-      ) {
+      if (checkIncludesAddressInCustomersAddress(addressId, result.body.shippingAddressIds)) {
         actions.push({ action: 'removeShippingAddressId', addressId })
       }
     }
     if (props.typeAddress === 'shipping') {
       actions.push({ action: 'addShippingAddressId', addressId })
 
-      if (
-        result.body.billingAddressIds &&
-        addressId &&
-        result.body.billingAddressIds?.indexOf(addressId) > -1
-      ) {
+      if (checkIncludesAddressInCustomersAddress(addressId, result.body.billingAddressIds)) {
         actions.push({ action: 'removeBillingAddressId', addressId })
       }
     }
@@ -210,7 +206,7 @@ function updateAddress(address: Address) {
 
 <template>
   <div class="form-wrapper">
-    <v-form v-if="address" class="address-form" @submit.prevent="submit" ref="form">
+    <v-form v-if="address" class="address-form" @submit.prevent="submit" ref="addressForm">
       <v-col class="title">{{ titleForm }}</v-col>
       <v-col class="registration-inner-container">
         <v-col>
