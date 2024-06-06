@@ -41,7 +41,6 @@ getCategories()
   .then(() => categoriesStore().setCategoriesLink())
 
 const { categoriesLinks } = storeToRefs(categoriesStore())
-const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
 </script>
 
 <template>
@@ -54,7 +53,7 @@ const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
     ></v-app-bar-nav-icon>
     <HoverMenu
       v-if="$vuetify.display.lgAndUp"
-      :menuItemsWithSubItems="allCategoriesLinks"
+      :menuItemsWithSubItems="[ALL_PRODUCTS, ...categoriesLinks]"
       menu-trigger-text="Catalog"
     />
     <v-list v-if="$vuetify.display.lgAndUp" class="nav-list">
