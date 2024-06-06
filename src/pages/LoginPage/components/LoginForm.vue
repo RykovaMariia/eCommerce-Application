@@ -6,7 +6,7 @@ import { InputType } from '@/enums/inputType'
 import { reactive } from 'vue'
 import type { UserLoginData } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
-import { userAuth } from '@/stores/authStore'
+import { userAuth } from '@/stores/userAuth'
 import { alertStore } from '@/stores/alertStore'
 import router from '@/router'
 import type { SubmitEventPromise } from 'vuetify'
@@ -27,7 +27,7 @@ function login() {
   authService
     .login(userData)
     .then(() => {
-      userAuth().toggleAuthState()
+      userAuth().login()
       router.replace({ name: 'main' })
     })
     .catch((error: Error) => {
@@ -43,6 +43,7 @@ function login() {
       placeholder="user@example.com"
       :type="InputType.Text"
       v-model="userData.email"
+      is-validation
     />
     <Input
       :label="InputLabel.Password"
@@ -50,6 +51,7 @@ function login() {
       :type="InputType.Password"
       v-model="userData.password"
       icon="mdi-eye-closed"
+      is-validation
     />
     <v-col class="col-button-link">
       <Button textContent="Login" classes="secondary" buttonType="submit" />

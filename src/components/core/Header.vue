@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import HoverMenu from '@components/hover-menu/HoverMenu.vue'
 import IconLogo from '@components/icons/IconLogo.vue'
-import BurgerMenu from './BurgerMenu.vue'
+import BurgerMenu from '@components/core/BurgerMenu.vue'
 import { openBurgerStore } from '@/stores/openBurgerStore'
-import { userAuth } from '@/stores/authStore'
+import { userAuth } from '@/stores/userAuth'
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { CATALOG_MENU } from '@/constants/constants'
+import { ALL_PRODUCTS } from '@/constants/constants'
+import { getCategories } from '@/utils/getCategories'
+import { categoriesStore } from '@/stores/categoriesStore'
 
 const store = openBurgerStore()
 const { isLoggedIn } = storeToRefs(userAuth())
@@ -33,6 +35,13 @@ const infoLinks = [{ name: 'About us', href: '/about' }]
 function openBurger() {
   store.toggleOpenState()
 }
+
+getCategories()
+  .then((value) => categoriesStore().setCategories(value))
+  .then(() => categoriesStore().setCategoriesLink())
+
+const { categoriesLinks } = storeToRefs(categoriesStore())
+const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
 </script>
 
 <template>
@@ -45,10 +54,9 @@ function openBurger() {
     ></v-app-bar-nav-icon>
     <HoverMenu
       v-if="$vuetify.display.lgAndUp"
-      :menu-items="CATALOG_MENU"
+      :menuItemsWithSubItems="allCategoriesLinks"
       menu-trigger-text="Catalog"
     />
-
     <v-list v-if="$vuetify.display.lgAndUp" class="nav-list">
       <v-list-item v-for="item in infoLinks" :key="item.href"
         ><RouterLink :to="item.href">{{ item.name }}</RouterLink></v-list-item
@@ -60,10 +68,6 @@ function openBurger() {
     <RouterLink to="/main"><IconLogo /></RouterLink>
 
     <v-spacer></v-spacer>
-
-    <v-btn icon>
-      <v-icon>mdi-magnify</v-icon>
-    </v-btn>
 
     <v-btn icon to="/favorites" class="favorites">
       <v-icon>mdi-heart-outline</v-icon>
@@ -80,7 +84,7 @@ function openBurger() {
     </v-btn>
   </v-app-bar>
 
-  <BurgerMenu :account-menu="accountMenu" :catalog-menu="CATALOG_MENU" :info-links="infoLinks" />
+  <BurgerMenu :account-menu="accountMenu" :info-links="infoLinks" />
 </template>
 
 <style lang="scss" scoped>

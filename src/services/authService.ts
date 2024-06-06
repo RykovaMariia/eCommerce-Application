@@ -1,4 +1,4 @@
-import { ClientService, clientService } from '@/api/ClientService'
+import { ClientService } from '@/api/ClientService'
 
 import {
   StorageService,
@@ -14,18 +14,19 @@ export class AuthService {
     private localStorageService: StorageService<LocalStorageState>,
   ) {}
 
-  async login(userData: UserLoginData) {
+  login(userData: UserLoginData) {
     const userClientData = this.clientService
       .getApiRoot(this.clientService.getPasswordFlowClient(userData.email, userData.password))
       .me()
-      .get()
+      .login()
+      .post({ body: userData })
       .execute()
     return userClientData.then(() => {
       this.localStorageService.saveData('token', tokenData.get())
     })
   }
 
-  async signup(userData: UserCustomerDraft) {
+  signup(userData: UserCustomerDraft) {
     const userClientData = this.clientService
       .getApiRoot()
       .me()
@@ -40,4 +41,4 @@ export class AuthService {
   }
 }
 
-export const authService = new AuthService(clientService, localStorageService)
+export const authService = new AuthService(new ClientService(), localStorageService)

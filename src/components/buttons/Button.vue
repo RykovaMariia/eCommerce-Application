@@ -28,6 +28,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 @use '@styles/constants.scss';
 
 .v-btn {
+  background: constants.$color-secondary;
   border-radius: 6px;
 }
 

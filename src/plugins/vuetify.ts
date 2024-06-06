@@ -4,11 +4,13 @@ import { createVuetify } from 'vuetify'
 import * as vuetifyComponents from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { VDateInput } from 'vuetify/labs/VDateInput'
+import { VNumberInput } from 'vuetify/labs/VNumberInput'
 
 const vuetify = createVuetify({
   components: {
     ...vuetifyComponents,
     VDateInput,
+    VNumberInput,
   },
   directives,
   theme: {
@@ -24,7 +26,7 @@ const vuetify = createVuetify({
           info: '#2196F3',
           success: '#828266',
           warning: '#ba6559',
-          surface: '#bb9758',
+          surface: '#f4e8da',
           'on-surface': '#27291b',
         },
         variables: {

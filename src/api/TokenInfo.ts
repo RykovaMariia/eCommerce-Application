@@ -16,6 +16,10 @@ export class TokenInfo {
   public set(data: TokenStore): void {
     this.store = data
   }
+
+  public clear() {
+    this.store = initialTokenInfo
+  }
 }
 
 export const tokenData = new TokenInfo()

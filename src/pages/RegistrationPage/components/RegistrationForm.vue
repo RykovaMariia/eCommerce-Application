@@ -6,15 +6,15 @@ import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import { computed, reactive, ref } from 'vue'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
-import { COUNTRY } from '@/constants/constants'
+import { COUNTRY, yearToShow } from '@/constants/constants'
 import type { UserCustomerDraft } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
 import { formateDate } from '@/utils/dateUtils'
 import { alertStore } from '@/stores/alertStore'
 import router from '@/router'
-import { userAuth } from '@/stores/authStore'
+import { userAuth } from '@/stores/userAuth'
 import type { SubmitEventPromise } from 'vuetify'
-import AutocompleteInput from '@/components/inputs/AutocompleteInput.vue'
+import SelectInput from '@components/inputs/SelectInput.vue'
 
 const alert = alertStore()
 
@@ -46,10 +46,6 @@ const title = computed(() => {
   return isTheSame.value ? 'Billing / shipping address' : 'Billing address'
 })
 
-const setInput = (value: string) => {
-  return (userData.dateOfBirth = value)
-}
-
 const userData: UserCustomerDraft = reactive({
   firstName: '',
   lastName: '',
@@ -57,7 +53,12 @@ const userData: UserCustomerDraft = reactive({
   email: '',
   password: '',
   addresses: [],
+  billingAddresses: [],
+  shippingAddresses: [],
 })
+
+const currentDate = new Date()
+const dateOfBirth = ref(new Date(yearToShow, currentDate.getMonth(), currentDate.getDate()))
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   if (isTheSame.value) {
@@ -75,21 +76,24 @@ function signup() {
   }
   if (isTheSame.value) {
     userData.addresses.push(addressBilling)
+    userData.billingAddresses = userData.shippingAddresses = [0]
     if (defaultShipping.value) {
       userData.defaultShippingAddress = 0
     }
   } else {
     userData.addresses.push(addressBilling, addressShipping)
+    userData.billingAddresses = [0]
+    userData.shippingAddresses = [1]
     if (defaultShipping.value) {
       userData.defaultShippingAddress = 1
     }
   }
-  userData.dateOfBirth = formateDate(userData.dateOfBirth)
+  userData.dateOfBirth = formateDate(dateOfBirth.value.toDateString())
 
   authService
     .signup(userData)
     .then(() => {
-      userAuth().toggleAuthState()
+      userAuth().login()
       alert.show('User is registered', 'success')
       router.replace({ name: 'main' })
     })
@@ -109,6 +113,7 @@ function signup() {
           :type="InputType.Text"
           v-model="userData.firstName"
           class="registration-input"
+          is-validation
         />
         <Input
           :label="InputLabel.LastName"
@@ -116,9 +121,10 @@ function signup() {
           :type="InputType.Text"
           v-model="userData.lastName"
           class="registration-input"
+          is-validation
         />
         <v-col class="registration-input">
-          <DateInput :label="InputLabel.BirthDate" :type="InputType.Text" @setInput="setInput" />
+          <DateInput :label="InputLabel.BirthDate" :type="InputType.Text" v-model="dateOfBirth" />
         </v-col>
         <Input
           :label="InputLabel.Email"
@@ -126,6 +132,7 @@ function signup() {
           :type="InputType.Text"
           v-model="userData.email"
           class="registration-input"
+          is-validation
         />
         <Input
           :label="InputLabel.Password"
@@ -134,14 +141,16 @@ function signup() {
           v-model="userData.password"
           icon="mdi-eye-closed"
           class="registration-input"
+          is-validation
         />
       </v-col>
       <v-col class="registration-inner-container">
         <v-col>
-          <AutocompleteInput
+          <SelectInput
             :label="InputLabel.Country"
             :items="[COUNTRY]"
             type="text"
+            is-validation
             class="registration-input"
           />
         </v-col>
@@ -167,16 +176,23 @@ function signup() {
                 @click="!defaultShipping"
               />
             </div>
-            <Input :label="InputLabel.City" :type="InputType.Text" v-model="addressBilling.city" />
+            <Input
+              :label="InputLabel.City"
+              :type="InputType.Text"
+              v-model="addressBilling.city"
+              is-validation
+            />
             <Input
               :label="InputLabel.Street"
               :type="InputType.Text"
               v-model="addressBilling.streetName"
+              is-validation
             />
             <Input
               :label="InputLabel.PostalCode"
               :type="InputType.Text"
               v-model="addressBilling.postalCode"
+              is-validation
             />
           </v-col>
           <v-col class="address-shipping-wrapper">
@@ -193,16 +209,19 @@ function signup() {
                 :label="InputLabel.City"
                 :type="InputType.Text"
                 v-model="addressShipping.city"
+                is-validation
               />
               <Input
                 :label="InputLabel.Street"
                 :type="InputType.Text"
                 v-model="addressShipping.streetName"
+                is-validation
               />
               <Input
                 :label="InputLabel.PostalCode"
                 :type="InputType.Text"
                 v-model="addressShipping.postalCode"
+                is-validation
               />
             </div>
           </v-col>

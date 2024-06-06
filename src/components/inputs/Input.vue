@@ -5,10 +5,21 @@ import { InputLabel } from '@/enums/inputLabel'
 
 const props = defineProps<{
   label: string
-  placeholder?: string
   type: string
+  placeholder?: string
   icon?: string
   disabled?: boolean
+  variant?:
+    | 'outlined'
+    | 'underlined'
+    | 'filled'
+    | 'plain'
+    | 'solo'
+    | 'solo-inverted'
+    | 'solo-filled'
+  isValidation?: boolean
+  isHideDetails?: boolean | 'auto'
+  isClearable?: boolean
 }>()
 
 const data = defineModel()
@@ -19,10 +30,24 @@ function togglePassword() {
   marker.value = !marker.value
 }
 const fieldType = computed(() =>
-  props.label === InputLabel.Password ? (marker.value ? props.type : 'text') : props.type,
+  props.label === InputLabel.Password ||
+  InputLabel.CurrentPassword ||
+  InputLabel.NewPassword ||
+  InputLabel.ConfirmPassword
+    ? marker.value
+      ? props.type
+      : 'text'
+    : props.type,
 )
 const innerIcon = computed(() =>
-  props.label === InputLabel.Password ? (marker.value ? props.icon : 'mdi-eye-outline') : '',
+  props.label === InputLabel.Password ||
+  InputLabel.CurrentPassword ||
+  InputLabel.NewPassword ||
+  InputLabel.ConfirmPassword
+    ? marker.value
+      ? props.icon
+      : 'mdi-eye-outline'
+    : '',
 )
 </script>
 
@@ -31,15 +56,19 @@ const innerIcon = computed(() =>
     <v-text-field
       :label="props.label"
       :placeholder="props.placeholder"
-      :rules="rules"
+      :rules="isValidation ? rules : [true]"
       :type="fieldType"
       :append-inner-icon="innerIcon"
       @click:append-inner="togglePassword()"
-      variant="outlined"
+      :variant="variant ? variant : 'outlined'"
       :disabled="$props.disabled"
       v-model="data"
       base-color="on-surface"
       color="on-surface"
+      density="comfortable"
+      :hide-details="isHideDetails"
+      :clearable="isClearable"
+      :clear-icon="isClearable ? '$clear' : ''"
     ></v-text-field>
   </v-col>
 </template>

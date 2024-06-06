@@ -4,18 +4,17 @@ import {
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
   type PasswordAuthMiddlewareOptions,
-  type RefreshAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2'
 
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
-
 import { tokenData } from './TokenInfo'
 import { localStorageService } from '@/services/storageService'
-const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
 
 const userClientBuilder = new ClientBuilder()
 
 export class ClientService {
+  private refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
+
   private projectKey = import.meta.env.VITE_CTP_PROJECT_KEY
   private authUri = import.meta.env.VITE_CTP_AUTH_URL
   private baseUri = import.meta.env.VITE_CTP_API_URL
@@ -36,21 +35,23 @@ export class ClientService {
     fetch,
   }
 
-  private refreshAuthMiddlewareOptions: RefreshAuthMiddlewareOptions = {
-    host: this.authUri,
-    projectKey: this.projectKey,
-    credentials: {
-      clientId: this.clientId,
-      clientSecret: this.clientSecret,
-    },
-    refreshToken: refreshToken,
-    tokenCache: tokenData,
-    fetch,
-  }
-
   private httpMiddlewareOptions: HttpMiddlewareOptions = {
     host: this.baseUri,
     fetch,
+  }
+
+  getRefreshAuthMiddlewareOptions = (refreshToken: string) => {
+    return {
+      host: this.authUri,
+      projectKey: this.projectKey,
+      credentials: {
+        clientId: this.clientId,
+        clientSecret: this.clientSecret,
+      },
+      refreshToken: refreshToken,
+      tokenCache: tokenData,
+      fetch,
+    }
   }
 
   getPasswordAuthMiddlewareOptions(email: string, password: string): PasswordAuthMiddlewareOptions {
@@ -86,8 +87,12 @@ export class ClientService {
   }
 
   getClient() {
+    const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
+
     if (refreshToken) {
-      return this.getDefaultClient().withRefreshTokenFlow(this.refreshAuthMiddlewareOptions).build()
+      return this.getDefaultClient()
+        .withRefreshTokenFlow(this.getRefreshAuthMiddlewareOptions(refreshToken))
+        .build()
     }
     return this.getDefaultClient().build()
   }

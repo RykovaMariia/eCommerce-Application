@@ -40,22 +40,10 @@ h1 {
 }
 
 h2 {
-  font-size: 4rem;
-}
-
-h3 {
-  font-size: 3.5rem;
-}
-
-h4 {
-  font-size: 3rem;
-}
-
-h5 {
   font-size: 2.5rem;
 }
 
-h6 {
+h3 {
   font-size: 2rem;
 }
 
@@ -81,6 +69,11 @@ a {
   &:hover {
     color: constants.$color-primary;
   }
+}
+
+.page-card {
+  border: 1px solid constants.$color-primary;
+  border-radius: 6px;
 }
 
 .v-application {
