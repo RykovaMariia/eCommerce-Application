@@ -11,7 +11,7 @@ defineProps<{
   defaultAddress: string
 }>()
 
-let typeAddress = defineModel<string>('typeAddress')
+const typeAddress = defineModel<string>('typeAddress')
 const actions: MyCustomerUpdateAction[] = []
 
 const emit = defineEmits({

@@ -9,6 +9,14 @@ const props = defineProps<{
   placeholder?: string
   icon?: string
   disabled?: boolean
+  variant?:
+    | 'outlined'
+    | 'underlined'
+    | 'filled'
+    | 'plain'
+    | 'solo'
+    | 'solo-inverted'
+    | 'solo-filled'
   isValidation?: boolean
   isHideDetails?: boolean | 'auto'
   isClearable?: boolean
@@ -52,7 +60,7 @@ const innerIcon = computed(() =>
       :type="fieldType"
       :append-inner-icon="innerIcon"
       @click:append-inner="togglePassword()"
-      variant="outlined"
+      :variant="variant ? variant : 'outlined'"
       :disabled="$props.disabled"
       v-model="data"
       base-color="on-surface"

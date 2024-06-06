@@ -23,45 +23,59 @@ const passProductKey = () => {
 }
 </script>
 <template>
-  <v-card
-    elevation="0"
-    max-width="290"
-    variant="text"
-    class="product-card"
-    :to="href"
-    @click="passProductKey"
-  >
-    <v-img height="340" :src="src" cover></v-img>
-    <v-card-title>{{ name }}</v-card-title>
-    <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>
-    <v-card-text
-      ><span class="price_discount" v-if="discountedPrice"
-        >€{{ discountedPrice / HUNDRED }}&nbsp;</span
-      >
-      <span :class="discountedPrice ? 'line-through' : 'price'">€{{ price / HUNDRED }}</span>
-    </v-card-text>
-    <v-card-actions>
-      <Button textContent="Add to card" />
-    </v-card-actions>
-    <div class="discount" v-if="discountedPrice">
-      -{{ getDiscountPercentage(price, discountedPrice) }}%
-    </div>
-  </v-card>
+  <v-col>
+    <v-card
+      elevation="0"
+      max-width="290"
+      variant="text"
+      class="product-card"
+      :to="href"
+      @click="passProductKey"
+    >
+      <v-img height="340" :src="src" cover></v-img>
+      <v-card-title>{{ name }}</v-card-title>
+      <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>
+      <v-card-text
+        ><span class="price_discount" v-if="discountedPrice"
+          >€{{ discountedPrice / HUNDRED }}&nbsp;</span
+        >
+        <span :class="discountedPrice ? 'line-through' : 'price'">€{{ price / HUNDRED }}</span>
+      </v-card-text>
+      <div class="discount" v-if="discountedPrice">
+        -{{ getDiscountPercentage(price, discountedPrice) }}%
+      </div>
+    </v-card>
+    <Button textContent="Add to card" />
+  </v-col>
 </template>
 
 <style lang="scss" scoped>
 @use '@/styles/constants.scss';
 
+.v-col {
+  display: flex;
+  flex-basis: 0;
+  flex-direction: column;
+  flex-grow: 0;
+  gap: 0.6rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
 .product-card {
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
 
   &:hover {
+    color: constants.$color-text-dark;
+
     ::v-deep(.v-img__img--cover) {
       transform: scale(1.1);
     }
   }
+}
+
+::v-deep(.v-card__overlay) {
+  display: none;
 }
 
 ::v-deep(.v-img__img--cover) {
@@ -123,10 +137,6 @@ const passProductKey = () => {
   color: constants.$color-text-dark;
   text-decoration: line-through;
   opacity: 0.8;
-}
-
-.v-card-actions {
-  padding: 0;
 }
 
 .v-btn {

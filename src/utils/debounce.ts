@@ -1,8 +1,8 @@
-export function debounce<T extends Function>(cb: T, wait = 3000) {
-  let timer: NodeJS.Timeout
-  const callable = (...args: any) => {
-    clearTimeout(timer)
-    timer = setTimeout(() => cb(...args), wait)
+export function debounce<T extends (...args: unknown[]) => void>(cb: T, wait = 300) {
+  let timer: number
+  const callable = (...args: unknown[]) => {
+    window.clearTimeout(timer)
+    timer = window.setTimeout(() => cb(...args), wait)
   }
-  return <T>(<any>callable)
+  return callable
 }

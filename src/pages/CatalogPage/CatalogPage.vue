@@ -7,17 +7,16 @@ import type {
 } from '@commercetools/platform-sdk'
 import { productsService } from '@/services/productsService'
 import ProductCard from '@components/product-card/ProductCard.vue'
-import { computed, ref, watchEffect, type Ref } from 'vue'
+import { computed, reactive, ref, watch, watchEffect, type Ref } from 'vue'
 import SelectInput from '@components/inputs/SelectInput.vue'
 import { SORTING_ITEMS } from '@/constants/constants'
 import { type SortBy } from '@/enums/sortingCommand'
 import { useRoute, useRouter } from 'vue-router'
 import { Facet } from '@/enums/facet'
-import PriceForm from './PriceForm.vue'
+import PriceForm from './components/PriceForm.vue'
 import { storeToRefs } from 'pinia'
 import { categoriesStore } from '@/stores/categoriesStore'
 import Input from '@/components/inputs/Input.vue'
-import { debounce } from '@/utils/debounce'
 
 const route = useRoute()
 const router = useRouter()
@@ -28,15 +27,13 @@ watchEffect(() => {
   const category = route.params.categoryId
   const subCategory = route.params.subCategoryId
 
-  if (categories.value.length) {
-    const currentCategory = categories.value.find((el) => el.parent.key === category)
-
-    if (subCategory) {
-      categoryId.value =
-        currentCategory?.children.find((subEl) => subEl.key === subCategory)?.id ?? ''
-    } else {
-      categoryId.value = currentCategory?.parent.id ?? ''
-    }
+  if (!categories.value.length) return
+  const currentCategory = categories.value.find((el) => el.parent.key === category)
+  if (subCategory) {
+    categoryId.value =
+      currentCategory?.children.find((subEl) => subEl.key === subCategory)?.id ?? ''
+  } else {
+    categoryId.value = currentCategory?.parent.id ?? ''
   }
 })
 
@@ -44,31 +41,33 @@ const limit = 20
 const currentPage = ref(1)
 const totalPages = computed(() => Math.ceil(productsCount.value / limit))
 
-let products: Ref<ProductProjection[]> = ref([])
-let productsCount = ref(0)
-let colorItems: Ref<string[]> = ref([])
-let quantityItems: Ref<string[]> = ref([])
+const products: Ref<ProductProjection[]> = ref([])
+const productsCount = ref(0)
+const colorItems: Ref<string[]> = ref([])
+const quantityItems: Ref<string[]> = ref([])
 
-const selectedSorting: Ref<SortBy> = ref((route.query.sorting as SortBy) ?? 'default')
-const selectedColor: Ref<string[]> = ref((route.query.color as string[]) ?? [])
-const selectedQuantity: Ref<string[]> = ref((route.query.quantity as string[]) ?? [])
-const selectedPrice: Ref<[string, string]> = ref((route.query.price as [string, string]) ?? [])
-const searchString = ref(route.query.search as string)
+const selectedFilters = reactive({
+  sorting: (route.query.sorting as SortBy) ?? 'default',
+  color: route.query.color as string[] | string,
+  quantity: route.query.quantity as string[],
+  price: route.query.price as [string, string],
+  search: route.query.search as string,
+})
 
 const fetchProducts = () => {
   const offset = (currentPage.value - 1) * limit
 
   productsService
-    .getProducts(
+    .getProducts({
       limit,
       offset,
-      selectedSorting.value,
-      categoryId?.value,
-      selectedColor.value,
-      selectedQuantity.value,
-      selectedPrice.value,
-      searchString.value,
-    )
+      sorting: selectedFilters.sorting,
+      categoryId: categoryId.value,
+      colorFilter: selectedFilters.color,
+      quantityFilter: selectedFilters.quantity,
+      priceFilter: selectedFilters.price,
+      search: selectedFilters.search,
+    })
     .then((response: ClientResponse<ProductProjectionPagedSearchResponse>) => {
       products.value = response.body.results || []
       productsCount.value = response.body.total || 0
@@ -88,50 +87,52 @@ const fetchProducts = () => {
 
 const selectSorting = (value: SortBy) => {
   router.replace({ query: { ...route.query, sorting: value } })
-  selectedSorting.value = value
+  selectedFilters.sorting = value
   fetchProducts()
 }
 
 const selectColor = (value: string[]) => {
   router.replace({ query: { ...route.query, color: value } })
-  selectedColor.value = value
+  selectedFilters.color = value
   fetchProducts()
 }
 
 const selectQuantity = (value: string[]) => {
   router.replace({ query: { ...route.query, quantity: value } })
-  selectedQuantity.value = value
+  selectedFilters.quantity = value
   fetchProducts()
 }
 
 const selectPrice = (value: { from: string; to: string }) => {
   router.replace({ query: { ...route.query, price: [value.from, value.to] } })
-  selectedPrice.value = [value.from, value.to]
+  selectedFilters.price = [value.from, value.to]
   fetchProducts()
 }
 
 const search = (value: string) => {
   router.replace({ query: { ...route.query, search: value } })
-  searchString.value = value
+  selectedFilters.search = value
   fetchProducts()
 }
 
-const searchWithDebounce = debounce(search)
-
-watchEffect(() => {
-  selectedSorting.value = route.query.sorting as SortBy
-  selectedColor.value = route.query.color as string[]
-  selectedQuantity.value = route.query.quantity as string[]
-  selectedPrice.value = route.query.price as [string, string]
-  fetchProducts()
-})
+watch(
+  () => route,
+  () => {
+    selectedFilters.sorting = route.query.sorting as SortBy
+    selectedFilters.color = route.query.color as string[]
+    selectedFilters.quantity = route.query.quantity as string[]
+    selectedFilters.price = route.query.price as [string, string]
+    fetchProducts()
+  },
+  { deep: true, immediate: true },
+)
 </script>
 
 <template>
   <SelectInput
     label="Sort by"
     :items="SORTING_ITEMS"
-    v-model="selectedSorting"
+    v-model="selectedFilters.sorting"
     variant="underlined"
     width="10rem"
     @update:modelValue="selectSorting"
@@ -139,7 +140,7 @@ watchEffect(() => {
   <SelectInput
     label="Color"
     :items="colorItems"
-    v-model="selectedColor"
+    v-model="selectedFilters.color"
     variant="underlined"
     is-chips
     is-clearable
@@ -150,6 +151,7 @@ watchEffect(() => {
   <SelectInput
     label="Quantity"
     :items="quantityItems"
+    v-model="selectedFilters.quantity"
     variant="underlined"
     is-chips
     is-clearable
@@ -165,8 +167,8 @@ watchEffect(() => {
     icon="mdi-magnify"
     isHideDetails
     isClearable
-    v-model="searchString"
-    @update:modelValue="searchWithDebounce"
+    v-model="selectedFilters.search"
+    @update:modelValue="search"
   />
 
   <div class="d-flex">
