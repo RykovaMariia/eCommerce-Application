@@ -14,7 +14,6 @@ const { infoLinks, accountMenu } = defineProps<{
 }>()
 
 const { categoriesLinks } = storeToRefs(categoriesStore())
-const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
 </script>
 
 <template>
@@ -25,7 +24,10 @@ const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
       }}</v-list-item>
     </v-list>
 
-    <CollapsibleMenu menuTriggerText="Catalog" :itemsWithSubItems="allCategoriesLinks" />
+    <CollapsibleMenu
+      menuTriggerText="Catalog"
+      :itemsWithSubItems="[ALL_PRODUCTS, ...categoriesLinks]"
+    />
 
     <v-list class="nav-list-login">
       <v-list-item v-for="item in accountMenu" :key="item.href" :to="item.href" variant="plain">{{
