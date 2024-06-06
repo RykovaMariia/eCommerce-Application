@@ -85,13 +85,13 @@ export class ProductsService {
     if (categoryId) {
       filter.push(`${categoryId ? `categories.id:subtree("${categoryId}")` : ''}`)
     }
-    if (colorFilter) {
+    if (colorFilter?.length) {
       if (typeof colorFilter === 'string') filter.push(`${Facet.color}: "${colorFilter}"`)
       else {
         filter.push(`${Facet.color}: ${colorFilter.map((el) => `"${el}"`).join(',')}`)
       }
     }
-    if (quantityFilter) {
+    if (quantityFilter?.length) {
       if (typeof quantityFilter === 'string') filter.push(`${Facet.quantity}: "${quantityFilter}"`)
       else {
         filter.push(`${Facet.quantity}: ${quantityFilter.map((el) => `"${el}"`).join(',')}`)
