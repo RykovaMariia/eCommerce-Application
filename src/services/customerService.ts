@@ -12,6 +12,8 @@ export class CustomerService {
   }
 
   update(customer: ICustomer) {
+    const { firstName, lastName, dateOfBirth, email } = customer
+
     return this.clientService
       .getApiRoot()
       .me()
@@ -21,19 +23,19 @@ export class CustomerService {
           actions: [
             {
               action: 'setFirstName',
-              firstName: customer.firstName,
+              firstName,
             },
             {
               action: 'setLastName',
-              lastName: customer.lastName,
+              lastName,
             },
             {
               action: 'setDateOfBirth',
-              dateOfBirth: customer.dateOfBirth,
+              dateOfBirth,
             },
             {
               action: 'changeEmail',
-              email: customer.email,
+              email,
             },
           ],
         },

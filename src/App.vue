@@ -5,7 +5,20 @@ import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue'
 import { alertStore } from '@/stores/alertStore'
 import { storeToRefs } from 'pinia'
 import AlertWindow from '@components/alertWindow/AlertWindow.vue'
+import { customerService } from './services/customerService'
+import { userAuth } from './stores/userAuth'
+import router from './router'
 const { isOpenAlert } = storeToRefs(alertStore())
+
+const alert = alertStore()
+
+customerService.user().catch((error: Error) => {
+  if (error.message.includes('The refresh token was not found')) {
+    alert.show(`Error: The token has expired. Please re-authorize`, 'warning')
+    userAuth().logout()
+    router.replace({ name: 'login' })
+  }
+})
 </script>
 
 <template>

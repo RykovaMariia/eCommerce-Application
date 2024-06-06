@@ -68,15 +68,23 @@ function setAsDefault(address: Address) {
   <v-list bg-color="transparent" color="primary">
     <v-list-item class="item" v-for="(item, i) in items" :key="i" :value="item" color="primary">
       <template v-slot:prepend>
-        <v-icon color="primary" icon="mdi-home-map-marker" size="small" class="icon"></v-icon>
+        <v-icon color="primary" icon="mdi-map-marker-radius" size="small" class="icon"></v-icon>
       </template>
-      <v-list-item-title @click="setAsDefault(item)">
+      <v-list-item-title>
         <div class="text">{{ item.city }}, {{ item.streetName }}, {{ item.postalCode }}</div>
       </v-list-item-title>
 
       <template v-slot:append>
         <div class="icons" color="primary">
           <v-chip v-if="item.id === defaultAddress" color="primary"> Default </v-chip>
+          <v-chip
+            color="secondary"
+            size="small"
+            @click="setAsDefault(item)"
+            v-if="item.id !== defaultAddress"
+          >
+            Set as default
+          </v-chip>
           <v-icon
             icon="mdi-grease-pencil"
             size="small"
@@ -106,7 +114,6 @@ function setAsDefault(address: Address) {
 @include mixins.media-middle {
   .v-list-item--density-default:not(.v-list-item--nav).v-list-item--one-line {
     display: flex;
-    flex-direction: column;
     align-items: flex-start;
     padding: 1px;
   }
@@ -118,6 +125,10 @@ function setAsDefault(address: Address) {
 
   ::v-deep(.v-list-item__append) {
     align-self: flex-end;
+  }
+
+  ::v-deep(.v-list-item__prepend) {
+    align-self: flex-start;
   }
 
   .text {
