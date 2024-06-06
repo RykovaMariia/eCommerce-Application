@@ -17,6 +17,7 @@ import PriceForm from './components/PriceForm.vue'
 import { storeToRefs } from 'pinia'
 import { categoriesStore } from '@/stores/categoriesStore'
 import Input from '@/components/inputs/Input.vue'
+import { alertStore } from '@/stores/alertStore'
 
 const route = useRoute()
 const router = useRouter()
@@ -81,7 +82,7 @@ const fetchProducts = () => {
       ) as string[]
     })
     .catch((error: Error) => {
-      throw new Error(error.message)
+      alertStore().show(error.message, 'warning')
     })
 }
 

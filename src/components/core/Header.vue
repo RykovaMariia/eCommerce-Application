@@ -38,9 +38,10 @@ function openBurger() {
 
 getCategories()
   .then((value) => categoriesStore().setCategories(value))
-  .then(() => categoriesStore().getCategoriesLink())
+  .then(() => categoriesStore().setCategoriesLink())
 
-const { categoriesLink } = storeToRefs(categoriesStore())
+const { categoriesLinks } = storeToRefs(categoriesStore())
+const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
 </script>
 
 <template>
@@ -53,7 +54,7 @@ const { categoriesLink } = storeToRefs(categoriesStore())
     ></v-app-bar-nav-icon>
     <HoverMenu
       v-if="$vuetify.display.lgAndUp"
-      :menuItemsWithSubItems="[ALL_PRODUCTS, ...categoriesLink]"
+      :menuItemsWithSubItems="allCategoriesLinks"
       menu-trigger-text="Catalog"
     />
     <v-list v-if="$vuetify.display.lgAndUp" class="nav-list">

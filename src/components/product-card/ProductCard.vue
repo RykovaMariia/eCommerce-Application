@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { HUNDRED } from '@/constants/constants'
+import { FULL_PERCENTAGE } from '@/constants/constants'
 import Button from '@components/buttons/Button.vue'
 import { localStorageService } from '@/services/storageService'
 
@@ -16,7 +16,7 @@ const props = defineProps<{
 const href = { name: 'productId', params: { productId: props.productSlug } }
 
 function getDiscountPercentage(price: number, discountedPrice: number) {
-  return HUNDRED - Math.ceil((discountedPrice * HUNDRED) / price)
+  return FULL_PERCENTAGE - Math.ceil((discountedPrice * FULL_PERCENTAGE) / price)
 }
 const passProductKey = () => {
   localStorageService.saveData('productKey', props.productKey)
@@ -37,9 +37,11 @@ const passProductKey = () => {
       <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>
       <v-card-text
         ><span class="price_discount" v-if="discountedPrice"
-          >€{{ discountedPrice / HUNDRED }}&nbsp;</span
+          >€{{ discountedPrice / FULL_PERCENTAGE }}&nbsp;</span
         >
-        <span :class="discountedPrice ? 'line-through' : 'price'">€{{ price / HUNDRED }}</span>
+        <span :class="discountedPrice ? 'line-through' : 'price'"
+          >€{{ price / FULL_PERCENTAGE }}</span
+        >
       </v-card-text>
       <div class="discount" v-if="discountedPrice">
         -{{ getDiscountPercentage(price, discountedPrice) }}%

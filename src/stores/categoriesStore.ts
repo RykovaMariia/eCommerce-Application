@@ -8,16 +8,16 @@ export interface Categories {
 }
 
 export const categoriesStore = defineStore('Categories', {
-  state: (): { categories: Categories[]; categoriesLink: CategoryLink[] } => ({
+  state: (): { categories: Categories[]; categoriesLinks: CategoryLink[] } => ({
     categories: [],
-    categoriesLink: [],
+    categoriesLinks: [],
   }),
   actions: {
     setCategories(categories: Categories[]) {
       this.categories = categories
     },
-    getCategoriesLink() {
-      this.categoriesLink = this.categories.reduce((calc: CategoryLink[], category) => {
+    setCategoriesLink() {
+      this.categoriesLinks = this.categories.reduce((calc: CategoryLink[], category) => {
         calc.push({
           parent: {
             name: category.parent.key ?? '',

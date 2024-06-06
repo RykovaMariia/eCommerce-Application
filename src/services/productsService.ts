@@ -1,5 +1,5 @@
 import { ClientService, clientService } from '@/api/ClientService'
-import { HUNDRED } from '@/constants/constants'
+import { FULL_PERCENTAGE } from '@/constants/constants'
 import { Facet } from '@/enums/facet'
 import type { QueryParam } from '@commercetools/sdk-client-v2'
 import { SortingCommand, type SortBy } from '@/enums/sortingCommand'
@@ -100,7 +100,7 @@ export class ProductsService {
 
     if (priceFilter?.length) {
       filter.push(
-        `${Facet.price}: range(${+priceFilter[0] * HUNDRED} to ${+priceFilter[1] * HUNDRED})`,
+        `${Facet.price}: range(${+priceFilter[0] * FULL_PERCENTAGE} to ${+priceFilter[1] * FULL_PERCENTAGE})`,
       )
     }
 

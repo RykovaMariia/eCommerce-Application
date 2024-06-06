@@ -14,7 +14,9 @@ const menuLinks = [
     href: '/about',
   },
 ]
-const { categoriesLink } = storeToRefs(categoriesStore())
+const { categoriesLinks } = storeToRefs(categoriesStore())
+const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
+
 const creationYear = '2024'
 </script>
 <template>
@@ -37,11 +39,7 @@ const creationYear = '2024'
 
         <v-col class="v-col-md-3 catalog">
           <div class="footer-wrapper-title">Catalog</div>
-          <div
-            v-for="(link, index) in [ALL_PRODUCTS, ...categoriesLink]"
-            :key="index"
-            class="category"
-          >
+          <div v-for="(link, index) in allCategoriesLinks" :key="index" class="category">
             <RouterLink :to="link.parent.href">{{ link.parent.name }}</RouterLink>
           </div>
         </v-col>
