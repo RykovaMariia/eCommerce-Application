@@ -15,7 +15,7 @@ const multiplier = ref(1)
 const discountIsActive = ref(false)
 const isMainAttribute = ref(true)
 
-let product: ProductData = reactive({
+const product: ProductData = reactive({
   description: '',
   name: '',
   images: [],
@@ -24,7 +24,7 @@ let product: ProductData = reactive({
 
 let attributeValues: string[][]
 let masterAttributeNames: string[] = []
-let isProductDataLoaded = ref(false)
+const isProductDataLoaded = ref(false)
 
 function retrieveVariantsData({ attributes, prices }: ProductVariant) {
   return {

@@ -6,25 +6,24 @@ import { SortingCommand, type SortBy } from '@/enums/sortingCommand'
 
 interface QueryArgs {
   fuzzy?: boolean
-  fuzzyLevel?: number
-  markMatchingVariants?: boolean
   filter?: string | string[]
-  'filter.facets'?: string | string[]
   'filter.query'?: string | string[]
   facet?: string | string[]
   sort?: string | string[]
   limit?: number
   offset?: number
-  withTotal?: boolean
-  staged?: boolean
-  priceCurrency?: string
-  priceCountry?: string
-  priceCustomerGroup?: string
-  priceChannel?: string
-  localeProjection?: string | string[]
-  storeProjection?: string
-  expand?: string | string[]
   [key: string]: QueryParam
+}
+
+interface RequestParam {
+  limit: number
+  offset: number
+  sorting: SortBy
+  categoryId?: string
+  colorFilter?: string[] | string
+  quantityFilter?: string[] | string
+  priceFilter?: [string, string]
+  search?: string
 }
 
 export class ProductsService {
@@ -55,17 +54,18 @@ export class ProductsService {
       .execute()
   }
 
-  getProducts(
-    limit: number,
-    offset: number,
-    sorting: SortBy,
-    categoryId?: string,
-    colorFilter?: string[],
-    quantityFilter?: string[],
-    priceFilter?: [string, string],
-    searchString?: string,
-  ) {
+  getProducts({
+    limit,
+    offset,
+    sorting,
+    categoryId,
+    colorFilter,
+    quantityFilter,
+    priceFilter,
+    search,
+  }: RequestParam) {
     const sortingCommand = sorting ? SortingCommand[sorting] : SortingCommand.default
+    const filter = []
 
     let queryArgs: QueryArgs = {
       limit,
@@ -74,12 +74,10 @@ export class ProductsService {
       facet: [Facet.color, Facet.quantity],
     }
 
-    const filter = []
-
-    if (searchString) {
+    if (search) {
       queryArgs = {
         ...queryArgs,
-        'text.en-GB': `"${searchString}"`,
+        'text.en-GB': `"${search}"`,
         fuzzy: true,
       }
     }
@@ -87,11 +85,17 @@ export class ProductsService {
     if (categoryId) {
       filter.push(`${categoryId ? `categories.id:subtree("${categoryId}")` : ''}`)
     }
-    if (colorFilter?.length) {
-      filter.push(`${Facet.color}: ${colorFilter.map((el) => `"${el}"`).join(',')}`)
+    if (colorFilter) {
+      if (typeof colorFilter === 'string') filter.push(`${Facet.color}: "${colorFilter}"`)
+      else {
+        filter.push(`${Facet.color}: ${colorFilter.map((el) => `"${el}"`).join(',')}`)
+      }
     }
-    if (quantityFilter?.length) {
-      filter.push(`${Facet.quantity}: ${quantityFilter.map((el) => `"${el}"`).join(',')}`)
+    if (quantityFilter) {
+      if (typeof quantityFilter === 'string') filter.push(`${Facet.quantity}: "${quantityFilter}"`)
+      else {
+        filter.push(`${Facet.quantity}: ${quantityFilter.map((el) => `"${el}"`).join(',')}`)
+      }
     }
 
     if (priceFilter?.length) {

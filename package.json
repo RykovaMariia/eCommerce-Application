@@ -14,7 +14,7 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "build-only": "vite build",
-    "type-check": "vue-tsc --build --force",
+    "type-check": "vue-tsc --noEmit",
     "lint": "eslint \"./src/**/*.{vue,cjs,ts}\" --fix --ignore-path .gitignore",
     "format": "prettier --write ./src",
     "format:check": "prettier --check ./src",

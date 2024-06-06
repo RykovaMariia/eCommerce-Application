@@ -12,9 +12,9 @@ import { TypeAction } from '@/enums/typeAction'
 
 const typeAddress = ref('billing')
 
-let isOpenForm = ref(false)
+const isOpenForm = ref(false)
 
-let typeAction = ref(TypeAction.Add)
+const typeAction = ref(TypeAction.Add)
 
 const address: Ref<Address> = ref({
   country: COUNTRY,
@@ -23,7 +23,7 @@ const address: Ref<Address> = ref({
   postalCode: '',
 })
 
-let currentUser = defineModel<Customer>('currentUser')
+const currentUser = defineModel<Customer>('currentUser')
 
 const addressBillingItems = computed(() => {
   return currentUser.value
