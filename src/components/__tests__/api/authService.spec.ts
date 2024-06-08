@@ -5,7 +5,7 @@ import type { LocalStorageState, StorageService } from '@/services/storageServic
 
 describe('Auth Service', () => {
   const ClientServiceMock = {
-    getApiRoot: vi.fn(() => {
+    getRoot: vi.fn(() => {
       return {
         me: () => {
           return {
@@ -20,6 +20,7 @@ describe('Auth Service', () => {
         },
       }
     }),
+    setApiRoot: vi.fn(),
     getPasswordFlowClient: vi.fn(),
   }
 

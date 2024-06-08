@@ -1,4 +1,4 @@
-import { ClientService } from '@/api/ClientService'
+import { ClientService, clientService } from '@/api/ClientService'
 
 import {
   StorageService,
@@ -16,13 +16,15 @@ export class AuthService {
 
   login(userData: UserLoginData) {
     const userClientData = this.clientService
-      .getApiRoot(this.clientService.getPasswordFlowClient(userData.email, userData.password))
+      .getRoot(this.clientService.getPasswordFlowClient(userData.email, userData.password))
       .me()
       .login()
       .post({ body: userData })
       .execute()
     return userClientData.then(() => {
       this.localStorageService.saveData('token', tokenData.get())
+      localStorageService.removeData('anonymousId')
+      this.clientService.setApiRoot()
     })
   }
 
@@ -41,4 +43,4 @@ export class AuthService {
   }
 }
 
-export const authService = new AuthService(new ClientService(), localStorageService)
+export const authService = new AuthService(clientService, localStorageService)

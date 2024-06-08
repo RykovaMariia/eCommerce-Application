@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 import { localStorageService } from '@/services/storageService'
 import { tokenData } from '@/api/TokenInfo'
+import { clientService } from '@/api/ClientService'
 
 const refreshToken = localStorageService.getData('token')?.refreshToken
 
 export const userAuth = defineStore('user', {
   state: () => ({
     isLoggedIn: !!refreshToken,
-    refreshToken: refreshToken ?? '',
     customerVersion: 0,
   }),
 
@@ -19,6 +19,7 @@ export const userAuth = defineStore('user', {
       this.isLoggedIn = false
       localStorageService.removeData('token')
       tokenData.clear()
+      clientService.setApiRoot()
     },
   },
 })
