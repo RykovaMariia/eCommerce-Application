@@ -8,6 +8,8 @@ import {
 import { tokenData } from '@/api/TokenInfo'
 import type { UserCustomerDraft, UserLoginData } from '@/interfaces/userData'
 
+const MergeWithExistingCustomerCart = 'MergeWithExistingCustomerCart'
+
 export class AuthService {
   constructor(
     private clientService: ClientService,
@@ -15,12 +17,23 @@ export class AuthService {
   ) {}
 
   login(userData: UserLoginData) {
+    const cartId = localStorageService.getData('cartId')
+    const anonymousId = localStorageService.getData('anonymousId')
+
+    if (cartId && anonymousId) {
+      userData.anonymousCartId = cartId
+      userData.anonymousId = anonymousId
+      userData.anonymousCartSignInMode = MergeWithExistingCustomerCart
+      userData.updateProductData = true
+    }
+
     const userClientData = this.clientService
       .getRoot(this.clientService.getPasswordFlowClient(userData.email, userData.password))
       .me()
       .login()
       .post({ body: userData })
       .execute()
+
     return userClientData.then(() => {
       this.localStorageService.saveData('token', tokenData.get())
       localStorageService.removeData('anonymousId')

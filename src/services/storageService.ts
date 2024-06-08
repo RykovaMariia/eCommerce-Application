@@ -52,6 +52,7 @@ export type LocalStorageState = {
   priceFilter: number[]
   productKey: string
   anonymousId: string
+  cartId: string
 }
 
 export const localStorageService = new StorageService<LocalStorageState>('ECommerce_')

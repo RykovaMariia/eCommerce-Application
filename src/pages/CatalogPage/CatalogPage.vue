@@ -38,7 +38,7 @@ watchEffect(() => {
   }
 })
 
-const limit = 20
+const limit = 16
 const currentPage = ref(1)
 const totalPages = computed(() => Math.ceil(productsCount.value / limit))
 

@@ -8,6 +8,8 @@ import AlertWindow from '@components/alertWindow/AlertWindow.vue'
 import { customerService } from './services/customerService'
 import { userAuth } from './stores/userAuth'
 import router from './router'
+import { cartService } from './services/cartService'
+import { localStorageService } from './services/storageService'
 const { isOpenAlert } = storeToRefs(alertStore())
 
 const alert = alertStore()
@@ -19,6 +21,19 @@ customerService.user().catch((error: Error) => {
     router.replace({ name: 'login' })
   }
 })
+
+const cartId = localStorageService.getData('cartId')
+const anonymousId = localStorageService.getData('anonymousId')
+
+if (!cartId) {
+  cartService.create().then((response) => localStorageService.saveData('cartId', response.body.id))
+} else {
+  cartService.getCartById(cartId).then((response) => {
+    if (anonymousId && response.body.createdBy?.anonymousId !== anonymousId) {
+      cartService.updateAnonymousId({ id: cartId, version: response.body.version, anonymousId })
+    }
+  })
+}
 </script>
 
 <template>
