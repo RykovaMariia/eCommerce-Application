@@ -3,6 +3,10 @@ import type { Customer, MyCustomerDraft } from '@commercetools/platform-sdk'
 export interface UserLoginData {
   email: string
   password: string
+  anonymousCartId?: string
+  anonymousId?: string
+  anonymousCartSignInMode?: string
+  updateProductData?: boolean
 }
 
 export interface UserPasswordsData {
