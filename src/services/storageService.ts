@@ -51,6 +51,7 @@ export type LocalStorageState = {
   sorting: SortBy
   priceFilter: number[]
   productKey: string
+  anonymousId: string
 }
 
 export const localStorageService = new StorageService<LocalStorageState>('ECommerce_')

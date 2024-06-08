@@ -1,20 +1,21 @@
 import fetch from 'isomorphic-fetch'
 import {
   ClientBuilder,
-  type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
   type PasswordAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2'
 
-import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
+import {
+  ByProjectKeyRequestBuilder,
+  createApiBuilderFromCtpClient,
+} from '@commercetools/platform-sdk'
 import { tokenData } from './TokenInfo'
 import { localStorageService } from '@/services/storageService'
+import { generateRandomString } from '@/utils/randomString'
 
 const userClientBuilder = new ClientBuilder()
 
 export class ClientService {
-  private refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
-
   private projectKey = import.meta.env.VITE_CTP_PROJECT_KEY
   private authUri = import.meta.env.VITE_CTP_AUTH_URL
   private baseUri = import.meta.env.VITE_CTP_API_URL
@@ -22,25 +23,44 @@ export class ClientService {
   private clientId = import.meta.env.VITE_CTP_CLIENT_ID
   private clientSecret = import.meta.env.VITE_CTP_CLIENT_SECRET
 
-  private credentials = {
-    clientId: this.clientId,
-    clientSecret: this.clientSecret,
-  }
-
-  private authMiddlewareOptions: AuthMiddlewareOptions = {
-    host: this.authUri,
-    projectKey: this.projectKey,
-    credentials: this.credentials,
-    scopes: this.scopes,
-    fetch,
-  }
-
   private httpMiddlewareOptions: HttpMiddlewareOptions = {
     host: this.baseUri,
     fetch,
   }
 
-  getRefreshAuthMiddlewareOptions = (refreshToken: string) => {
+  constructor() {
+    this.apiRoot = this.getRoot()
+  }
+
+  private apiRoot: ByProjectKeyRequestBuilder
+
+  private getRefreshToken() {
+    return localStorageService.getData('token')?.refreshToken ?? ''
+  }
+
+  public setApiRoot() {
+    this.apiRoot = this.getRoot(this.getClient())
+  }
+
+  public getApiRoot() {
+    return this.apiRoot
+  }
+
+  private getAnonymousAuthMiddlewareOptions = (anonymousId: string) => {
+    return {
+      host: this.authUri,
+      projectKey: this.projectKey,
+      credentials: {
+        clientId: this.clientId,
+        clientSecret: this.clientSecret,
+        anonymousId,
+      },
+      scopes: this.scopes,
+      fetch,
+    }
+  }
+
+  private getRefreshAuthMiddlewareOptions = (refreshToken: string) => {
     return {
       host: this.authUri,
       projectKey: this.projectKey,
@@ -48,13 +68,16 @@ export class ClientService {
         clientId: this.clientId,
         clientSecret: this.clientSecret,
       },
-      refreshToken: refreshToken,
+      refreshToken,
       tokenCache: tokenData,
       fetch,
     }
   }
 
-  getPasswordAuthMiddlewareOptions(email: string, password: string): PasswordAuthMiddlewareOptions {
+  private getPasswordAuthMiddlewareOptions(
+    email: string,
+    password: string,
+  ): PasswordAuthMiddlewareOptions {
     return {
       host: this.authUri,
       projectKey: this.projectKey,
@@ -72,32 +95,36 @@ export class ClientService {
     }
   }
 
-  getDefaultClient() {
+  private getDefaultClient() {
     return userClientBuilder
       .withProjectKey(this.projectKey)
-      .withClientCredentialsFlow(this.authMiddlewareOptions)
       .withHttpMiddleware(this.httpMiddlewareOptions)
       .withLoggerMiddleware()
   }
 
-  getPasswordFlowClient(email: string, password: string) {
+  public getPasswordFlowClient(email: string, password: string) {
     return this.getDefaultClient()
       .withPasswordFlow(this.getPasswordAuthMiddlewareOptions(email, password))
       .build()
   }
 
-  getClient() {
-    const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
+  private getClient() {
+    const refreshToken = this.getRefreshToken()
 
     if (refreshToken) {
       return this.getDefaultClient()
         .withRefreshTokenFlow(this.getRefreshAuthMiddlewareOptions(refreshToken))
         .build()
+    } else {
+      const anonymousId = generateRandomString()
+      localStorageService.saveData('anonymousId', anonymousId)
+      return this.getDefaultClient()
+        .withAnonymousSessionFlow(this.getAnonymousAuthMiddlewareOptions(anonymousId))
+        .build()
     }
-    return this.getDefaultClient().build()
   }
 
-  getApiRoot(client = this.getClient()) {
+  public getRoot(client = this.getClient()) {
     return createApiBuilderFromCtpClient(client).withProjectKey({
       projectKey: this.projectKey,
     })
