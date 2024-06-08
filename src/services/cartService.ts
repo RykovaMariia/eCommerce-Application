@@ -1,16 +1,13 @@
 import { ClientService, clientService } from '@/api/ClientService'
-import { localStorageService } from './storageService'
+
+interface CartData {
+  id: string
+  version: number
+  anonymousId: string
+}
 
 export class CartService {
   constructor(private clientService: ClientService) {}
-
-  private getAnonymousId() {
-    return localStorageService.getData('anonymousId')
-  }
-
-  private getCartID() {
-    return localStorageService.getData('cartId')
-  }
 
   public create() {
     return this.clientService
@@ -21,19 +18,19 @@ export class CartService {
       .execute()
   }
 
-  public getCartById() {
-    return this.clientService.getApiRoot().carts().withId({ ID: this.getCartID() }).get().execute()
+  public getCartById(cartId: string) {
+    return this.clientService.getApiRoot().carts().withId({ ID: cartId }).get().execute()
   }
 
-  public updateAnonymousId(version: number) {
+  public updateAnonymousId({ id, version, anonymousId }: CartData) {
     return this.clientService
       .getApiRoot()
       .carts()
-      .withId({ ID: this.getCartID() })
+      .withId({ ID: id })
       .post({
         body: {
           version,
-          actions: [{ action: 'setAnonymousId', anonymousId: this.getAnonymousId() }],
+          actions: [{ action: 'setAnonymousId', anonymousId: anonymousId }],
         },
       })
       .execute()
