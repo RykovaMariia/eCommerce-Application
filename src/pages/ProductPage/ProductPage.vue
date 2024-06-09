@@ -9,10 +9,10 @@ import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
 import { productsService } from '@/services/productsService'
+import { FULL_PERCENTAGE } from '@/constants/constants'
 
 const imageIndex = ref(0)
 const multiplier = ref(1)
-const discountIsActive = ref(false)
 const isMainAttribute = ref(true)
 
 const product: ProductData = reactive({
@@ -22,7 +22,7 @@ const product: ProductData = reactive({
   variants: [],
 })
 
-let attributeValues: string[][]
+let attributeValues: string[][] = []
 let masterAttributeNames: string[] = []
 const isProductDataLoaded = ref(false)
 
@@ -61,7 +61,7 @@ if (productKey !== null) {
       const allVariants = variants?.map(retrieveVariantsData)
       product.variants = [mainVariant, ...allVariants]
       isProductDataLoaded.value = true
-      selectedVariants.value = product.variants[0].attributes.map((value) => value)
+      selectedVariants.value = [...product.variants[0].attributes]
     })
     .catch((error: Error) => {
       console.warn(`Error: ${error.message}`, 'warning')
@@ -73,25 +73,20 @@ const setVariant = (value: string, index: number) => {
 }
 
 const formatPrice = (price: number) => {
-  return ((price / 100) * multiplier.value).toFixed(2)
+  return ((price / FULL_PERCENTAGE) * multiplier.value).toFixed(2)
 }
 
 const definePrice = ({ price, discountPrice }: ProductItem) => {
   const formattedPrice = formatPrice(price)
   const formattedDiscountPrice = formatPrice(discountPrice)
-  const resultFormattedPrice = discountPrice
-    ? { formattedPrice, formattedDiscountPrice }
-    : { formattedPrice }
-  discountPrice ? (discountIsActive.value = true) : (discountIsActive.value = false)
-  return resultFormattedPrice
+  return discountPrice ? { formattedPrice, formattedDiscountPrice } : { formattedPrice }
 }
 const price = computed(() => {
   const variant = product.variants.find(
     ({ attributes }) =>
       attributes[0] === selectedVariants.value[0] && attributes[1] === selectedVariants.value[1],
   )
-  const resultPrice = variant ? definePrice(variant) : definePrice(product.variants[0])
-  return resultPrice
+  return definePrice(variant ?? product.variants[0])
 })
 </script>
 
@@ -101,43 +96,44 @@ const price = computed(() => {
       <v-sheet max-width="28rem" class="mx-auto slider-image">
         <v-sheet rounded="6px" class="slider-image">
           <div class="d-flex align-center justify-center slider-image" id="activator">
-            <v-img
-              cover
-              :src="product.images[imageIndex] ?? product.images[imageIndex]"
-              rounded="lg"
-            ></v-img>
+            <v-img cover :src="product.images[imageIndex]" rounded="lg"></v-img>
           </div>
         </v-sheet>
-        <div v-if="product.images.length > 1">
-          <v-slide-group v-model="imageIndex">
-            <v-slide-group-item
-              v-for="(n, index) in product.images"
-              :source="n"
-              :key="n"
-              v-slot="{ select }"
-            >
-              <v-card
-                :class="['ma-4']"
-                height="100"
-                width="100"
-                @click="select"
-                :image="product.images[index]"
+        <div>
+          <div v-if="product.images.length > 1">
+            <v-slide-group v-model="imageIndex">
+              <v-slide-group-item
+                v-for="(groupItem, i) in product.images"
+                :key="groupItem"
+                v-slot="{ select }"
               >
-              </v-card>
-            </v-slide-group-item>
-          </v-slide-group>
+                <v-card
+                  :class="['ma-4']"
+                  height="100"
+                  width="100"
+                  @click="select"
+                  :style="{
+                    'background-image': `url(${product.images[i]})`,
+                    'background-size': 'cover',
+                  }"
+                >
+                </v-card>
+              </v-slide-group-item>
+            </v-slide-group>
+          </div>
         </div>
       </v-sheet>
     </v-col>
     <v-col>
       <h1>{{ product.name }}</h1>
       <div>{{ product.description }}</div>
+
       <div v-if="masterAttributeNames.length">
         <div v-for="(attributesArray, n) in attributeValues" :key="n" class="value-wrapper">
           <div class="attribute-name">{{ masterAttributeNames[n] }}:</div>
           <v-item-group selected-class="selected-group" mandatory>
             <div class="value-container">
-              <div v-for="(attribute, i) in attributesArray" :key="i">
+              <div v-for="(attribute, i) in attributesArray" :key="attribute">
                 <v-item v-slot="{ selectedClass, toggle }">
                   <v-card
                     :class="[
@@ -156,13 +152,14 @@ const price = computed(() => {
           </v-item-group>
         </div>
       </div>
+
       <div class="price-wrapper">
         <NumberInput v-model="multiplier" />
         <div v-if="isProductDataLoaded" class="price-wrapper">
           <div class="price_discount" v-if="price.formattedDiscountPrice">
             € {{ price.formattedDiscountPrice }}
           </div>
-          <div class="price" :class="{ 'price_line-through': discountIsActive }">
+          <div class="price" :class="{ 'price_line-through': price.formattedDiscountPrice }">
             € {{ price.formattedPrice }}
           </div>
         </div>
