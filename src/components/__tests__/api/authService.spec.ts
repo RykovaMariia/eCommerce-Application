@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import { AuthService } from '@/services/authService'
-import { ClientService } from '@/api/ClientService'
+import { ClientService } from '@/services/clientService'
 import type { LocalStorageState, StorageService } from '@/services/storageService'
 
 describe('Auth Service', () => {
