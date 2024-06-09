@@ -1,4 +1,4 @@
-import { ClientService, clientService } from '@/api/ClientService'
+import { ClientService, clientService } from '@/services/clientService'
 import type { UserLoginData, UserPasswordsData } from '@/interfaces/userData'
 import { userAuth } from '@/stores/userAuth'
 import type { ICustomer } from '@/types/writable'
@@ -11,9 +11,7 @@ export class CustomerService {
     return this.clientService.getApiRoot().me().get().execute()
   }
 
-  update(customer: ICustomer) {
-    const { firstName, lastName, dateOfBirth, email } = customer
-
+  update({ firstName, lastName, dateOfBirth, email }: ICustomer) {
     return this.clientService
       .getApiRoot()
       .me()
@@ -43,7 +41,7 @@ export class CustomerService {
       .execute()
   }
 
-  updatePassword(userPasswords: UserPasswordsData) {
+  updatePassword({ currentPassword, newPassword, email }: UserPasswordsData) {
     const userPasswordData = this.clientService
       .getApiRoot()
       .me()
@@ -51,16 +49,16 @@ export class CustomerService {
       .post({
         body: {
           version: userAuth().customerVersion,
-          currentPassword: userPasswords.currentPassword,
-          newPassword: userPasswords.newPassword,
+          currentPassword,
+          newPassword,
         },
       })
       .execute()
     userPasswordData.then(() => {
       userAuth().logout()
       const userData: UserLoginData = {
-        email: userPasswords.email,
-        password: userPasswords.newPassword,
+        email,
+        password: newPassword,
       }
       authService.login(userData)
     })

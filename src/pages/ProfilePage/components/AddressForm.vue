@@ -15,7 +15,7 @@ import type {
 } from '@commercetools/platform-sdk'
 import type { SubmitEventPromise } from 'vuetify'
 import { addressService } from '@/services/addressService'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 import { userAuth } from '@/stores/userAuth'
 import { reactive } from 'vue'
 import { TypeAction } from '@/enums/typeAction'
@@ -34,16 +34,15 @@ const address = reactive({ ...props.address })
 
 const addressForm: Ref<HTMLFormElement | undefined> = ref()
 
-const alert = alertStore()
+const alert = useAlertStore()
 
 const isTheSame = ref(false)
 
-const actions: MyCustomerUpdateAction[] = reactive([])
+const actions: MyCustomerUpdateAction[] = []
 
 const titleCheckbox = computed(() => {
-  return props.typeAddress === 'billing'
-    ? 'Use the billing address as the shipping address'
-    : 'Use the shipping address as the billing address'
+  const addressType = props.typeAddress === 'billing' ? 'shipping' : 'billing'
+  return `Use the ${props.typeAddress} address as the ${addressType} address`
 })
 
 const titleForm = computed(() => {
@@ -66,23 +65,26 @@ const defaultBilling = ref(false)
 const defaultShipping = ref(false)
 
 watchEffect(() => {
-  defaultBilling.value = props.addressBillingDefault === props.address?.id ? true : false
+  defaultBilling.value = props.addressBillingDefault === props.address?.id
 
-  defaultShipping.value = props.addressShippingDefault === props.address?.id ? true : false
+  defaultShipping.value = props.addressShippingDefault === props.address?.id
 
-  if (props.address)
+  if (props.address) {
     isTheSame.value =
       props.addressesShipping.includes(props.address) &&
       props.addressesBilling.includes(props.address)
-        ? true
-        : false
+  }
 })
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
   if (valid) {
-    if (props.typeAction === TypeAction.Add) createAddress()
-    if (props.typeAction === TypeAction.Edit && address) updateAddress(address)
+    if (props.typeAction === TypeAction.Add) {
+      createAddress()
+    }
+    if (props.typeAction === TypeAction.Edit && address) {
+      updateAddress(address)
+    }
   }
 }
 
@@ -103,39 +105,43 @@ function setActionsForCreate(addressId: string) {
   }
 }
 
+function findMatchingAddress(result: ClientResponse<Customer>, address: Address) {
+  return (
+    result.body?.addresses?.find(
+      (item) =>
+        item.streetName === address?.streetName &&
+        item.postalCode === address?.postalCode &&
+        item.city === address?.city,
+    ) || ''
+  )
+}
+
 function createAddress() {
-  if (!address) return
-  else {
-    addressService
-      .create(address)
-      .then((result) => {
-        const addressResult = result.body
-          ? result?.body?.addresses?.find(
-              (item) =>
-                item.streetName === address?.streetName &&
-                item.postalCode === address?.postalCode &&
-                item.streetNumber === address?.streetNumber,
-            )
-          : ''
-
-        if (addressResult && addressResult.id) {
-          setActionsForCreate(addressResult.id)
-
-          addressService.setTypeAddress(actions, result.body.version).then((result) => {
-            alert.show('Address created', 'success')
-
-            if (result?.body) {
-              userAuth().customerVersion = result?.body.version
-              emit('updateUserInfo', result?.body)
-              resetForm()
-            }
-          })
-        }
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
+  if (!address) {
+    return
   }
+  addressService
+    .create(address)
+    .then((result) => {
+      const addressResult = findMatchingAddress(result, address)
+      if (!addressResult || !addressResult.id) {
+        return
+      }
+      setActionsForCreate(addressResult.id)
+      return addressService.setTypeAddress(actions, result.body.version)
+    })
+    .then((result) => {
+      alert.show('Address created', 'success')
+      if (!result?.body) {
+        return
+      }
+      userAuth().customerVersion = result.body.version
+      emit('updateUserInfo', result.body)
+      resetForm()
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 
 function checkIncludesAddressInCustomersAddress(addressId: string, arrayAddresses?: string[]) {
@@ -180,27 +186,31 @@ function setActionsForUpdate(result: ClientResponse<Customer>, addressId: string
 }
 
 function updateAddress(address: Address) {
-  if (!address) return
-  else {
-    addressService
-      .update(address)
-      .then((result) => {
-        const addressId = address.id
-        if (addressId) setActionsForUpdate(result, addressId)
-
-        addressService.setTypeAddress(actions, result.body.version).then((result) => {
-          alert.show('Address updated', 'success')
-          if (result?.body) {
-            userAuth().customerVersion = result?.body.version
-            emit('updateUserInfo', result?.body)
-            resetForm()
-          }
-        })
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
+  if (!address) {
+    return
   }
+  addressService
+    .update(address)
+    .then((result) => {
+      const addressId = address.id
+      if (addressId) {
+        setActionsForUpdate(result, addressId)
+      }
+
+      return addressService.setTypeAddress(actions, result.body.version)
+    })
+    .then((result) => {
+      alert.show('Address updated', 'success')
+
+      if (result?.body) {
+        userAuth().customerVersion = result.body.version
+        emit('updateUserInfo', result.body)
+        resetForm()
+      }
+    })
+    .catch((error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 </script>
 

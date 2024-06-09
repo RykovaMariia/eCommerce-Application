@@ -1,4 +1,4 @@
-import { ClientService, clientService } from '@/api/ClientService'
+import { ClientService, clientService } from '@/services/clientService'
 
 interface CartData {
   id: string
@@ -30,7 +30,7 @@ export class CartService {
       .post({
         body: {
           version,
-          actions: [{ action: 'setAnonymousId', anonymousId: anonymousId }],
+          actions: [{ action: 'setAnonymousId', anonymousId }],
         },
       })
       .execute()

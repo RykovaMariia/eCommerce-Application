@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { productService } from '@/services/productService'
 import { computed, reactive, type Ref } from 'vue'
 import Button from '@/components/buttons/Button.vue'
 import { type ProductData, type ProductItem } from '@/interfaces/productData'
@@ -9,6 +8,7 @@ import NumberInput from '@/components/inputs/NumberInput.vue'
 import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
+import { productsService } from '@/services/productsService'
 import { FULL_PERCENTAGE } from '@/constants/constants'
 
 const imageIndex = ref(0)
@@ -39,7 +39,7 @@ const productKey = localStorageService.getData('productKey')
 const selectedVariants: Ref<string[]> = ref([])
 
 if (productKey !== null) {
-  productService
+  productsService
     .getProduct(productKey)
     .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
       product.description = description?.['en-GB'] ?? ''
@@ -62,7 +62,7 @@ if (productKey !== null) {
       const allVariants = variants?.map(retrieveVariantsData)
       product.variants = [mainVariant, ...allVariants]
       isProductDataLoaded.value = true
-      selectedVariants.value = product.variants[0].attributes.map((value) => value) //
+      selectedVariants.value = product.variants[0].attributes
     })
     .catch((error: Error) => {
       console.warn(`Error: ${error.message}`, 'warning')
