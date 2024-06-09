@@ -7,11 +7,11 @@ import { reactive } from 'vue'
 import type { UserLoginData } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
 import { userAuth } from '@/stores/userAuth'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 import router from '@/router'
 import type { SubmitEventPromise } from 'vuetify'
 
-const alert = alertStore()
+const alert = useAlertStore()
 
 const userData: UserLoginData = reactive({
   email: '',
@@ -20,7 +20,9 @@ const userData: UserLoginData = reactive({
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
-  if (valid) login()
+  if (valid) {
+    login()
+  }
 }
 
 function login() {

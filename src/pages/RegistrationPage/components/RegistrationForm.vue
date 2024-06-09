@@ -6,17 +6,17 @@ import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import { computed, reactive, ref } from 'vue'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
-import { COUNTRY, yearToShow } from '@/constants/constants'
+import { COUNTRY, YEAR_TO_SHOW } from '@/constants/constants'
 import type { UserCustomerDraft } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
 import { formateDate } from '@/utils/dateUtils'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 import router from '@/router'
 import { userAuth } from '@/stores/userAuth'
 import type { SubmitEventPromise } from 'vuetify'
 import SelectInput from '@components/inputs/SelectInput.vue'
 
-const alert = alertStore()
+const alert = useAlertStore()
 
 const defaultShipping = ref(false)
 const defaultBilling = ref(false)
@@ -58,7 +58,7 @@ const userData: UserCustomerDraft = reactive({
 })
 
 const currentDate = new Date()
-const dateOfBirth = ref(new Date(yearToShow, currentDate.getMonth(), currentDate.getDate()))
+const dateOfBirth = ref(new Date(YEAR_TO_SHOW, currentDate.getMonth(), currentDate.getDate()))
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   if (isTheSame.value) {
@@ -67,7 +67,9 @@ async function submit(submitEventPromise: SubmitEventPromise) {
     addressShipping.postalCode = addressBilling.postalCode
   }
   const { valid } = await submitEventPromise
-  if (valid) signup()
+  if (valid) {
+    signup()
+  }
 }
 
 function signup() {

@@ -20,14 +20,14 @@ const updateBreadcrumbs = () => {
         breadcrumb = meta.breadcrumb
       }
 
-      let href = router.resolve(path).href
+      let { href } = router.resolve(path)
 
       if (index === matched.length - 2) {
         href = router.resolve(path).href.replace(':categoryId', breadcrumb)
       }
       return {
         text: breadcrumb,
-        href: href,
+        href,
       }
     })
     .filter((item) => item.text)

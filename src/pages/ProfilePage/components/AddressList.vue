@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { addressService } from '@/services/addressService'
 import type { Address, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 import { userAuth } from '@/stores/userAuth'
 
-const alert = alertStore()
+const alert = useAlertStore()
 
 defineProps<{
   items: Address[]
@@ -17,7 +17,10 @@ const actions: MyCustomerUpdateAction[] = []
 const emit = defineEmits(['editAddress', 'updateUserInfo'])
 
 function removeAddress(address: Address) {
-  if (!address) return
+  if (!address) {
+    return
+  }
+
   addressService
     .remove(address)
     .then((result) => {
@@ -33,7 +36,9 @@ function removeAddress(address: Address) {
 }
 
 function setAsDefault(address: Address) {
-  if (!address) return
+  if (!address) {
+    return
+  }
   const setTypeAction =
     typeAddress?.value === 'billing' ? 'setDefaultBillingAddress' : 'setDefaultShippingAddress'
   actions.push({ action: setTypeAction, addressId: address.id })

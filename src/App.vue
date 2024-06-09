@@ -2,7 +2,7 @@
 import Header from '@components/core/Header.vue'
 import Footer from '@components/core/Footer.vue'
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 import { storeToRefs } from 'pinia'
 import AlertWindow from '@components/alertWindow/AlertWindow.vue'
 import { customerService } from './services/customerService'
@@ -11,9 +11,9 @@ import router from './router'
 import { cartService } from './services/cartService'
 import { localStorageService } from './services/storageService'
 import { cartStore } from './stores/cartStore'
-const { isOpenAlert } = storeToRefs(alertStore())
+const { isOpenAlert } = storeToRefs(useAlertStore())
 
-const alert = alertStore()
+const alert = useAlertStore()
 
 customerService.user().catch((error: Error) => {
   if (error.message.includes('The refresh token was not found')) {

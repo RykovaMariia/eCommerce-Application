@@ -15,7 +15,7 @@ import type {
 } from '@commercetools/platform-sdk'
 import type { SubmitEventPromise } from 'vuetify'
 import { addressService } from '@/services/addressService'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 import { userAuth } from '@/stores/userAuth'
 import { reactive } from 'vue'
 import { TypeAction } from '@/enums/typeAction'
@@ -34,7 +34,7 @@ const address = reactive({ ...props.address })
 
 const addressForm: Ref<HTMLFormElement | undefined> = ref()
 
-const alert = alertStore()
+const alert = useAlertStore()
 
 const isTheSame = ref(false)
 
@@ -79,8 +79,12 @@ watchEffect(() => {
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
   if (valid) {
-    if (props.typeAction === TypeAction.Add) createAddress()
-    if (props.typeAction === TypeAction.Edit && address) updateAddress(address)
+    if (props.typeAction === TypeAction.Add) {
+      createAddress()
+    }
+    if (props.typeAction === TypeAction.Edit && address) {
+      updateAddress(address)
+    }
   }
 }
 
@@ -113,18 +117,24 @@ function findMatchingAddress(result: ClientResponse<Customer>, address: Address)
 }
 
 function createAddress() {
-  if (!address) return
+  if (!address) {
+    return
+  }
   addressService
     .create(address)
     .then((result) => {
       const addressResult = findMatchingAddress(result, address)
-      if (!addressResult || !addressResult.id) return
+      if (!addressResult || !addressResult.id) {
+        return
+      }
       setActionsForCreate(addressResult.id)
       return addressService.setTypeAddress(actions, result.body.version)
     })
     .then((result) => {
       alert.show('Address created', 'success')
-      if (!result?.body) return
+      if (!result?.body) {
+        return
+      }
       userAuth().customerVersion = result.body.version
       emit('updateUserInfo', result.body)
       resetForm()
@@ -176,13 +186,16 @@ function setActionsForUpdate(result: ClientResponse<Customer>, addressId: string
 }
 
 function updateAddress(address: Address) {
-  if (!address) return
-
+  if (!address) {
+    return
+  }
   addressService
     .update(address)
     .then((result) => {
       const addressId = address.id
-      if (addressId) setActionsForUpdate(result, addressId)
+      if (addressId) {
+        setActionsForUpdate(result, addressId)
+      }
 
       return addressService.setTypeAddress(actions, result.body.version)
     })
