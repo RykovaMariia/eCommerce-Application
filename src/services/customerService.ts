@@ -11,9 +11,7 @@ export class CustomerService {
     return this.clientService.getApiRoot().me().get().execute()
   }
 
-  update(customer: ICustomer) {
-    const { firstName, lastName, dateOfBirth, email } = customer
-
+  update({ firstName, lastName, dateOfBirth, email }: ICustomer) {
     return this.clientService
       .getApiRoot()
       .me()
