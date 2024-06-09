@@ -1,6 +1,6 @@
 import { ClientService, clientService } from '@/services/clientService'
 
-export class CategoriesService {
+class CategoriesService {
   constructor(private clientService: ClientService) {}
 
   private getParentCategories() {
@@ -44,3 +44,4 @@ export class CategoriesService {
 }
 
 export const categoryService = new CategoriesService(clientService)
+export type CategoriesServiceType = typeof CategoriesService

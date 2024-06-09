@@ -6,10 +6,10 @@ import router from '@/router'
 import { VAppBarNavIcon } from 'vuetify/components'
 import Header from '@/components/core/Header.vue'
 import { createTestingPinia } from '@pinia/testing'
+import { categoryService } from '@/services/categoriesService'
+import type { Category } from '@commercetools/platform-sdk'
 
 describe('should render components within Header with a large screen width', () => {
-  vi.mock('@/utils/getCategories', () => ({ getCategories: vi.fn(() => Promise.resolve({})) }))
-
   beforeAll(() => {
     global.ResizeObserver = ResizeObserverMock
   })
@@ -22,6 +22,12 @@ describe('should render components within Header with a large screen width', () 
   }
 
   it('should render text and not render VAppBarNavIcon within Header', async () => {
+    vi.spyOn(categoryService, 'getCategories').mockResolvedValue([
+      {
+        parent: {} as Category,
+        children: [],
+      },
+    ])
     const header = mount(getAppWrapper(), {
       slots: {
         default: Header,
