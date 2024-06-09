@@ -71,18 +71,18 @@ watchEffect(() => {
   defaultShipping.value = props.addressShippingDefault === props.address?.id ? true : false
 
   if (props.address)
-    isTheSame.value =
+    {isTheSame.value =
       props.addressesShipping.includes(props.address) &&
       props.addressesBilling.includes(props.address)
         ? true
-        : false
+        : false}
 })
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
   if (valid) {
-    if (props.typeAction === TypeAction.Add) createAddress()
-    if (props.typeAction === TypeAction.Edit && address) updateAddress(address)
+    if (props.typeAction === TypeAction.Add) {createAddress()}
+    if (props.typeAction === TypeAction.Edit && address) {updateAddress(address)}
   }
 }
 
@@ -104,7 +104,7 @@ function setActionsForCreate(addressId: string) {
 }
 
 function createAddress() {
-  if (!address) return
+  if (!address) {return}
   else {
     addressService
       .create(address)
@@ -180,13 +180,13 @@ function setActionsForUpdate(result: ClientResponse<Customer>, addressId: string
 }
 
 function updateAddress(address: Address) {
-  if (!address) return
+  if (!address) {return}
   else {
     addressService
       .update(address)
       .then((result) => {
         const addressId = address.id
-        if (addressId) setActionsForUpdate(result, addressId)
+        if (addressId) {setActionsForUpdate(result, addressId)}
 
         addressService.setTypeAddress(actions, result.body.version).then((result) => {
           alert.show('Address updated', 'success')

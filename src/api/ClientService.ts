@@ -86,7 +86,7 @@ export class ClientService {
         clientSecret: this.clientSecret,
         user: {
           username: email,
-          password: password,
+          password,
         },
       },
       scopes: this.scopes,

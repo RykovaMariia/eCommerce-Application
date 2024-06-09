@@ -27,7 +27,7 @@ const updateBreadcrumbs = () => {
       }
       return {
         text: breadcrumb,
-        href: href,
+        href,
       }
     })
     .filter((item) => item.text)

@@ -86,14 +86,16 @@ export class ProductsService {
       filter.push(`${categoryId ? `categories.id:subtree("${categoryId}")` : ''}`)
     }
     if (colorFilter?.length) {
-      if (typeof colorFilter === 'string') filter.push(`${Facet.color}: "${colorFilter}"`)
-      else {
+      if (typeof colorFilter === 'string') {
+        filter.push(`${Facet.color}: "${colorFilter}"`)
+      } else {
         filter.push(`${Facet.color}: ${colorFilter.map((el) => `"${el}"`).join(',')}`)
       }
     }
     if (quantityFilter?.length) {
-      if (typeof quantityFilter === 'string') filter.push(`${Facet.quantity}: "${quantityFilter}"`)
-      else {
+      if (typeof quantityFilter === 'string') {
+        filter.push(`${Facet.quantity}: "${quantityFilter}"`)
+      } else {
         filter.push(`${Facet.quantity}: ${quantityFilter.map((el) => `"${el}"`).join(',')}`)
       }
     }
@@ -115,7 +117,7 @@ export class ProductsService {
       .getApiRoot()
       .productProjections()
       .search()
-      .get({ queryArgs: queryArgs })
+      .get({ queryArgs })
       .execute()
   }
 }

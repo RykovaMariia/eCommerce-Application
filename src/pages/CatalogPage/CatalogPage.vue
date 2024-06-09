@@ -28,7 +28,7 @@ watchEffect(() => {
   const category = route.params.categoryId
   const subCategory = route.params.subCategoryId
 
-  if (!categories.value.length) return
+  if (!categories.value.length) {return}
   const currentCategory = categories.value.find((el) => el.parent.key === category)
   if (subCategory) {
     categoryId.value =

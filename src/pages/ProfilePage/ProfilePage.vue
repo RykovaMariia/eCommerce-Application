@@ -59,7 +59,7 @@ customerService
   })
 
 function updateUserInfo(user: UserData) {
-  if (!user) return
+  if (!user) {return}
   userInfo.value = user
 }
 </script>

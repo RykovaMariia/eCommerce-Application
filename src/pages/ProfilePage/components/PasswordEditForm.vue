@@ -20,7 +20,7 @@ const passwordForm: Ref<HTMLFormElement | undefined> = ref()
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
-  if (valid) updatePassword()
+  if (valid) {updatePassword()}
 }
 
 const userPasswords: Ref<UserPasswordsData> = ref({
@@ -47,8 +47,8 @@ function updatePassword() {
     })
     .catch((error: Error) => {
       if (error.message === 'The given current password does not match.')
-        alert.show(`Error: Your current password is not correct`, 'warning')
-      else alert.show(`Error: ${error.message}`, 'warning')
+        {alert.show(`Error: Your current password is not correct`, 'warning')}
+      else {alert.show(`Error: ${error.message}`, 'warning')}
     })
 }
 
@@ -65,7 +65,7 @@ function setButtonState() {
 }
 
 function provePassword() {
-  if (!userPasswords.value.confirmPassword || !userPasswords.value.newPassword) return
+  if (!userPasswords.value.confirmPassword || !userPasswords.value.newPassword) {return}
   else {
     isError.value = userPasswords.value.newPassword !== userPasswords.value.confirmPassword
   }

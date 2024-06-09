@@ -67,7 +67,7 @@ async function submit(submitEventPromise: SubmitEventPromise) {
     addressShipping.postalCode = addressBilling.postalCode
   }
   const { valid } = await submitEventPromise
-  if (valid) signup()
+  if (valid) {signup()}
 }
 
 function signup() {

@@ -24,7 +24,7 @@ const emit = defineEmits({
 })
 
 function removeAddress(address: Address) {
-  if (!address) return
+  if (!address) {return}
   else {
     addressService
       .remove(address)
@@ -42,7 +42,7 @@ function removeAddress(address: Address) {
 }
 
 function setAsDefault(address: Address) {
-  if (!address) return
+  if (!address) {return}
   else {
     const setTypeAction =
       typeAddress?.value === 'billing' ? 'setDefaultBillingAddress' : 'setDefaultShippingAddress'

@@ -20,7 +20,7 @@ const userData: UserLoginData = reactive({
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
-  if (valid) login()
+  if (valid) {login()}
 }
 
 function login() {

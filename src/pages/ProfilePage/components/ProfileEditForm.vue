@@ -22,7 +22,7 @@ const dateOfBirth = ref(new Date(formateDate(currentUser.value?.dateOfBirth || '
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
-  if (valid) update()
+  if (valid) {update()}
 }
 
 function update() {

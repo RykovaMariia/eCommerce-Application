@@ -108,7 +108,7 @@ router.beforeEach((to, from, next) => {
     next({ name: 'main' })
   } else if (to.name === 'profile' && !userAuth().isLoggedIn) {
     next({ name: 'login', replace: true })
-  } else next()
+  } else {next()}
 })
 
 export default router
