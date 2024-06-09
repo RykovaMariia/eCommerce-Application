@@ -28,7 +28,9 @@ async function submit(submitEventPromise: SubmitEventPromise) {
 }
 
 function update() {
-  if (!currentUser.value) {return}
+  if (!currentUser.value) {
+    return
+  }
 
   currentUser.value.dateOfBirth = formateDate(dateOfBirth.value.toDateString())
   customerService

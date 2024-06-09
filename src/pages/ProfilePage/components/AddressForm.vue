@@ -124,13 +124,17 @@ function createAddress() {
     .create(address)
     .then((result) => {
       const addressResult = findMatchingAddress(result, address)
-      if (!addressResult || !addressResult.id) {return}
+      if (!addressResult || !addressResult.id) {
+        return
+      }
       setActionsForCreate(addressResult.id)
       return addressService.setTypeAddress(actions, result.body.version)
     })
     .then((result) => {
       alert.show('Address created', 'success')
-      if (!result?.body) {return}
+      if (!result?.body) {
+        return
+      }
       userAuth().customerVersion = result.body.version
       emit('updateUserInfo', result.body)
       resetForm()
@@ -189,7 +193,9 @@ function updateAddress(address: Address) {
     .update(address)
     .then((result) => {
       const addressId = address.id
-      if (addressId) {setActionsForUpdate(result, addressId)}
+      if (addressId) {
+        setActionsForUpdate(result, addressId)
+      }
 
       return addressService.setTypeAddress(actions, result.body.version)
     })

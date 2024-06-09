@@ -17,7 +17,9 @@ const actions: MyCustomerUpdateAction[] = []
 const emit = defineEmits(['editAddress', 'updateUserInfo'])
 
 function removeAddress(address: Address) {
-  if (!address) {return}
+  if (!address) {
+    return
+  }
 
   addressService
     .remove(address)
@@ -34,7 +36,9 @@ function removeAddress(address: Address) {
 }
 
 function setAsDefault(address: Address) {
-  if (!address) {return}
+  if (!address) {
+    return
+  }
   const setTypeAction =
     typeAddress?.value === 'billing' ? 'setDefaultBillingAddress' : 'setDefaultShippingAddress'
   actions.push({ action: setTypeAction, addressId: address.id })
