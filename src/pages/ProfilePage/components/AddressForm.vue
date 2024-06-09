@@ -69,10 +69,11 @@ watchEffect(() => {
 
   defaultShipping.value = props.addressShippingDefault === props.address?.id
 
-  if (props.address)
+  if (props.address) {
     isTheSame.value =
       props.addressesShipping.includes(props.address) &&
       props.addressesBilling.includes(props.address)
+  }
 })
 
 async function submit(submitEventPromise: SubmitEventPromise) {

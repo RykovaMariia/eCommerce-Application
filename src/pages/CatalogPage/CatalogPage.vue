@@ -18,6 +18,8 @@ import { storeToRefs } from 'pinia'
 import { categoriesStore } from '@/stores/categoriesStore'
 import Input from '@/components/inputs/Input.vue'
 import { alertStore } from '@/stores/alertStore'
+import { cartService } from '@/services/cartService'
+import { cartStore } from '@/stores/cartStore'
 
 const route = useRoute()
 const router = useRouter()
@@ -127,6 +129,17 @@ watch(
   },
   { deep: true, immediate: true },
 )
+
+const { cartId } = storeToRefs(cartStore())
+const { cartVersion } = storeToRefs(cartStore())
+
+function addProductToCart(product: string) {
+  if (cartId) {
+    cartService.addProductToCart(cartId.value, cartVersion.value, product).then((response) => {
+      cartStore().setVersion(response.body.version)
+    })
+  }
+}
 </script>
 
 <template>
@@ -183,6 +196,8 @@ watch(
       :discountedPrice="product.masterVariant.prices?.[0]?.discounted?.value.centAmount ?? 0"
       :productSlug="product.slug['en-GB']"
       :productKey="product.key"
+      :productId="product.id"
+      @addProduct="addProductToCart($event)"
     />
   </div>
   <v-pagination

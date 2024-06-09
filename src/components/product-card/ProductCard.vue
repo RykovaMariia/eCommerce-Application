@@ -11,7 +11,10 @@ const props = defineProps<{
   discountedPrice: number
   productSlug: string
   productKey: string
+  productId: string
 }>()
+
+const emit = defineEmits(['addProduct'])
 
 const href = { name: 'productId', params: { productId: props.productSlug } }
 
@@ -47,7 +50,7 @@ const passProductKey = () => {
         -{{ getDiscountPercentage(price, discountedPrice) }}%
       </div>
     </v-card>
-    <Button textContent="Add to card" />
+    <Button textContent="Add to card" @click="emit('addProduct', props.productId)" />
   </v-col>
 </template>
 

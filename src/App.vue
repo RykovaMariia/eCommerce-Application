@@ -10,6 +10,7 @@ import { userAuth } from './stores/userAuth'
 import router from './router'
 import { cartService } from './services/cartService'
 import { localStorageService } from './services/storageService'
+import { cartStore } from './stores/cartStore'
 const { isOpenAlert } = storeToRefs(alertStore())
 
 const alert = alertStore()
@@ -26,11 +27,20 @@ const cartId = localStorageService.getData('cartId')
 const anonymousId = localStorageService.getData('anonymousId')
 
 if (!cartId) {
-  cartService.create().then((response) => localStorageService.saveData('cartId', response.body.id))
+  cartService.create().then(({ body }) => {
+    localStorageService.saveData('cartId', body.id)
+    cartStore().setCartId(body.id)
+    cartStore().setVersion(body.version)
+  })
 } else {
-  cartService.getCartById(cartId).then((response) => {
-    if (anonymousId && response.body.createdBy?.anonymousId !== anonymousId) {
-      cartService.updateAnonymousId({ id: cartId, version: response.body.version, anonymousId })
+  cartService.getCartById(cartId).then(({ body }) => {
+    if (anonymousId && body.createdBy?.anonymousId !== anonymousId) {
+      cartService
+        .updateAnonymousId({ id: cartId, version: body.version, anonymousId })
+        .then(({ body }) => {
+          cartStore().setCartId(cartId)
+          cartStore().setVersion(body.version)
+        })
     }
   })
 }
