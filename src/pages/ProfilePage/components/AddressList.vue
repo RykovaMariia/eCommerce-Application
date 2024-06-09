@@ -26,8 +26,8 @@ function removeAddress(address: Address) {
     .then((result) => {
       alert.show('Address removed', 'success')
       if (result?.body) {
-        userAuth().customerVersion = result?.body.version
-        emit('updateUserInfo', result?.body)
+        userAuth().customerVersion = result.body.version
+        emit('updateUserInfo', result.body)
       }
     })
     .catch((error: Error) => {
