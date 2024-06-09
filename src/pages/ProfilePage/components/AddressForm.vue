@@ -40,7 +40,10 @@ const isTheSame = ref(false)
 
 const actions: MyCustomerUpdateAction[] = []
 
-const titleCheckbox = computed(() => `Use the ${props.typeAddress} address as the shipping address`)
+const titleCheckbox = computed(() => {
+  const addressType = props.typeAddress === 'billing' ? 'shipping' : 'billing'
+  return `Use the ${props.typeAddress} address as the ${addressType} address`
+})
 
 const titleForm = computed(() => {
   return props.typeAction === TypeAction.Add ? 'Add New Address' : 'Edit Address'
