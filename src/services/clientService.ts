@@ -9,30 +9,31 @@ import {
   ByProjectKeyRequestBuilder,
   createApiBuilderFromCtpClient,
 } from '@commercetools/platform-sdk'
-import { tokenData } from './TokenInfo'
+import { tokenData } from './tokenService'
 import { localStorageService } from '@/services/storageService'
 import { generateRandomString } from '@/utils/randomString'
+import { configService } from './configService'
 
 const userClientBuilder = new ClientBuilder()
 
 export class ClientService {
-  private projectKey = import.meta.env.VITE_CTP_PROJECT_KEY
-  private authUri = import.meta.env.VITE_CTP_AUTH_URL
-  private baseUri = import.meta.env.VITE_CTP_API_URL
-  private scopes = [import.meta.env.VITE_CTP_SCOPES]
-  private clientId = import.meta.env.VITE_CTP_CLIENT_ID
-  private clientSecret = import.meta.env.VITE_CTP_CLIENT_SECRET
+  private projectKey = configService.getSecret('VITE_CTP_PROJECT_KEY')
+  private authUri = configService.getSecret('VITE_CTP_AUTH_URL')
+  private apiUri = configService.getSecret('VITE_CTP_API_URL')
+  private scopes = [configService.getSecret('VITE_CTP_SCOPES')]
+  private clientId = configService.getSecret('VITE_CTP_CLIENT_ID')
+  private clientSecret = configService.getSecret('VITE_CTP_CLIENT_SECRET')
 
   private httpMiddlewareOptions: HttpMiddlewareOptions = {
-    host: this.baseUri,
+    host: this.apiUri,
     fetch,
   }
+
+  private apiRoot: ByProjectKeyRequestBuilder
 
   constructor() {
     this.apiRoot = this.getRoot()
   }
-
-  private apiRoot: ByProjectKeyRequestBuilder
 
   private getRefreshToken() {
     return localStorageService.getData('token')?.refreshToken ?? ''

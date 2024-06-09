@@ -1,4 +1,4 @@
-import { ClientService, clientService } from '@/api/ClientService'
+import { ClientService, clientService } from '@/services/clientService'
 import { FULL_PERCENTAGE } from '@/constants/constants'
 import { Facet } from '@/enums/facet'
 import type { QueryParam } from '@commercetools/sdk-client-v2'

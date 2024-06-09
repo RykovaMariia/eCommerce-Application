@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { localStorageService } from '@/services/storageService'
-import { tokenData } from '@/api/TokenInfo'
-import { clientService } from '@/api/ClientService'
+import { clientService } from '@/services/clientService'
+import { tokenData } from '@/services/tokenService'
 
 const refreshToken = localStorageService.getData('token')?.refreshToken
 
