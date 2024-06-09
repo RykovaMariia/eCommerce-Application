@@ -1,4 +1,4 @@
-import { ClientService, clientService } from '@/api/ClientService'
+import { ClientService, clientService } from '@/services/clientService'
 
 export class CategoriesService {
   constructor(private clientService: ClientService) {}

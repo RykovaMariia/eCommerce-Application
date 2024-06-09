@@ -1,8 +1,8 @@
-import { ClientService, clientService } from '@/api/ClientService'
+import { clientService, type ClientService } from '@/services/clientService'
 import { userAuth } from '@/stores/userAuth'
 import type { Address, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
 
-export class AddressService {
+class AddressService {
   constructor(private clientService: ClientService) {}
 
   create(address: Address) {

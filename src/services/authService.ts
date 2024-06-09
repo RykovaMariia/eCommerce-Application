@@ -1,11 +1,11 @@
-import { ClientService, clientService } from '@/api/ClientService'
+import { ClientService, clientService } from '@/services/clientService'
 
 import {
   StorageService,
   localStorageService,
   type LocalStorageState,
 } from '@/services/storageService'
-import { tokenData } from '@/api/TokenInfo'
+import { tokenData } from '@/services/tokenService'
 import type { UserCustomerDraft, UserLoginData } from '@/interfaces/userData'
 
 const mergeWithExistingCustomerCart = 'MergeWithExistingCustomerCart'
@@ -27,22 +27,22 @@ export class AuthService {
       userData.updateProductData = true
     }
 
-    const userClientData = this.clientService
+    return this.clientService
       .getRoot(this.clientService.getPasswordFlowClient(userData.email, userData.password))
       .me()
       .login()
       .post({ body: userData })
       .execute()
 
-    return userClientData.then(() => {
-      this.localStorageService.saveData('token', tokenData.get())
-      localStorageService.removeData('anonymousId')
-      this.clientService.setApiRoot()
-    })
+      .then(() => {
+        this.localStorageService.saveData('token', tokenData.get())
+        localStorageService.removeData('anonymousId')
+        this.clientService.setApiRoot()
+      })
   }
 
   signup(userData: UserCustomerDraft) {
-    const userClientData = this.clientService
+    return this.clientService
       .getApiRoot()
       .me()
       .signup()
@@ -50,9 +50,9 @@ export class AuthService {
         body: userData,
       })
       .execute()
-    return userClientData.then(() => {
-      return this.login(userData)
-    })
+      .then(() => {
+        this.login(userData)
+      })
   }
 }
 

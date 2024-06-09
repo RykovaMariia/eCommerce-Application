@@ -28,19 +28,19 @@ async function submit(submitEventPromise: SubmitEventPromise) {
 }
 
 function update() {
-  if (currentUser.value) {
-    currentUser.value.dateOfBirth = formateDate(dateOfBirth.value.toDateString())
-    customerService
-      .update(currentUser.value)
-      .then((result) => {
-        alert.show(`Data updated successfully`, 'success')
-        userAuth().customerVersion = result.body.version
-        emit('updateUser', result.body)
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
-  }
+  if (!currentUser.value) {return}
+
+  currentUser.value.dateOfBirth = formateDate(dateOfBirth.value.toDateString())
+  customerService
+    .update(currentUser.value)
+    .then((result) => {
+      alert.show('Data updated successfully', 'success')
+      userAuth().customerVersion = result.body.version
+      emit('updateUser', result.body)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 </script>
 
