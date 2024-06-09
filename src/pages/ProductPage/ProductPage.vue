@@ -62,7 +62,7 @@ if (productKey !== null) {
       const allVariants = variants?.map(retrieveVariantsData)
       product.variants = [mainVariant, ...allVariants]
       isProductDataLoaded.value = true
-      selectedVariants.value = product.variants[0].attributes
+      selectedVariants.value = [...product.variants[0].attributes]
     })
     .catch((error: Error) => {
       console.warn(`Error: ${error.message}`, 'warning')
