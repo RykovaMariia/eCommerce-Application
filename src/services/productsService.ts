@@ -1,5 +1,4 @@
 import { ClientService, clientService } from '@/api/ClientService'
-import { FULL_PERCENTAGE } from '@/constants/constants'
 import { Facet } from '@/enums/facet'
 import type { QueryParam } from '@commercetools/sdk-client-v2'
 import { SortingCommand, type SortBy } from '@/enums/sortingCommand'
@@ -22,12 +21,24 @@ interface RequestParam {
   categoryId?: string
   colorFilter?: string[] | string
   quantityFilter?: string[] | string
-  priceFilter?: [string, string]
   search?: string
 }
 
 export class ProductsService {
   constructor(private clientService: ClientService) {}
+
+  getProduct(key: string) {
+    return this.clientService
+      .getApiRoot()
+      .products()
+      .get({
+        queryArgs: {
+          where: `key=${key}`,
+        },
+      })
+      .execute()
+      .then(({ body: { results } }) => results[0].masterData)
+  }
 
   getProducts({
     limit,
@@ -36,13 +47,12 @@ export class ProductsService {
     categoryId,
     colorFilter,
     quantityFilter,
-    priceFilter,
     search,
   }: RequestParam) {
     const sortingCommand = sorting ? SortingCommand[sorting] : SortingCommand.default
     const filter = []
 
-    let queryArgs: QueryArgs = {
+    const queryArgs: QueryArgs = {
       limit,
       offset,
       sort: sortingCommand,
@@ -50,42 +60,26 @@ export class ProductsService {
     }
 
     if (search) {
-      queryArgs = {
-        ...queryArgs,
-        'text.en-GB': `"${search}"`,
-        fuzzy: true,
-      }
+      queryArgs['text.en-GB'] = `"${search}"`
+      queryArgs.fuzzy = true
     }
 
     if (categoryId) {
       filter.push(`${categoryId ? `categories.id:subtree("${categoryId}")` : ''}`)
     }
     if (colorFilter?.length) {
-      if (typeof colorFilter === 'string') {
-        filter.push(`${Facet.color}: "${colorFilter}"`)
-      } else {
-        filter.push(`${Facet.color}: ${colorFilter.map((el) => `"${el}"`).join(',')}`)
-      }
+      filter.push(
+        `${Facet.color}: ${colorFilter instanceof Array ? colorFilter.map((el) => `"${el}"`).join(',') : `"${colorFilter}"`}`,
+      )
     }
     if (quantityFilter?.length) {
-      if (typeof quantityFilter === 'string') {
-        filter.push(`${Facet.quantity}: "${quantityFilter}"`)
-      } else {
-        filter.push(`${Facet.quantity}: ${quantityFilter.map((el) => `"${el}"`).join(',')}`)
-      }
-    }
-
-    if (priceFilter?.length) {
       filter.push(
-        `${Facet.price}: range(${+priceFilter[0] * FULL_PERCENTAGE} to ${+priceFilter[1] * FULL_PERCENTAGE})`,
+        `${Facet.quantity}: ${quantityFilter instanceof Array ? quantityFilter.map((el) => `"${el}"`).join(',') : `"${quantityFilter}"`}`,
       )
     }
 
     if (filter.length) {
-      queryArgs = {
-        ...queryArgs,
-        'filter.query': filter,
-      }
+      queryArgs['filter.query'] = filter
     }
 
     return this.clientService

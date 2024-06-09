@@ -1,28 +1,34 @@
 import { defineStore } from 'pinia'
 
-interface Alert {
+type AlertVariants = 'info' | 'error' | 'success' | 'warning'
+
+interface AlertState {
   isOpenAlert: boolean
-  message: string
-  type: 'info' | 'error' | 'success' | 'warning'
+
+  messageInfo?: {
+    message: string
+    type: AlertVariants
+  }
 }
 
 export const useAlertStore = defineStore('Alert', {
-  state: (): Alert => ({
+  state: (): AlertState => ({
     isOpenAlert: false,
-    message: '',
-    type: 'info',
+    messageInfo: undefined,
   }),
 
   actions: {
-    setFalse() {
-      this.message = ''
+    hide() {
       this.isOpenAlert = false
+      this.messageInfo = undefined
     },
 
-    show(message: string, type: 'info' | 'error' | 'success' | 'warning') {
+    show(message: string, type: AlertVariants) {
       this.isOpenAlert = true
-      this.message = message
-      this.type = type
+      this.messageInfo = {
+        message,
+        type,
+      }
     },
   },
 })

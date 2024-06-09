@@ -6,7 +6,6 @@ import { useBurgerStore } from '@/stores/burger'
 import { userAuth } from '@/stores/userAuth'
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { ALL_PRODUCTS } from '@/constants/constants'
 import { useCategoriesStore } from '@/stores/categories'
 import { categoryService } from '@/services/categoriesService'
 
@@ -51,7 +50,7 @@ const { categoriesLinks } = storeToRefs(useCategoriesStore())
     ></v-app-bar-nav-icon>
     <HoverMenu
       v-if="$vuetify.display.lgAndUp"
-      :menuItemsWithSubItems="[ALL_PRODUCTS, ...categoriesLinks]"
+      :menuItemsWithSubItems="categoriesLinks"
       menu-trigger-text="Catalog"
     />
     <v-list v-if="$vuetify.display.lgAndUp" class="nav-list">

@@ -2,7 +2,7 @@
 import { chooseRules } from '@/utils/chooseRules'
 import { getMaxTime } from '@/utils/dateUtils'
 import { computed } from 'vue'
-import { yearToShow } from '@/constants/constants'
+import { YEAR_TO_SHOW } from '@/constants/constants'
 
 const props = defineProps<{
   label: string
@@ -18,7 +18,7 @@ const rules = computed(() => chooseRules(props.type, props.label))
   <v-date-input
     :label="props.label"
     :max="getMaxTime()"
-    :year="yearToShow"
+    :year="YEAR_TO_SHOW"
     :type="props.type"
     :rules="rules"
     variant="outlined"

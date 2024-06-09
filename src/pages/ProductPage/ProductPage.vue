@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { productService } from '@/services/productService'
 import { computed, reactive, type Ref } from 'vue'
 import Button from '@/components/buttons/Button.vue'
 import { type ProductData, type ProductItem } from '@/interfaces/productData'
@@ -9,6 +8,7 @@ import NumberInput from '@/components/inputs/NumberInput.vue'
 import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
+import { productsService } from '@/services/productsService'
 
 const imageIndex = ref(0)
 const multiplier = ref(1)
@@ -38,7 +38,7 @@ const productKey = localStorageService.getData('productKey')
 const selectedVariants: Ref<string[]> = ref([])
 
 if (productKey !== null) {
-  productService
+  productsService
     .getProduct(productKey)
     .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
       product.description = description?.['en-GB'] ?? ''

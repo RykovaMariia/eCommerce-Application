@@ -3,7 +3,7 @@ import { useAlertStore } from '@/stores/alert'
 
 const alert = useAlertStore()
 
-const closeAlert = () => alert.setFalse()
+const closeAlert = () => alert.hide()
 </script>
 
 <template>

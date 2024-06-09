@@ -8,7 +8,7 @@ import {
 import { tokenData } from '@/api/TokenInfo'
 import type { UserCustomerDraft, UserLoginData } from '@/interfaces/userData'
 
-const MergeWithExistingCustomerCart = 'MergeWithExistingCustomerCart'
+const mergeWithExistingCustomerCart = 'MergeWithExistingCustomerCart'
 
 export class AuthService {
   constructor(
@@ -23,7 +23,7 @@ export class AuthService {
     if (cartId && anonymousId) {
       userData.anonymousCartId = cartId
       userData.anonymousId = anonymousId
-      userData.anonymousCartSignInMode = MergeWithExistingCustomerCart
+      userData.anonymousCartSignInMode = mergeWithExistingCustomerCart
       userData.updateProductData = true
     }
 

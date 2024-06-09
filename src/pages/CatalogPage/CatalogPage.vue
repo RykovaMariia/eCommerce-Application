@@ -13,7 +13,6 @@ import { SORTING_ITEMS } from '@/constants/constants'
 import { type SortBy } from '@/enums/sortingCommand'
 import { useRoute, useRouter } from 'vue-router'
 import { Facet } from '@/enums/facet'
-import PriceForm from './components/PriceForm.vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categories'
 import Input from '@/components/inputs/Input.vue'
@@ -40,12 +39,12 @@ watchEffect(() => {
   }
 })
 
-const limit = 16
+const limitProductsOnPage = 16
 const currentPage = ref(1)
-const totalPages = computed(() => Math.ceil(productsCount.value / limit))
+const totalPages = computed(() => Math.ceil(totalProductsCount.value / limitProductsOnPage))
 
 const products: Ref<ProductProjection[]> = ref([])
-const productsCount = ref(0)
+const totalProductsCount = ref(0)
 const colorItems: Ref<string[]> = ref([])
 const quantityItems: Ref<string[]> = ref([])
 
@@ -53,70 +52,51 @@ const selectedFilters = reactive({
   sorting: (route.query.sorting as SortBy) ?? 'default',
   color: route.query.color as string[] | string,
   quantity: route.query.quantity as string[],
-  price: route.query.price as [string, string],
   search: route.query.search as string,
 })
 
 const fetchProducts = () => {
-  const offset = (currentPage.value - 1) * limit
+  const offset = (currentPage.value - 1) * limitProductsOnPage
 
   productsService
     .getProducts({
-      limit,
+      limit: limitProductsOnPage,
       offset,
       sorting: selectedFilters.sorting,
       categoryId: categoryId.value,
       colorFilter: selectedFilters.color,
       quantityFilter: selectedFilters.quantity,
-      priceFilter: selectedFilters.price,
       search: selectedFilters.search,
     })
     .then((response: ClientResponse<ProductProjectionPagedSearchResponse>) => {
       products.value = response.body.results || []
-      productsCount.value = response.body.total || 0
+      totalProductsCount.value = response.body.total || 0
 
-      colorItems.value = (response.body.facets[Facet.color] as TermFacetResult).terms.map(
+      colorItems.value = (response.body.facets[Facet.color] as TermFacetResult).terms.map<string>(
         (el) => el.term,
-      ) as string[]
+      )
 
-      quantityItems.value = (response.body.facets[Facet.quantity] as TermFacetResult).terms.map(
-        (el) => el.term,
-      ) as string[]
+      quantityItems.value = (
+        response.body.facets[Facet.quantity] as TermFacetResult
+      ).terms.map<string>((el) => el.term)
     })
     .catch((error: Error) => {
       useAlertStore().show(error.message, 'warning')
     })
 }
 
-const selectSorting = (value: SortBy) => {
-  router.replace({ query: { ...route.query, sorting: value } })
-  selectedFilters.sorting = value
-  fetchProducts()
-}
+const update =
+  <T extends keyof typeof selectedFilters>(field: T) =>
+  (value: (typeof selectedFilters)[T]) => {
+    router.replace({ query: { ...route.query, [field]: value } })
+    selectedFilters[field] = value
+    fetchProducts()
+  }
 
-const selectColor = (value: string[]) => {
-  router.replace({ query: { ...route.query, color: value } })
-  selectedFilters.color = value
-  fetchProducts()
-}
-
-const selectQuantity = (value: string[]) => {
-  router.replace({ query: { ...route.query, quantity: value } })
-  selectedFilters.quantity = value
-  fetchProducts()
-}
-
-const selectPrice = (value: { from: string; to: string }) => {
-  router.replace({ query: { ...route.query, price: [value.from, value.to] } })
-  selectedFilters.price = [value.from, value.to]
-  fetchProducts()
-}
-
-const search = (value: string) => {
-  router.replace({ query: { ...route.query, search: value } })
-  selectedFilters.search = value
-  fetchProducts()
-}
+const search = update('search')
+const selectSorting = update('sorting')
+const selectColor = update('color')
+const selectQuantity = update('quantity')
 
 watch(
   () => route,
@@ -124,7 +104,6 @@ watch(
     selectedFilters.sorting = route.query.sorting as SortBy
     selectedFilters.color = route.query.color as string[]
     selectedFilters.quantity = route.query.quantity as string[]
-    selectedFilters.price = route.query.price as [string, string]
     fetchProducts()
   },
   { deep: true, immediate: true },
@@ -161,7 +140,6 @@ watch(
     is-multiple
     @update:modelValue="selectQuantity"
   />
-  <PriceForm @priceFilterUpdated="selectPrice" />
 
   <Input
     label="Search"

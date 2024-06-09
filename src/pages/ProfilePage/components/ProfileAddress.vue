@@ -54,7 +54,9 @@ function openFormForAddress(item?: Address) {
   if (item) {
     address.value = item
     typeAction.value = TypeAction.Edit
-  } else {typeAction.value = TypeAction.Add}
+  } else {
+    typeAction.value = TypeAction.Add
+  }
 }
 
 function updateUserInfo(user: Customer) {

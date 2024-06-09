@@ -6,7 +6,7 @@ import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import { computed, reactive, ref } from 'vue'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
-import { COUNTRY, yearToShow } from '@/constants/constants'
+import { COUNTRY, YEAR_TO_SHOW } from '@/constants/constants'
 import type { UserCustomerDraft } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
 import { formateDate } from '@/utils/dateUtils'
@@ -58,7 +58,7 @@ const userData: UserCustomerDraft = reactive({
 })
 
 const currentDate = new Date()
-const dateOfBirth = ref(new Date(yearToShow, currentDate.getMonth(), currentDate.getDate()))
+const dateOfBirth = ref(new Date(YEAR_TO_SHOW, currentDate.getMonth(), currentDate.getDate()))
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   if (isTheSame.value) {
