@@ -9,6 +9,7 @@ import NumberInput from '@/components/inputs/NumberInput.vue'
 import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
+import { FULL_PERCENTAGE } from '@/constants/constants'
 
 const imageIndex = ref(0)
 const multiplier = ref(1)
@@ -22,7 +23,7 @@ const product: ProductData = reactive({
   variants: [],
 })
 
-let attributeValues: string[][]
+let attributeValues: string[][] = []
 let masterAttributeNames: string[] = []
 const isProductDataLoaded = ref(false)
 
@@ -61,7 +62,7 @@ if (productKey !== null) {
       const allVariants = variants?.map(retrieveVariantsData)
       product.variants = [mainVariant, ...allVariants]
       isProductDataLoaded.value = true
-      selectedVariants.value = product.variants[0].attributes.map((value) => value)
+      selectedVariants.value = product.variants[0].attributes.map((value) => value) //
     })
     .catch((error: Error) => {
       console.warn(`Error: ${error.message}`, 'warning')
@@ -73,7 +74,7 @@ const setVariant = (value: string, index: number) => {
 }
 
 const formatPrice = (price: number) => {
-  return ((price / 100) * multiplier.value).toFixed(2)
+  return ((price / FULL_PERCENTAGE) * multiplier.value).toFixed(2)
 }
 
 const definePrice = ({ price, discountPrice }: ProductItem) => {
@@ -82,7 +83,9 @@ const definePrice = ({ price, discountPrice }: ProductItem) => {
   const resultFormattedPrice = discountPrice
     ? { formattedPrice, formattedDiscountPrice }
     : { formattedPrice }
-  discountPrice ? (discountIsActive.value = true) : (discountIsActive.value = false)
+  if (discountPrice) {
+    discountIsActive.value = true
+  }
   return resultFormattedPrice
 }
 const price = computed(() => {
@@ -90,7 +93,7 @@ const price = computed(() => {
     ({ attributes }) =>
       attributes[0] === selectedVariants.value[0] && attributes[1] === selectedVariants.value[1],
   )
-  const resultPrice = variant ? definePrice(variant) : definePrice(product.variants[0])
+  const resultPrice = definePrice(variant ?? product.variants[0])
   return resultPrice
 })
 </script>
@@ -111,9 +114,9 @@ const price = computed(() => {
         <div v-if="product.images.length > 1">
           <v-slide-group v-model="imageIndex">
             <v-slide-group-item
-              v-for="(n, index) in product.images"
-              :source="n"
-              :key="n"
+              v-for="(groupItem, index) in product.images"
+              :source="groupItem"
+              :key="groupItem"
               v-slot="{ select }"
             >
               <v-card
@@ -137,7 +140,7 @@ const price = computed(() => {
           <div class="attribute-name">{{ masterAttributeNames[n] }}:</div>
           <v-item-group selected-class="selected-group" mandatory>
             <div class="value-container">
-              <div v-for="(attribute, i) in attributesArray" :key="i">
+              <div v-for="(attribute, i) in attributesArray" :key="attribute">
                 <v-item v-slot="{ selectedClass, toggle }">
                   <v-card
                     :class="[

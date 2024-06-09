@@ -13,9 +13,7 @@ export class ProductService {
         },
       })
       .execute()
-    return product.then((value) => {
-      return value.body.results[0].masterData
-    })
+    return product.then(({ body: { results } }) => results[0].masterData)
   }
 }
 
