@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { addressService } from '@/services/addressService'
 import type { Address, Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 import { userAuth } from '@/stores/userAuth'
 
-const alert = alertStore()
+const alert = useAlertStore()
 
 defineProps<{
   items: Address[]

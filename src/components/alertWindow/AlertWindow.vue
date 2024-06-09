@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 
-const alert = alertStore()
+const alert = useAlertStore()
 
 const closeAlert = () => alert.setFalse()
 </script>

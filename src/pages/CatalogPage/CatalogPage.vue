@@ -15,20 +15,22 @@ import { useRoute, useRouter } from 'vue-router'
 import { Facet } from '@/enums/facet'
 import PriceForm from './components/PriceForm.vue'
 import { storeToRefs } from 'pinia'
-import { categoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/stores/categories'
 import Input from '@/components/inputs/Input.vue'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 
 const route = useRoute()
 const router = useRouter()
-const { categories } = storeToRefs(categoriesStore())
+const { categories } = storeToRefs(useCategoriesStore())
 const categoryId = ref()
 
 watchEffect(() => {
   const category = route.params.categoryId
   const subCategory = route.params.subCategoryId
 
-  if (!categories.value.length) {return}
+  if (!categories.value.length) {
+    return
+  }
   const currentCategory = categories.value.find((el) => el.parent.key === category)
   if (subCategory) {
     categoryId.value =
@@ -82,7 +84,7 @@ const fetchProducts = () => {
       ) as string[]
     })
     .catch((error: Error) => {
-      alertStore().show(error.message, 'warning')
+      useAlertStore().show(error.message, 'warning')
     })
 }
 

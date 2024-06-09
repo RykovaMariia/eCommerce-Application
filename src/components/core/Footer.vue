@@ -2,7 +2,7 @@
 import IconLogo from '@components/icons/IconLogo.vue'
 import { ALL_PRODUCTS } from '@/constants/constants'
 import { storeToRefs } from 'pinia'
-import { categoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/stores/categories'
 
 const menuLinks = [
   {
@@ -14,7 +14,7 @@ const menuLinks = [
     href: '/about',
   },
 ]
-const { categoriesLinks } = storeToRefs(categoriesStore())
+const { categoriesLinks } = storeToRefs(useCategoriesStore())
 
 const creationYear = '2024'
 </script>

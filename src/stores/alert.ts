@@ -6,7 +6,7 @@ interface Alert {
   type: 'info' | 'error' | 'success' | 'warning'
 }
 
-export const alertStore = defineStore('Alert', {
+export const useAlertStore = defineStore('Alert', {
   state: (): Alert => ({
     isOpenAlert: false,
     message: '',

@@ -10,13 +10,13 @@ import { COUNTRY, yearToShow } from '@/constants/constants'
 import type { UserCustomerDraft } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
 import { formateDate } from '@/utils/dateUtils'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 import router from '@/router'
 import { userAuth } from '@/stores/userAuth'
 import type { SubmitEventPromise } from 'vuetify'
 import SelectInput from '@components/inputs/SelectInput.vue'
 
-const alert = alertStore()
+const alert = useAlertStore()
 
 const defaultShipping = ref(false)
 const defaultBilling = ref(false)
@@ -67,7 +67,9 @@ async function submit(submitEventPromise: SubmitEventPromise) {
     addressShipping.postalCode = addressBilling.postalCode
   }
   const { valid } = await submitEventPromise
-  if (valid) {signup()}
+  if (valid) {
+    signup()
+  }
 }
 
 function signup() {

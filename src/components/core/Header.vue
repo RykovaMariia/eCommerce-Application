@@ -2,15 +2,15 @@
 import HoverMenu from '@components/hover-menu/HoverMenu.vue'
 import IconLogo from '@components/icons/IconLogo.vue'
 import BurgerMenu from '@components/core/BurgerMenu.vue'
-import { openBurgerStore } from '@/stores/openBurgerStore'
+import { useBurgerStore } from '@/stores/burger'
 import { userAuth } from '@/stores/userAuth'
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ALL_PRODUCTS } from '@/constants/constants'
-import { getCategories } from '@/utils/getCategories'
-import { categoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/stores/categories'
+import { categoryService } from '@/services/categoriesService'
 
-const store = openBurgerStore()
+const store = useBurgerStore()
 const { isLoggedIn } = storeToRefs(userAuth())
 
 const userLinks = [
@@ -36,11 +36,9 @@ function openBurger() {
   store.toggleOpenState()
 }
 
-getCategories()
-  .then((value) => categoriesStore().setCategories(value))
-  .then(() => categoriesStore().setCategoriesLink())
+categoryService.getCategories().then((value) => useCategoriesStore().setCategories(value))
 
-const { categoriesLinks } = storeToRefs(categoriesStore())
+const { categoriesLinks } = storeToRefs(useCategoriesStore())
 </script>
 
 <template>

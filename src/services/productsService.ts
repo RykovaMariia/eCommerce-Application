@@ -29,31 +29,6 @@ interface RequestParam {
 export class ProductsService {
   constructor(private clientService: ClientService) {}
 
-  getCategories() {
-    return this.clientService
-      .getApiRoot()
-      .categories()
-      .get({
-        queryArgs: {
-          where: 'parent is not defined',
-          expand: [],
-        },
-      })
-      .execute()
-  }
-
-  getSubCategories(parentCategoryId: string) {
-    return this.clientService
-      .getApiRoot()
-      .categories()
-      .get({
-        queryArgs: {
-          where: `parent(id="${parentCategoryId}")`,
-        },
-      })
-      .execute()
-  }
-
   getProducts({
     limit,
     offset,

@@ -9,9 +9,9 @@ import { customerService } from '@/services/customerService'
 import type { Customer } from '@commercetools/platform-sdk'
 import { userAuth } from '@/stores/userAuth'
 import type { UserData } from '@/interfaces/userData'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 
-const alert = alertStore()
+const alert = useAlertStore()
 
 const userInfo: Ref<UserData> = ref({
   firstName: '',
@@ -59,7 +59,9 @@ customerService
   })
 
 function updateUserInfo(user: UserData) {
-  if (!user) {return}
+  if (!user) {
+    return
+  }
   userInfo.value = user
 }
 </script>

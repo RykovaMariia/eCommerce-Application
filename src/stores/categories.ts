@@ -7,17 +7,18 @@ export interface Categories {
   children: Category[]
 }
 
-export const categoriesStore = defineStore('Categories', {
-  state: (): { categories: Categories[]; categoriesLinks: CategoryLink[] } => ({
+export const useCategoriesStore = defineStore('Categories', {
+  state: (): { categories: Categories[] } => ({
     categories: [],
-    categoriesLinks: [],
   }),
   actions: {
     setCategories(categories: Categories[]) {
       this.categories = categories
     },
-    setCategoriesLink() {
-      this.categoriesLinks = this.categories.reduce((calc: CategoryLink[], category) => {
+  },
+  getters: {
+    categoriesLinks(state: { categories: Categories[] }) {
+      return state.categories.reduce((calc: CategoryLink[], category) => {
         calc.push({
           parent: {
             name: category.parent.key ?? '',
