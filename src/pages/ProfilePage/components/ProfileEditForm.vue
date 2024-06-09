@@ -8,11 +8,11 @@ import { ref } from 'vue'
 import { formateDate } from '@/utils/dateUtils'
 import type { SubmitEventPromise } from 'vuetify'
 import { customerService } from '@/services/customerService'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 import { userAuth } from '@/stores/userAuth'
 import type { ICustomer } from '@/types/writable'
 
-const alert = alertStore()
+const alert = useAlertStore()
 
 const emit = defineEmits(['updateUser'])
 
@@ -22,11 +22,15 @@ const dateOfBirth = ref(new Date(formateDate(currentUser.value?.dateOfBirth || '
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
-  if (valid) update()
+  if (valid) {
+    update()
+  }
 }
 
 function update() {
-  if (!currentUser.value) return
+  if (!currentUser.value) {
+    return
+  }
 
   currentUser.value.dateOfBirth = formateDate(dateOfBirth.value.toDateString())
   customerService
