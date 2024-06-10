@@ -80,7 +80,7 @@ const router = createRouter({
     {
       path: '/cart',
       name: 'cart',
-      component: () => import('@pages/CartPage.vue'),
+      component: () => import('@pages/CartPage/CartPage.vue'),
       meta: { breadcrumb: 'Cart' },
     },
     {

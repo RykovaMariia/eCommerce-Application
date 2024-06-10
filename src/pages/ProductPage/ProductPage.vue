@@ -4,7 +4,6 @@ import Button from '@/components/buttons/Button.vue'
 import { type ProductData, type ProductItem } from '@/interfaces/productData'
 import { ref } from 'vue'
 import type { ProductCatalogData, ProductVariant } from '@commercetools/platform-sdk'
-import NumberInput from '@/components/inputs/NumberInput.vue'
 import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
@@ -34,12 +33,12 @@ function retrieveVariantsData({ attributes, prices }: ProductVariant) {
   }
 }
 
-const productKey = localStorageService.getData('productKey')
+const productId = localStorageService.getData('productId')
 const selectedVariants: Ref<string[]> = ref([])
 
-if (productKey !== null) {
+if (productId !== null) {
   productsService
-    .getProduct(productKey)
+    .getProduct(productId)
     .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
       product.description = description?.['en-GB'] ?? ''
       product.name = name?.['en-GB']
@@ -154,7 +153,6 @@ const price = computed(() => {
       </div>
 
       <div class="price-wrapper">
-        <NumberInput v-model="multiplier" />
         <div v-if="isProductDataLoaded" class="price-wrapper">
           <div class="price_discount" v-if="price.formattedDiscountPrice">
             € {{ price.formattedDiscountPrice }}

@@ -27,13 +27,13 @@ interface RequestParam {
 export class ProductsService {
   constructor(private clientService: ClientService) {}
 
-  getProduct(key: string) {
+  getProduct(id: string) {
     return this.clientService
       .getApiRoot()
       .products()
       .get({
         queryArgs: {
-          where: `key=${key}`,
+          where: `id="${id}"`,
         },
       })
       .execute()

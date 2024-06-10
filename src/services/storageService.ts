@@ -50,7 +50,7 @@ export type LocalStorageState = {
   token: TokenStore
   sorting: SortBy
   priceFilter: number[]
-  productKey: string
+  productId: string
   anonymousId: string
   cartId: string
   productId: string

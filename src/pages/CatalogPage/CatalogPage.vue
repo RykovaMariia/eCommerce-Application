@@ -20,6 +20,7 @@ import { useAlertStore } from '@/stores/alert'
 import { cartApiService } from '@/services/cartApiService'
 import { useCartStore } from '@/stores/cart'
 import { localStorageService } from '@/services/storageService'
+import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
 import { cartService } from '@/services/cartService'
 
 const route = useRoute()
@@ -191,18 +192,19 @@ function getLoadingState(productId: string) {
 
   <div class="d-flex">
     <ProductCard
-      v-for="product in products"
-      :key="product.id"
-      :src="product.masterVariant.images?.[0]?.url"
-      :name="product.name['en-GB']"
-      :description="product.description?.['en-GB']"
-      :price="product.masterVariant.prices?.[0]?.value?.centAmount ?? 0"
-      :discountedPrice="product.masterVariant.prices?.[0]?.discounted?.value.centAmount ?? 0"
-      :productSlug="product.slug['en-GB']"
-      :productKey="product.key"
-      :productId="product.id"
-      :isAdd="isProductInCart(product.id)"
-      :loading="getLoadingState(product.id)"
+      v-for="{ id, masterVariant, name, description, slug } in products"
+      :key="id"
+      :src="masterVariant.images?.[0]?.url"
+      :name="name['en-GB']"
+      :description="description?.['en-GB']"
+      :price="getPriceAccordingToFractionDigits(masterVariant.prices?.[0]?.value)"
+      :discountedPrice="
+        getPriceAccordingToFractionDigits(masterVariant.prices?.[0]?.discounted?.value)
+      "
+      :productSlug="slug['en-GB']"
+      :productId="id"
+      :isAdd="isProductInCart(id)"
+      :loading="getLoadingState(id)"
       @addProductToCart="addProductToCart($event)"
     />
   </div>
