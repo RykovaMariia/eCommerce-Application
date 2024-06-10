@@ -2,8 +2,10 @@
 import { FULL_PERCENTAGE } from '@/constants/constants'
 import Button from '@components/buttons/Button.vue'
 import { localStorageService } from '@/services/storageService'
+import { computed } from 'vue'
 
 const props = defineProps<{
+  loading: boolean
   src: string
   name: string
   description: string
@@ -11,7 +13,11 @@ const props = defineProps<{
   discountedPrice: number
   productSlug: string
   productKey: string
+  productId: string
+  isAdd: boolean
 }>()
+
+const emit = defineEmits(['addProductToCart'])
 
 const href = { name: 'productId', params: { productId: props.productSlug } }
 
@@ -21,10 +27,28 @@ function getDiscountPercentage(price: number, discountedPrice: number) {
 const passProductKey = () => {
   localStorageService.saveData('productKey', props.productKey)
 }
+
+const color = computed(() => {
+  return !props.isAdd ? 'secondary' : 'primary'
+})
+
+const textContent = computed(() => {
+  return !props.isAdd ? 'Add to cart' : 'Added to cart'
+})
+
+const to = computed(() => {
+  return props.isAdd ? '/cart' : undefined
+})
+
+const click = computed(() => {
+  return !props.isAdd ? emit('addProductToCart', props.productId) : undefined
+})
 </script>
 <template>
   <v-col>
     <v-card
+      :disabled="loading"
+      :loading="loading"
       elevation="0"
       max-width="290"
       variant="text"
@@ -32,6 +56,14 @@ const passProductKey = () => {
       :to="href"
       @click="passProductKey"
     >
+      <template v-slot:loader="{ isActive }">
+        <v-progress-linear
+          :active="isActive"
+          color="secondary"
+          height="4"
+          indeterminate
+        ></v-progress-linear>
+      </template>
       <v-img height="340" :src="src" cover></v-img>
       <v-card-title>{{ name }}</v-card-title>
       <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>
@@ -47,7 +79,7 @@ const passProductKey = () => {
         -{{ getDiscountPercentage(price, discountedPrice) }}%
       </div>
     </v-card>
-    <Button textContent="Add to card" />
+    <Button :disabled="loading" :color :textContent :to @click="() => click" />
   </v-col>
 </template>
 

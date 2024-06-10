@@ -35,6 +35,26 @@ export class CartService {
       })
       .execute()
   }
+
+  public addProductToCart(id: string, version: number, productId: string, quantity?: number) {
+    return this.clientService
+      .getApiRoot()
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'addLineItem',
+              productId,
+              quantity,
+            },
+          ],
+        },
+      })
+      .execute()
+  }
 }
 
 export const cartService = new CartService(clientService)
