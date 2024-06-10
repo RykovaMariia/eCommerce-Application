@@ -1,60 +1,40 @@
-import { ClientService, clientService } from '@/services/clientService'
-
-interface CartData {
-  id: string
-  version: number
-  anonymousId: string
-}
+import { useCartStore } from '@/stores/cart'
+import { cartApiService, type CartApiService } from './cartApiService'
+import { localStorageService } from './storageService'
+import type { LineItem } from '@commercetools/platform-sdk'
+const cartId = localStorageService.getData('cartId')
+const anonymousId = localStorageService.getData('anonymousId')
 
 export class CartService {
-  constructor(private clientService: ClientService) {}
+  constructor(private cartApiService: CartApiService) {}
 
-  public create() {
-    return this.clientService
-      .getApiRoot()
-      .me()
-      .carts()
-      .post({ body: { currency: 'EUR' } })
-      .execute()
+  public setAnonymousSession() {
+    if (cartId) {
+      cartApiService
+        .getCartById(cartId)
+        .then(({ body }) => {
+          if (anonymousId && body.createdBy?.anonymousId !== anonymousId) {
+            return cartApiService
+              .updateAnonymousId({ id: cartId, version: body.version, anonymousId })
+              .then(({ body }) => body)
+          }
+          return body
+        })
+        .then((body) => {
+          useCartStore().setCart(body)
+        })
+    }
   }
 
-  public getCartById(cartId: string) {
-    return this.clientService.getApiRoot().carts().withId({ ID: cartId }).get().execute()
+  public createCart() {
+    return cartApiService.create().then(({ body }) => {
+      localStorageService.saveData('cartId', body.id)
+      useCartStore().setCart(body)
+    })
   }
 
-  public updateAnonymousId({ id, version, anonymousId }: CartData) {
-    return this.clientService
-      .getApiRoot()
-      .carts()
-      .withId({ ID: id })
-      .post({
-        body: {
-          version,
-          actions: [{ action: 'setAnonymousId', anonymousId }],
-        },
-      })
-      .execute()
-  }
-
-  public addProductToCart(id: string, version: number, productId: string, quantity?: number) {
-    return this.clientService
-      .getApiRoot()
-      .carts()
-      .withId({ ID: id })
-      .post({
-        body: {
-          version,
-          actions: [
-            {
-              action: 'addLineItem',
-              productId,
-              quantity,
-            },
-          ],
-        },
-      })
-      .execute()
+  public isProductInCart(lineItems: LineItem[], productId: string) {
+    return lineItems.some((item) => item.productId === productId)
   }
 }
-
-export const cartService = new CartService(clientService)
+export const cartService = new CartService(cartApiService)

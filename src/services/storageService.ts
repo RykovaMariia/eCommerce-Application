@@ -53,6 +53,7 @@ export type LocalStorageState = {
   productKey: string
   anonymousId: string
   cartId: string
+  productId: string
 }
 
 export const localStorageService = new StorageService<LocalStorageState>('ECommerce_')

@@ -17,9 +17,10 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categories'
 import Input from '@/components/inputs/Input.vue'
 import { useAlertStore } from '@/stores/alert'
-import { cartService } from '@/services/cartService'
+import { cartApiService } from '@/services/cartApiService'
 import { useCartStore } from '@/stores/cart'
 import { localStorageService } from '@/services/storageService'
+import { cartService } from '@/services/cartService'
 
 const route = useRoute()
 const router = useRouter()
@@ -117,33 +118,28 @@ watch(
   { deep: true, immediate: true },
 )
 
-function createCart() {
-  return cartService.create().then(({ body }) => {
-    localStorageService.saveData('cartId', body.id)
-    useCartStore().setCart(body)
-  })
-}
-
 async function addProductToCart(productId: string) {
   loadingStates.value[productId] = true
   const cartId = localStorageService.getData('cartId')
   if (!cartId) {
-    await createCart()
+    await cartService.createCart()
   }
   if (cart.value?.id) {
-    cartService.addProductToCart(cart.value.id, cart.value.version, productId).then(({ body }) => {
-      setTimeout(() => {
-        useCartStore().setCart(body)
-        loadingStates.value[productId] = false
-      }, timeLoading)
-    })
+    cartApiService
+      .addProductToCart({ id: cart.value.id, version: cart.value.version, productId })
+      .then(({ body }) => {
+        setTimeout(() => {
+          useCartStore().setCart(body)
+          loadingStates.value[productId] = false
+        }, timeLoading)
+      })
   }
 }
-function isProduct(productId: string) {
+function isProductInCart(productId: string) {
   if (!cart.value?.lineItems) {
     return false
   }
-  return cart.value.lineItems.some((item) => item.productId === productId)
+  return cartService.isProductInCart(cart.value?.lineItems, productId)
 }
 
 function getLoadingState(productId: string) {
@@ -205,7 +201,7 @@ function getLoadingState(productId: string) {
       :productSlug="product.slug['en-GB']"
       :productKey="product.key"
       :productId="product.id"
-      :isAdd="isProduct(product.id)"
+      :isAdd="isProductInCart(product.id)"
       :loading="getLoadingState(product.id)"
       @addProductToCart="addProductToCart($event)"
     />
