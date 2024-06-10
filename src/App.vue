@@ -29,7 +29,6 @@ const anonymousId = localStorageService.getData('anonymousId')
 if (!cartId) {
   cartService.create().then(({ body }) => {
     localStorageService.saveData('cartId', body.id)
-    console.warn(body.lineItems)
     useCartStore().setCart(body)
   })
 } else {

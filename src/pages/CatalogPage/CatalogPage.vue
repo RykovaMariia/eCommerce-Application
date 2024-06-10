@@ -112,18 +112,31 @@ watch(
 )
 
 const { cart } = storeToRefs(useCartStore())
-const lineItems = ref(cart.value?.lineItems)
+const loadingStates: Ref<{ [key: string]: boolean }> = ref({})
 
-function addProductToCart(product: string) {
+function addProductToCart(productId: string) {
   if (cart.value?.id) {
-    cartService.addProductToCart(cart.value.id, cart.value.version, product).then(({ body }) => {
-      useCartStore().setCart(body)
-      lineItems.value = body.lineItems
+    loadingStates.value[productId] = true
+
+    cartService.addProductToCart(cart.value.id, cart.value.version, productId).then(({ body }) => {
+      setTimeout(() => {
+        useCartStore().setCart(body)
+        loadingStates.value[productId] = false
+      }, 1000)
+      //useCartStore().setCart(body)
+      //loadingStates.value[productId] = false;
     })
   }
 }
 function isProduct(productId: string) {
-  return lineItems.value?.some((item) => item.productId === productId)
+  if (!cart.value?.lineItems) {
+    return false
+  }
+  return cart.value.lineItems.some((item) => item.productId === productId)
+}
+
+function getLoadingState(productId: string) {
+  return loadingStates.value[productId] || false
 }
 </script>
 
@@ -182,6 +195,7 @@ function isProduct(productId: string) {
       :productKey="product.key"
       :productId="product.id"
       :isAdd="isProduct(product.id)"
+      :loading="getLoadingState(product.id)"
       @addProduct="addProductToCart($event)"
     />
   </div>

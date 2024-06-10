@@ -30,8 +30,8 @@ const passProductKey = () => {
 <template>
   <v-col>
     <v-card
-      :disabled="props.loading"
-      :loading="props.loading"
+      :disabled="loading"
+      :loading="loading"
       elevation="0"
       max-width="290"
       variant="text"
@@ -42,7 +42,7 @@ const passProductKey = () => {
       <template v-slot:loader="{ isActive }">
         <v-progress-linear
           :active="isActive"
-          color="deep-purple"
+          color="secondary"
           height="4"
           indeterminate
         ></v-progress-linear>
@@ -63,9 +63,11 @@ const passProductKey = () => {
       </div>
     </v-card>
     <Button
+      :disabled="loading"
       :color="!isAdd ? 'secondary' : 'primary'"
-      :textContent="!isAdd ? 'Add to cart' : 'Added'"
-      @click="emit('addProduct', props.productId)"
+      :textContent="!isAdd ? 'Add to cart' : 'Go to cart'"
+      @click="!isAdd ? emit('addProduct', props.productId) : undefined"
+      :to="isAdd ? '/cart' : undefined"
     />
   </v-col>
 </template>
