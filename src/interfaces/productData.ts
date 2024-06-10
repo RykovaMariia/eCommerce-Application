@@ -1,7 +1,7 @@
 export interface ProductData {
   description: string
   name: string
-  images: string[] | string
+  images: string[]
   variants: ProductItem[]
 }
 
