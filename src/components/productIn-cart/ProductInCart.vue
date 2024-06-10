@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NumberInput from '@inputs/NumberInput.vue'
+import NumberInput from '@components/inputs/NumberInput.vue'
 import { localStorageService } from '@/services/storageService'
 import { computed, ref } from 'vue'
 import { cartService } from '@/services/cartService'
