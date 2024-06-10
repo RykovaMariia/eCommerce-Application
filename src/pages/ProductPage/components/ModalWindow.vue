@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   activator: string
-  productImages: string | string[]
+  productImages: string[]
 }>()
 </script>
 
@@ -16,8 +16,8 @@ const props = defineProps<{
       <v-card :width="$vuetify.display.smAndDown ? '90svw' : '60svw'">
         <v-carousel :height="$vuetify.display.smAndDown ? '80svh' : '90svh'">
           <v-carousel-item
-            v-for="(url, i) in productImages"
-            :key="i"
+            v-for="url in productImages"
+            :key="url"
             :src="url"
             cover
           ></v-carousel-item>
