@@ -12,15 +12,17 @@
     placeholder="1"
     density="compact"
     readonly
+    hide-details="auto"
   ></v-number-input>
 </template>
 
 <style lang="scss">
-.v-btn--icon .v-icon {
+.v-btn--icon .v-icon.mdi-minus,
+.v-btn--icon .v-icon.mdi-plus {
   --v-icon-size-multiplier: 0.7;
 }
 
-.v-btn--icon.v-btn--density-default {
+.v-number-input .v-btn--icon.v-btn--density-default {
   width: calc(var(--v-btn-height));
 }
 </style>

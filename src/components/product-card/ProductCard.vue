@@ -12,7 +12,6 @@ const props = defineProps<{
   price: number
   discountedPrice: number
   productSlug: string
-  productKey: string
   productId: string
   isAdd: boolean
 }>()
@@ -24,8 +23,8 @@ const href = { name: 'productId', params: { productId: props.productSlug } }
 function getDiscountPercentage(price: number, discountedPrice: number) {
   return FULL_PERCENTAGE - Math.ceil((discountedPrice * FULL_PERCENTAGE) / price)
 }
-const passProductKey = () => {
-  localStorageService.saveData('productKey', props.productKey)
+const passProductId = () => {
+  localStorageService.saveData('productId', props.productId)
 }
 
 const color = computed(() => {
@@ -43,6 +42,10 @@ const to = computed(() => {
 const click = computed(() => {
   return !props.isAdd ? emit('addProductToCart', props.productId) : undefined
 })
+
+const priceClass = computed(() => {
+  return props.discountedPrice ? 'line-through' : 'price'
+})
 </script>
 <template>
   <v-col>
@@ -54,7 +57,7 @@ const click = computed(() => {
       variant="text"
       class="product-card"
       :to="href"
-      @click="passProductKey"
+      @click="passProductId"
     >
       <template v-slot:loader="{ isActive }">
         <v-progress-linear
@@ -68,12 +71,8 @@ const click = computed(() => {
       <v-card-title>{{ name }}</v-card-title>
       <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>
       <v-card-text
-        ><span class="price_discount" v-if="discountedPrice"
-          >€{{ discountedPrice / FULL_PERCENTAGE }}&nbsp;</span
-        >
-        <span :class="discountedPrice ? 'line-through' : 'price'"
-          >€{{ price / FULL_PERCENTAGE }}</span
-        >
+        ><span class="price_discount" v-if="discountedPrice">€{{ discountedPrice }}&nbsp;</span>
+        <span :class="priceClass">€{{ price }}</span>
       </v-card-text>
       <div class="discount" v-if="discountedPrice">
         -{{ getDiscountPercentage(price, discountedPrice) }}%

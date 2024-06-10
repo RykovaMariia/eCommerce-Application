@@ -39,6 +39,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 }
 
 .primary {
+  color: constants.$color-text-light;
   background-color: constants.$color-primary;
 }
 
