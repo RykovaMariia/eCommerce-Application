@@ -207,7 +207,7 @@ function getLoadingState(productId: string) {
       :productId="product.id"
       :isAdd="isProduct(product.id)"
       :loading="getLoadingState(product.id)"
-      @addProduct="addProductToCart($event)"
+      @addProductToCart="addProductToCart($event)"
     />
   </div>
   <v-pagination

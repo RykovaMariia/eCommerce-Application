@@ -16,7 +16,7 @@ const props = defineProps<{
   isAdd: boolean
 }>()
 
-const emit = defineEmits(['addProduct'])
+const emit = defineEmits(['addProductToCart'])
 
 const href = { name: 'productId', params: { productId: props.productSlug } }
 
@@ -66,7 +66,7 @@ const passProductKey = () => {
       :disabled="loading"
       :color="!isAdd ? 'secondary' : 'primary'"
       :textContent="!isAdd ? 'Add to cart' : 'Added to cart'"
-      @click="!isAdd ? emit('addProduct', props.productId) : undefined"
+      @click="!isAdd ? emit('addProductToCart', props.productId) : undefined"
       :to="isAdd ? '/cart' : undefined"
     />
   </v-col>
