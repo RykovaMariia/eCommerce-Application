@@ -4,6 +4,7 @@ import Button from '@components/buttons/Button.vue'
 import { localStorageService } from '@/services/storageService'
 
 const props = defineProps<{
+  loading: boolean
   src: string
   name: string
   description: string
@@ -12,6 +13,7 @@ const props = defineProps<{
   productSlug: string
   productKey: string
   productId: string
+  isAdd: boolean
 }>()
 
 const emit = defineEmits(['addProduct'])
@@ -28,6 +30,8 @@ const passProductKey = () => {
 <template>
   <v-col>
     <v-card
+      :disabled="props.loading"
+      :loading="props.loading"
       elevation="0"
       max-width="290"
       variant="text"
@@ -35,6 +39,14 @@ const passProductKey = () => {
       :to="href"
       @click="passProductKey"
     >
+      <template v-slot:loader="{ isActive }">
+        <v-progress-linear
+          :active="isActive"
+          color="deep-purple"
+          height="4"
+          indeterminate
+        ></v-progress-linear>
+      </template>
       <v-img height="340" :src="src" cover></v-img>
       <v-card-title>{{ name }}</v-card-title>
       <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>
@@ -50,7 +62,11 @@ const passProductKey = () => {
         -{{ getDiscountPercentage(price, discountedPrice) }}%
       </div>
     </v-card>
-    <Button textContent="Add to card" @click="emit('addProduct', props.productId)" />
+    <Button
+      :color="!isAdd ? 'secondary' : 'primary'"
+      :textContent="!isAdd ? 'Add to cart' : 'Added'"
+      @click="emit('addProduct', props.productId)"
+    />
   </v-col>
 </template>
 

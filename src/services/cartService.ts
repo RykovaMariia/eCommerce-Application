@@ -36,7 +36,7 @@ export class CartService {
       .execute()
   }
 
-  public addProductToCart(id: string, version: number, productId: string) {
+  public addProductToCart(id: string, version: number, productId: string, quantity?: number) {
     return this.clientService
       .getApiRoot()
       .carts()
@@ -48,7 +48,7 @@ export class CartService {
             {
               action: 'addLineItem',
               productId,
-              quantity: 1,
+              quantity,
             },
           ],
         },

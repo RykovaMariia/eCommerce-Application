@@ -10,7 +10,7 @@ import { userAuth } from './stores/userAuth'
 import router from './router'
 import { cartService } from './services/cartService'
 import { localStorageService } from './services/storageService'
-import { cartStore } from './stores/cartStore'
+import { useCartStore } from './stores/cart'
 const { isOpenAlert } = storeToRefs(useAlertStore())
 
 const alert = useAlertStore()
@@ -29,20 +29,23 @@ const anonymousId = localStorageService.getData('anonymousId')
 if (!cartId) {
   cartService.create().then(({ body }) => {
     localStorageService.saveData('cartId', body.id)
-    cartStore().setCartId(body.id)
-    cartStore().setVersion(body.version)
+    console.warn(body.lineItems)
+    useCartStore().setCart(body)
   })
 } else {
-  cartService.getCartById(cartId).then(({ body }) => {
-    if (anonymousId && body.createdBy?.anonymousId !== anonymousId) {
-      cartService
-        .updateAnonymousId({ id: cartId, version: body.version, anonymousId })
-        .then(({ body }) => {
-          cartStore().setCartId(cartId)
-          cartStore().setVersion(body.version)
-        })
-    }
-  })
+  cartService
+    .getCartById(cartId)
+    .then(({ body }) => {
+      if (anonymousId && body.createdBy?.anonymousId !== anonymousId) {
+        return cartService
+          .updateAnonymousId({ id: cartId, version: body.version, anonymousId })
+          .then(({ body }) => body)
+      }
+      return body
+    })
+    .then((body) => {
+      useCartStore().setCart(body)
+    })
 }
 </script>
 

@@ -18,7 +18,7 @@ import { useCategoriesStore } from '@/stores/categories'
 import Input from '@/components/inputs/Input.vue'
 import { useAlertStore } from '@/stores/alert'
 import { cartService } from '@/services/cartService'
-import { cartStore } from '@/stores/cartStore'
+import { useCartStore } from '@/stores/cart'
 
 const route = useRoute()
 const router = useRouter()
@@ -111,15 +111,19 @@ watch(
   { deep: true, immediate: true },
 )
 
-const { cartId } = storeToRefs(cartStore())
-const { cartVersion } = storeToRefs(cartStore())
+const { cart } = storeToRefs(useCartStore())
+const lineItems = ref(cart.value?.lineItems)
 
 function addProductToCart(product: string) {
-  if (cartId) {
-    cartService.addProductToCart(cartId.value, cartVersion.value, product).then((response) => {
-      cartStore().setVersion(response.body.version)
+  if (cart.value?.id) {
+    cartService.addProductToCart(cart.value.id, cart.value.version, product).then(({ body }) => {
+      useCartStore().setCart(body)
+      lineItems.value = body.lineItems
     })
   }
+}
+function isProduct(productId: string) {
+  return lineItems.value?.some((item) => item.productId === productId)
 }
 </script>
 
@@ -177,6 +181,7 @@ function addProductToCart(product: string) {
       :productSlug="product.slug['en-GB']"
       :productKey="product.key"
       :productId="product.id"
+      :isAdd="isProduct(product.id)"
       @addProduct="addProductToCart($event)"
     />
   </div>
