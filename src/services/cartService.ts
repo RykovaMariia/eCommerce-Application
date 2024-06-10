@@ -1,10 +1,5 @@
+import type { CartData, LineItem } from '@/interfaces/cart'
 import { ClientService, clientService } from '@/services/clientService'
-
-interface CartData {
-  id: string
-  version: number
-  anonymousId: string
-}
 
 export class CartService {
   constructor(private clientService: ClientService) {}
@@ -55,7 +50,7 @@ export class CartService {
       })
       .execute()
   }
-  public changeProductQuantity(id: string, version: number, lineItemId: string, quantity: number) {
+  public changeProductQuantity({ id, version, lineItemId, quantity }: CartData & LineItem) {
     return this.clientService
       .getApiRoot()
       .carts()

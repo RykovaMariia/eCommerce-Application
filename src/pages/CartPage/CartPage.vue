@@ -6,6 +6,7 @@ import { ref } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import { storeToRefs } from 'pinia'
 import { FULL_PERCENTAGE } from '@/constants/constants'
+import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
 
 const { cart } = storeToRefs(useCartStore())
 
@@ -15,17 +16,25 @@ const promocode = ref('')
 <template>
   <div v-if="cart?.totalLineItemQuantity">
     <ProductInCart
-      v-for="product in cart.lineItems"
-      :key="product.name['en-GB']"
-      :srcImg="product.variant.images?.[0].url ?? ''"
-      :name="product.name['en-GB']"
-      :price="product.totalPrice.centAmount"
-      :discountedPrice="product.price.discounted?.value.centAmount ?? 0"
-      :productSlug="product.productSlug?.['en-GB'] ?? ''"
-      :productKey="product.productKey ?? ''"
-      :product-id="product.id"
-      :quantity="product.quantity"
-      :lineItemId="product.id"
+      v-for="{
+        name,
+        variant,
+        totalPrice,
+        price,
+        productSlug,
+        productId,
+        quantity,
+        id,
+      } in cart.lineItems"
+      :key="name['en-GB']"
+      :srcImg="variant.images?.[0].url ?? ''"
+      :name="name['en-GB']"
+      :price="getPriceAccordingToFractionDigits(totalPrice)"
+      :discountedPrice="getPriceAccordingToFractionDigits(price.discounted?.value)"
+      :productSlug="productSlug?.['en-GB'] ?? ''"
+      :product-id="productId"
+      :quantity="quantity"
+      :lineItemId="id"
     />
 
     <div class="d-flex cart-total">

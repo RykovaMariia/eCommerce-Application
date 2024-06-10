@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { FULL_PERCENTAGE } from '@/constants/constants'
 import NumberInput from '../inputs/NumberInput.vue'
 import { localStorageService } from '@/services/storageService'
 import { ref } from 'vue'
@@ -13,7 +12,6 @@ const props = defineProps<{
   price: number
   discountedPrice?: number
   productSlug: string
-  productKey: string
   productId: string
   quantity: number
   lineItemId: string
@@ -23,8 +21,8 @@ const quantity = ref(props.quantity)
 
 const href = { name: 'productId', params: { productId: props.productSlug } }
 
-const passProductKey = () => {
-  localStorageService.saveData('productKey', props.productKey)
+const passProductId = () => {
+  localStorageService.saveData('productId', props.productId)
 }
 
 const { cart } = storeToRefs(useCartStore())
@@ -32,14 +30,19 @@ const { cart } = storeToRefs(useCartStore())
 function updateQuantity() {
   if (cart.value) {
     cartService
-      .changeProductQuantity(cart.value.id, cart.value.version, props.lineItemId, quantity.value)
+      .changeProductQuantity({
+        id: cart.value.id,
+        version: cart.value.version,
+        lineItemId: props.lineItemId,
+        quantity: quantity.value,
+      })
       .then(({ body }) => useCartStore().setCart(body))
   }
 }
 </script>
 <template>
   <v-card elevation="0" variant="text" class="d-flex product-in-cart">
-    <RouterLink :to="href" @click="passProductKey">
+    <RouterLink :to="href" @click="passProductId">
       <v-img height="200" width="200" :src="srcImg" cover></v-img
     ></RouterLink>
 
@@ -63,12 +66,8 @@ function updateQuantity() {
       <div class="d-flex product-prices">
         <NumberInput v-model="quantity" @update:modelValue="updateQuantity" />
         <v-card-text
-          ><span class="price_discount" v-if="discountedPrice"
-            >€{{ discountedPrice / FULL_PERCENTAGE }}&nbsp;</span
-          >
-          <span :class="discountedPrice ? 'line-through' : 'price'"
-            >€{{ price / FULL_PERCENTAGE }}</span
-          >
+          ><span class="price_discount" v-if="discountedPrice">€{{ discountedPrice }}&nbsp;</span>
+          <span :class="discountedPrice ? 'line-through' : 'price'">€{{ price }}</span>
         </v-card-text>
       </div>
     </v-col>
