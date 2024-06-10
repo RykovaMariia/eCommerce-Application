@@ -4,15 +4,13 @@ import Button from '@/components/buttons/Button.vue'
 import { type ProductData, type ProductItem } from '@/interfaces/productData'
 import { ref } from 'vue'
 import type { ProductCatalogData, ProductVariant } from '@commercetools/platform-sdk'
-import NumberInput from '@/components/inputs/NumberInput.vue'
 import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
 import { productsService } from '@/services/productsService'
-import { FULL_PERCENTAGE } from '@/constants/constants'
+import { getPriceAccordingToFractionDigits } from '@/utils/getPriceAccordingToFractionDigits'
 
 const imageIndex = ref(0)
-const multiplier = ref(1)
 const isMainAttribute = ref(true)
 
 const product: ProductData = reactive({
@@ -29,8 +27,8 @@ const isProductDataLoaded = ref(false)
 function retrieveVariantsData({ attributes, prices }: ProductVariant) {
   return {
     attributes: attributes?.map((value) => value.value[0].key) ?? [],
-    price: prices?.[0].value.centAmount ?? 0,
-    discountPrice: prices?.[0].discounted?.value.centAmount ?? 0,
+    price: getPriceAccordingToFractionDigits(prices?.[0].value),
+    discountPrice: getPriceAccordingToFractionDigits(prices?.[0].discounted?.value),
   }
 }
 
@@ -44,6 +42,7 @@ if (productKey !== null) {
       product.description = description?.['en-GB'] ?? ''
       product.name = name?.['en-GB']
       product.images = masterVariant.images?.map(({ url }) => url) ?? []
+      console.warn(variants)
       masterAttributeNames = masterVariant.attributes?.map(({ name }) => name) ?? []
       const variantAttributes = variants?.map((variant) => variant.attributes).flat()
       const attributesList = [masterVariant.attributes, ...variantAttributes].flat()
@@ -72,14 +71,8 @@ const setVariant = (value: string, index: number) => {
   selectedVariants.value[index] = value
 }
 
-const formatPrice = (price: number) => {
-  return ((price / FULL_PERCENTAGE) * multiplier.value).toFixed(2)
-}
-
 const definePrice = ({ price, discountPrice }: ProductItem) => {
-  const formattedPrice = formatPrice(price)
-  const formattedDiscountPrice = formatPrice(discountPrice)
-  return discountPrice ? { formattedPrice, formattedDiscountPrice } : { formattedPrice }
+  return discountPrice ? { price, discountPrice } : { price }
 }
 const price = computed(() => {
   const variant = product.variants.find(
@@ -154,13 +147,12 @@ const price = computed(() => {
       </div>
 
       <div class="price-wrapper">
-        <NumberInput v-model="multiplier" />
         <div v-if="isProductDataLoaded" class="price-wrapper">
-          <div class="price_discount" v-if="price.formattedDiscountPrice">
-            € {{ price.formattedDiscountPrice }}
+          <div class="price_discount" v-if="price.discountPrice">
+            € {{ price.discountPrice }}
           </div>
-          <div class="price" :class="{ 'price_line-through': price.formattedDiscountPrice }">
-            € {{ price.formattedPrice }}
+          <div class="price" :class="{ 'price_line-through': price.discountPrice }">
+            € {{ price.price }}
           </div>
         </div>
       </div>
