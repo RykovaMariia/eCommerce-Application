@@ -3,3 +3,7 @@ export interface CartData {
   version: number
   anonymousId?: string
 }
+export interface LineItem {
+  lineItemId: string
+  quantity: number
+}

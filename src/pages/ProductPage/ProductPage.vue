@@ -9,6 +9,9 @@ import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
 import { productsService } from '@/services/productsService'
 import { FULL_PERCENTAGE } from '@/constants/constants'
+import { storeToRefs } from 'pinia'
+import { useCartStore } from '@/stores/cart'
+import { cartService } from '@/services/cartService'
 
 const imageIndex = ref(0)
 const multiplier = ref(1)
@@ -87,6 +90,36 @@ const price = computed(() => {
   )
   return definePrice(variant ?? product.variants[0])
 })
+
+const { cart } = storeToRefs(useCartStore())
+
+function addProductToCart() {
+  console.warn(product.variants)
+  console.warn(selectedVariants.value)
+  console.warn(productId)
+}
+function removeProductFromCart() {
+  console.warn(2)
+}
+
+const isInCart = computed(() => {
+  if (!cart.value?.lineItems || !productId) {
+    return
+  }
+  return cartService.isProductInCart(cart.value?.lineItems, productId)
+})
+
+const textContent = computed(() => {
+  return !isInCart.value ? 'Add to cart' : 'Remove from cart'
+})
+
+const color = computed(() => {
+  return !isInCart.value ? 'secondary' : 'primary'
+})
+
+const click = computed(() => {
+  return !isInCart.value ? () => addProductToCart() : () => removeProductFromCart()
+})
 </script>
 
 <template>
@@ -153,6 +186,7 @@ const price = computed(() => {
       </div>
 
       <div class="price-wrapper">
+        <Button :textContent :color @click="click" />
         <div v-if="isProductDataLoaded" class="price-wrapper">
           <div class="price_discount" v-if="price.formattedDiscountPrice">
             € {{ price.formattedDiscountPrice }}
@@ -162,7 +196,6 @@ const price = computed(() => {
           </div>
         </div>
       </div>
-      <Button textContent="Add to cart" />
     </v-col>
     <ModalWindow activator="#activator" :productImages="product.images" />
   </div>
@@ -215,6 +248,7 @@ const price = computed(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  align-items: center;
   justify-content: space-between;
 
   padding: 1rem 0;

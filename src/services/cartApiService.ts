@@ -1,4 +1,4 @@
-import type { CartData } from '@/interfaces/cartData'
+import type { CartData, LineItem } from '@/interfaces/cartData'
 import { ClientService, clientService } from '@/services/clientService'
 
 export class CartApiService {
