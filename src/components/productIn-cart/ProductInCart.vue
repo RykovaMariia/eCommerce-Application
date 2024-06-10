@@ -3,6 +3,9 @@ import { FULL_PERCENTAGE } from '@/constants/constants'
 import NumberInput from '../inputs/NumberInput.vue'
 import { localStorageService } from '@/services/storageService'
 import { ref } from 'vue'
+import { cartService } from '@/services/cartService'
+import { storeToRefs } from 'pinia'
+import { useCartStore } from '@/stores/cart'
 
 const props = defineProps<{
   srcImg: string
@@ -11,14 +14,27 @@ const props = defineProps<{
   discountedPrice?: number
   productSlug: string
   productKey: string
+  productId: string
+  quantity: number
+  lineItemId: string
 }>()
 
-const multiplier = ref(1)
+const quantity = ref(props.quantity)
 
 const href = { name: 'productId', params: { productId: props.productSlug } }
 
 const passProductKey = () => {
   localStorageService.saveData('productKey', props.productKey)
+}
+
+const { cart } = storeToRefs(useCartStore())
+
+function updateQuantity() {
+  if (cart.value) {
+    cartService
+      .changeProductQuantity(cart.value.id, cart.value.version, props.lineItemId, quantity.value)
+      .then(({ body }) => useCartStore().setCart(body))
+  }
 }
 </script>
 <template>
@@ -45,13 +61,13 @@ const passProductKey = () => {
       </div>
       <div class="d-flex">blablabla</div>
       <div class="d-flex product-prices">
-        <NumberInput v-model="multiplier" />
+        <NumberInput v-model="quantity" @update:modelValue="updateQuantity" />
         <v-card-text
           ><span class="price_discount" v-if="discountedPrice"
-            >€{{ (discountedPrice * multiplier) / FULL_PERCENTAGE }}&nbsp;</span
+            >€{{ discountedPrice / FULL_PERCENTAGE }}&nbsp;</span
           >
           <span :class="discountedPrice ? 'line-through' : 'price'"
-            >€{{ (price * multiplier) / FULL_PERCENTAGE }}</span
+            >€{{ price / FULL_PERCENTAGE }}</span
           >
         </v-card-text>
       </div>

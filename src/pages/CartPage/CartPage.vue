@@ -19,10 +19,13 @@ const promocode = ref('')
       :key="product.name['en-GB']"
       :srcImg="product.variant.images?.[0].url ?? ''"
       :name="product.name['en-GB']"
-      :price="product.price.value.centAmount"
+      :price="product.totalPrice.centAmount"
       :discountedPrice="product.price.discounted?.value.centAmount ?? 0"
       :productSlug="product.productSlug?.['en-GB'] ?? ''"
       :productKey="product.productKey ?? ''"
+      :product-id="product.id"
+      :quantity="product.quantity"
+      :lineItemId="product.id"
     />
 
     <div class="d-flex cart-total">

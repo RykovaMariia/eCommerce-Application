@@ -55,6 +55,25 @@ export class CartService {
       })
       .execute()
   }
+  public changeProductQuantity(id: string, version: number, lineItemId: string, quantity: number) {
+    return this.clientService
+      .getApiRoot()
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'changeLineItemQuantity',
+              lineItemId,
+              quantity,
+            },
+          ],
+        },
+      })
+      .execute()
+  }
 }
 
 export const cartService = new CartService(clientService)
