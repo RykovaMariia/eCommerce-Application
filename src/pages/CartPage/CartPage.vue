@@ -3,6 +3,7 @@ import ProductInCart from '@/components/productIn-cart/ProductInCart.vue'
 import Input from '@/components/inputs/Input.vue'
 import Button from '@/components/buttons/Button.vue'
 import { ref } from 'vue'
+import { FULL_PERCENTAGE } from '@/constants/constants'
 
 const products = [
   {
@@ -28,6 +29,16 @@ const products = [
   },
 ]
 
+const totalPrice = () => {
+  return (
+    products.reduce(
+      (total, product) =>
+        total + (product.discountedPrice ? +product.discountedPrice : product.price),
+      0,
+    ) / FULL_PERCENTAGE
+  )
+}
+
 const promocode = ref('')
 </script>
 
@@ -37,7 +48,6 @@ const promocode = ref('')
     :key="product.name"
     :srcImg="product.srcImg"
     :name="product.name"
-    :description="product.description"
     :price="product.price"
     :discountedPrice="product.discountedPrice ?? undefined"
     :productSlug="product.slug"
@@ -62,7 +72,7 @@ const promocode = ref('')
         />
       </div>
     </v-form>
-    <div>Total</div>
+    <div class="total-price">Total: €{{ totalPrice() }}</div>
   </div>
 </template>
 <style scoped lang="scss">
@@ -76,10 +86,16 @@ const promocode = ref('')
 
 .promocode-input {
   width: 20rem;
+  padding: 0;
 }
 
 .promocode {
+  gap: 1rem;
   align-items: center;
   justify-content: center;
+}
+
+.total-price {
+  font-size: 1.7rem;
 }
 </style>

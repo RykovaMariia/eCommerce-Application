@@ -2,6 +2,7 @@
 import { FULL_PERCENTAGE } from '@/constants/constants'
 import NumberInput from '../inputs/NumberInput.vue'
 import { localStorageService } from '@/services/storageService'
+import { ref } from 'vue'
 
 const props = defineProps<{
   srcImg: string
@@ -12,6 +13,8 @@ const props = defineProps<{
   productKey: string
 }>()
 
+const multiplier = ref(1)
+
 const href = { name: 'productId', params: { productId: props.productSlug } }
 
 const passProductKey = () => {
@@ -20,11 +23,11 @@ const passProductKey = () => {
 </script>
 <template>
   <v-card elevation="0" variant="text" class="d-flex product-in-cart">
-    <RouterLink :to="href">
-      <v-img height="200" width="200" :src="srcImg" cover @click="passProductKey"></v-img
+    <RouterLink :to="href" @click="passProductKey">
+      <v-img height="200" width="200" :src="srcImg" cover></v-img
     ></RouterLink>
 
-    <v-cal class="product-info">
+    <v-col class="product-info">
       <div class="d-flex product-title">
         <v-card-title>{{ name }}</v-card-title>
         <div class="d-flex icons">
@@ -42,18 +45,19 @@ const passProductKey = () => {
       </div>
       <div class="d-flex">blablabla</div>
       <div class="d-flex product-prices">
-        <NumberInput />
+        <NumberInput v-model="multiplier" />
         <v-card-text
           ><span class="price_discount" v-if="discountedPrice"
-            >€{{ discountedPrice / FULL_PERCENTAGE }}&nbsp;</span
+            >€{{ (discountedPrice * multiplier) / FULL_PERCENTAGE }}&nbsp;</span
           >
           <span :class="discountedPrice ? 'line-through' : 'price'"
-            >€{{ price / FULL_PERCENTAGE }}</span
+            >€{{ (price * multiplier) / FULL_PERCENTAGE }}</span
           >
         </v-card-text>
       </div>
-    </v-cal>
+    </v-col>
   </v-card>
+
   <v-divider inset color="primary" opacity="0.4" thickness="2"></v-divider>
 </template>
 
