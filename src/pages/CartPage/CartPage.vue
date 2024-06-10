@@ -5,7 +5,6 @@ import Button from '@/components/buttons/Button.vue'
 import { ref } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import { storeToRefs } from 'pinia'
-import { FULL_PERCENTAGE } from '@/constants/constants'
 import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
 
 const { cart } = storeToRefs(useCartStore())
@@ -35,6 +34,7 @@ const promocode = ref('')
       :product-id="productId"
       :quantity="quantity"
       :lineItemId="id"
+      :attributes="variant.attributes"
     />
 
     <div class="d-flex cart-total">
@@ -56,7 +56,9 @@ const promocode = ref('')
           />
         </div>
       </v-form>
-      <div class="total-price">Total: €{{ cart.totalPrice.centAmount / FULL_PERCENTAGE }}</div>
+      <div class="total-price">
+        Total: €{{ getPriceAccordingToFractionDigits(cart.totalPrice) }}
+      </div>
     </div>
   </div>
 </template>

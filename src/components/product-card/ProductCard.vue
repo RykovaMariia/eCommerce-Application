@@ -42,6 +42,10 @@ const to = computed(() => {
 const click = computed(() => {
   return !props.isAdd ? emit('addProductToCart', props.productId) : undefined
 })
+
+const priceClass = computed(() => {
+  return props.discountedPrice ? 'line-through' : 'price'
+})
 </script>
 <template>
   <v-col>
@@ -68,7 +72,7 @@ const click = computed(() => {
       <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>
       <v-card-text
         ><span class="price_discount" v-if="discountedPrice">€{{ discountedPrice }}&nbsp;</span>
-        <span :class="discountedPrice ? 'line-through' : 'price'">€{{ price }}</span>
+        <span :class="priceClass">€{{ price }}</span>
       </v-card-text>
       <div class="discount" v-if="discountedPrice">
         -{{ getDiscountPercentage(price, discountedPrice) }}%

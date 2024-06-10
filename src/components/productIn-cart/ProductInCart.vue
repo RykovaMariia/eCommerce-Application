@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import NumberInput from '../inputs/NumberInput.vue'
+import NumberInput from '@inputs/NumberInput.vue'
 import { localStorageService } from '@/services/storageService'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { cartService } from '@/services/cartService'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cart'
+import type { Attribute } from '@commercetools/platform-sdk'
 
 const props = defineProps<{
   srcImg: string
@@ -15,6 +16,7 @@ const props = defineProps<{
   productId: string
   quantity: number
   lineItemId: string
+  attributes?: Attribute[]
 }>()
 
 const quantity = ref(props.quantity)
@@ -39,6 +41,10 @@ function updateQuantity() {
       .then(({ body }) => useCartStore().setCart(body))
   }
 }
+
+const priceClass = computed(() => {
+  return props.discountedPrice ? 'line-through' : 'price'
+})
 </script>
 <template>
   <v-card elevation="0" variant="text" class="d-flex product-in-cart">
@@ -62,12 +68,14 @@ function updateQuantity() {
           </v-card-actions>
         </div>
       </div>
-      <div class="d-flex">blablabla</div>
+      <div>
+        <div v-for="{ name, value } in attributes" :key="name">{{ name }}: {{ value[0].key }}</div>
+      </div>
       <div class="d-flex product-prices">
         <NumberInput v-model="quantity" @update:modelValue="updateQuantity" />
         <v-card-text
           ><span class="price_discount" v-if="discountedPrice">€{{ discountedPrice }}&nbsp;</span>
-          <span :class="discountedPrice ? 'line-through' : 'price'">€{{ price }}</span>
+          <span :class="priceClass">€{{ price }}</span>
         </v-card-text>
       </div>
     </v-col>
