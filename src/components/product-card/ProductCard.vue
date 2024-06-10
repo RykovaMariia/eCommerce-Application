@@ -65,7 +65,7 @@ const passProductKey = () => {
     <Button
       :disabled="loading"
       :color="!isAdd ? 'secondary' : 'primary'"
-      :textContent="!isAdd ? 'Add to cart' : 'Go to cart'"
+      :textContent="!isAdd ? 'Add to cart' : 'Added to cart'"
       @click="!isAdd ? emit('addProduct', props.productId) : undefined"
       :to="isAdd ? '/cart' : undefined"
     />

@@ -26,12 +26,7 @@ customerService.user().catch((error: Error) => {
 const cartId = localStorageService.getData('cartId')
 const anonymousId = localStorageService.getData('anonymousId')
 
-if (!cartId) {
-  cartService.create().then(({ body }) => {
-    localStorageService.saveData('cartId', body.id)
-    useCartStore().setCart(body)
-  })
-} else {
+if (cartId) {
   cartService
     .getCartById(cartId)
     .then(({ body }) => {
