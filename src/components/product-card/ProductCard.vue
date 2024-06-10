@@ -2,6 +2,7 @@
 import { FULL_PERCENTAGE } from '@/constants/constants'
 import Button from '@components/buttons/Button.vue'
 import { localStorageService } from '@/services/storageService'
+import { computed } from 'vue'
 
 const props = defineProps<{
   loading: boolean
@@ -26,6 +27,22 @@ function getDiscountPercentage(price: number, discountedPrice: number) {
 const passProductKey = () => {
   localStorageService.saveData('productKey', props.productKey)
 }
+
+const color = computed(() => {
+  return !props.isAdd ? 'secondary' : 'primary'
+})
+
+const textContent = computed(() => {
+  return !props.isAdd ? 'Add to cart' : 'Added to cart'
+})
+
+const to = computed(() => {
+  return props.isAdd ? '/cart' : undefined
+})
+
+const click = computed(() => {
+  return !props.isAdd ? emit('addProductToCart', props.productId) : undefined
+})
 </script>
 <template>
   <v-col>
@@ -62,13 +79,7 @@ const passProductKey = () => {
         -{{ getDiscountPercentage(price, discountedPrice) }}%
       </div>
     </v-card>
-    <Button
-      :disabled="loading"
-      :color="!isAdd ? 'secondary' : 'primary'"
-      :textContent="!isAdd ? 'Add to cart' : 'Added to cart'"
-      @click="!isAdd ? emit('addProductToCart', props.productId) : undefined"
-      :to="isAdd ? '/cart' : undefined"
-    />
+    <Button :disabled="loading" :color :textContent :to @click="() => click" />
   </v-col>
 </template>
 
