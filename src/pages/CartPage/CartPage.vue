@@ -6,10 +6,11 @@ import { ref } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import { storeToRefs } from 'pinia'
 import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
+import IconHeart from '@/components/icons/IconHeart.vue'
 
 const { cart } = storeToRefs(useCartStore())
 
-const promocode = ref('')
+const promoCode = ref('')
 </script>
 
 <template>
@@ -39,12 +40,12 @@ const promocode = ref('')
 
     <div class="d-flex cart-total">
       <v-form>
-        <div class="d-flex promocode">
+        <div class="d-flex promo-code">
           <Input
-            class="promocode-input"
+            class="promo-code-input"
             label="Enter your promo code:"
             placeholder="Your promo code"
-            v-model="promocode"
+            v-model="promoCode"
             isHideDetails="auto"
           />
           <Button
@@ -52,13 +53,21 @@ const promocode = ref('')
             variant="outlined"
             classes="primary"
             buttonType="submit"
-            :disabled="!promocode"
+            :disabled="!promoCode"
           />
         </div>
       </v-form>
       <div class="total-price">
         Total: €{{ getPriceAccordingToFractionDigits(cart.totalPrice) }}
       </div>
+    </div>
+  </div>
+  <div v-if="!cart?.totalLineItemQuantity" class="d-flex empty-cart">
+    <IconHeart class="icon-heart" />
+    <div class="tittle">The cart is empty</div>
+    <div>
+      It's time to add something:
+      <RouterLink class="catalog-link" to="/catalog">Go to catalog</RouterLink>
     </div>
   </div>
 </template>
@@ -71,12 +80,12 @@ const promocode = ref('')
   padding: 2rem;
 }
 
-.promocode-input {
+.promo-code-input {
   width: 20rem;
   padding: 0;
 }
 
-.promocode {
+.promo-code {
   gap: 1rem;
   align-items: center;
   justify-content: center;
@@ -84,5 +93,24 @@ const promocode = ref('')
 
 .total-price {
   font-size: 1.7rem;
+}
+
+.empty-cart {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-heart {
+  margin-bottom: 1.4rem;
+}
+
+.tittle {
+  font-size: 1.4rem;
+  opacity: 0.7;
+}
+
+.catalog-link {
+  text-decoration: underline;
 }
 </style>
