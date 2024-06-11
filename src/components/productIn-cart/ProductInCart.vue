@@ -49,7 +49,7 @@ const priceClass = computed(() => {
 <template>
   <v-card elevation="0" variant="text" class="d-flex product-in-cart">
     <RouterLink :to="href" @click="passProductId">
-      <v-img height="200" width="200" :src="srcImg" cover></v-img
+      <v-img v-if="srcImg" height="200" width="200" :src="srcImg" cover></v-img
     ></RouterLink>
 
     <v-col class="product-info">

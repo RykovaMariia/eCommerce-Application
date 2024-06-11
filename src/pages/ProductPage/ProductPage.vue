@@ -12,6 +12,10 @@ import { FULL_PERCENTAGE } from '@/constants/constants'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cart'
 import { cartService } from '@/services/cartService'
+import { cartApiService } from '@/services/cartApiService'
+import { useAlertStore } from '@/stores/alert'
+
+const alert = useAlertStore()
 
 const imageIndex = ref(0)
 const multiplier = ref(1)
@@ -28,8 +32,9 @@ let attributeValues: string[][] = []
 let masterAttributeNames: string[] = []
 const isProductDataLoaded = ref(false)
 
-function retrieveVariantsData({ attributes, prices }: ProductVariant) {
+function retrieveVariantsData({ id, attributes, prices }: ProductVariant) {
   return {
+    id,
     attributes: attributes?.map((value) => value.value[0].key) ?? [],
     price: prices?.[0].value.centAmount ?? 0,
     discountPrice: prices?.[0].discounted?.value.centAmount ?? 0,
@@ -84,29 +89,63 @@ const definePrice = ({ price, discountPrice }: ProductItem) => {
   return discountPrice ? { formattedPrice, formattedDiscountPrice } : { formattedPrice }
 }
 const price = computed(() => {
-  const variant = product.variants.find(
-    ({ attributes }) =>
-      attributes[0] === selectedVariants.value[0] && attributes[1] === selectedVariants.value[1],
-  )
+  const variant = cartService.getVariantByAttribute(product.variants, selectedVariants.value)
   return definePrice(variant ?? product.variants[0])
 })
 
 const { cart } = storeToRefs(useCartStore())
 
-function addProductToCart() {
-  console.warn(product.variants)
-  console.warn(selectedVariants.value)
-  console.warn(productId)
-}
-function removeProductFromCart() {
-  console.warn(2)
+async function addProductToCart() {
+  const cartId = localStorageService.getData('cartId')
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!cartId) {
+    await cartService.createCart()
+  }
+  if (cart.value?.id && productId) {
+    cartApiService
+      .addProductToCart({ id: cart.value.id, version: cart.value.version, productId, variantId })
+      .then(({ body }) => {
+        useCartStore().setCart(body)
+      })
+      .catch((error: Error) => {
+        alert.show(`Error: ${error.message}`, 'warning')
+      })
+  }
 }
 
-const isInCart = computed(() => {
+function removeProductFromCart() {
   if (!cart.value?.lineItems || !productId) {
     return
   }
-  return cartService.isProductInCart(cart.value?.lineItems, productId)
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId) {
+    return
+  }
+  const lineItemId = cartService.getLineIdByProduct(cart.value?.lineItems, productId, variantId)
+  if (!lineItemId) {
+    return
+  }
+  const quantity = 1
+  cartApiService
+    .removeLineItem({ id: cart.value.id, version: cart.value.version, lineItemId, quantity })
+    .then(({ body }) => {
+      alert.show('Product is removed', 'success')
+      useCartStore().setCart(body)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
+}
+
+const isInCart = computed(() => {
+  if (!cart.value?.lineItems) {
+    return
+  }
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId || !productId) {
+    return
+  }
+  return cartService.findItemByVariantId(cart.value?.lineItems, productId,  variantId)
 })
 
 const textContent = computed(() => {

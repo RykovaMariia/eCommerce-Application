@@ -23,6 +23,8 @@ import { localStorageService } from '@/services/storageService'
 import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
 import { cartService } from '@/services/cartService'
 
+const alert = useAlertStore()
+
 const route = useRoute()
 const router = useRouter()
 const { categories } = storeToRefs(useCategoriesStore())
@@ -133,6 +135,9 @@ async function addProductToCart(productId: string) {
           useCartStore().setCart(body)
           loadingStates.value[productId] = false
         }, timeLoading)
+      })
+      .catch((error: Error) => {
+        alert.show(`Error: ${error.message}`, 'warning')
       })
   }
 }

@@ -56,6 +56,25 @@ export class CartApiService {
       .execute()
   }
 
+  public removeLineItem({ id, version, lineItemId }: CartData & LineItem) {
+    return this.clientService
+      .getApiRoot()
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'removeLineItem',
+              lineItemId,
+            },
+          ],
+        },
+      })
+      .execute()
+  }
+
   public changeProductQuantity({ id, version, lineItemId, quantity }: CartData & LineItem) {
     return this.clientService
       .getApiRoot()
