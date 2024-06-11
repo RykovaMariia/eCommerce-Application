@@ -9,11 +9,11 @@ const closeAlert = () => alert.hide()
 <template>
   <v-alert
     closable
-    :text="alert.message"
+    :text="alert.messageInfo?.message"
     position="fixed"
     class="alert-window"
     @click:close="closeAlert"
-    :type="alert.type"
+    :type="alert.messageInfo?.type"
   ></v-alert>
 </template>
 
