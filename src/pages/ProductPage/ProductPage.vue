@@ -155,7 +155,7 @@ const color = computed(() => {
   return !isInCart.value ? 'secondary' : 'primary'
 })
 
-const click = computed(() => {
+const setAction = computed(() => {
   return !isInCart.value ? () => addProductToCart() : () => removeProductFromCart()
 })
 </script>
@@ -224,7 +224,7 @@ const click = computed(() => {
       </div>
 
       <div class="price-wrapper">
-        <Button :textContent :color @click="click" />
+        <Button :textContent :color @click="setAction" />
         <div v-if="isProductDataLoaded" class="price-wrapper">
           <div class="price_discount" v-if="price.formattedDiscountPrice">
             € {{ price.formattedDiscountPrice }}
