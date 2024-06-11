@@ -64,7 +64,7 @@ const promoCode = ref('')
   </div>
   <div v-if="!cart?.totalLineItemQuantity" class="d-flex empty-cart">
     <IconHeart class="icon-heart" />
-    <div class="tittle">The cart is empty</div>
+    <div class="title">The cart is empty</div>
     <div>
       It's time to add something:
       <RouterLink class="catalog-link" to="/catalog">Go to catalog</RouterLink>
@@ -105,7 +105,7 @@ const promoCode = ref('')
   margin-bottom: 1.4rem;
 }
 
-.tittle {
+.title {
   font-size: 1.4rem;
   opacity: 0.7;
 }

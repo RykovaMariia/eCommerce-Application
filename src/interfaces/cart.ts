@@ -6,5 +6,5 @@ export interface CartData {
 
 export interface LineItem {
   lineItemId: string
-  quantity: number
+  quantity?: number
 }

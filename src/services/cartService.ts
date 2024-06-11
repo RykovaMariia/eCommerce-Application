@@ -62,7 +62,26 @@ export class CartService {
             {
               action: 'changeLineItemQuantity',
               lineItemId,
-              quantity,
+              quantity: quantity ?? 0,
+            },
+          ],
+        },
+      })
+      .execute()
+  }
+
+  public removeLineItem({ id, version, lineItemId }: CartData & LineItem) {
+    return this.clientService
+      .getApiRoot()
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'removeLineItem',
+              lineItemId,
             },
           ],
         },

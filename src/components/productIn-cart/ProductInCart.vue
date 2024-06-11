@@ -45,6 +45,18 @@ function updateQuantity() {
 const priceClass = computed(() => {
   return props.discountedPrice ? 'line-through' : 'price'
 })
+
+function removeLineItem() {
+  if (cart.value) {
+    cartService
+      .removeLineItem({
+        id: cart.value.id,
+        version: cart.value.version,
+        lineItemId: props.lineItemId,
+      })
+      .then(({ body }) => useCartStore().setCart(body))
+  }
+}
 </script>
 <template>
   <v-card elevation="0" variant="text" class="d-flex product-in-cart">
@@ -62,7 +74,7 @@ const priceClass = computed(() => {
             </v-btn>
           </v-card-actions>
           <v-card-actions
-            ><v-btn icon>
+            ><v-btn icon @click="removeLineItem">
               <v-icon color="primary">mdi-trash-can-outline</v-icon>
             </v-btn>
           </v-card-actions>
