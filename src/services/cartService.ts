@@ -1,10 +1,5 @@
+import type { CartData, LineItem } from '@/interfaces/cart'
 import { ClientService, clientService } from '@/services/clientService'
-
-interface CartData {
-  id: string
-  version: number
-  anonymousId: string
-}
 
 export class CartService {
   constructor(private clientService: ClientService) {}
@@ -31,6 +26,45 @@ export class CartService {
         body: {
           version,
           actions: [{ action: 'setAnonymousId', anonymousId }],
+        },
+      })
+      .execute()
+  }
+
+  public addProductToCart(id: string, version: number, productId: string, quantity?: number) {
+    return this.clientService
+      .getApiRoot()
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'addLineItem',
+              productId,
+              quantity,
+            },
+          ],
+        },
+      })
+      .execute()
+  }
+  public changeProductQuantity({ id, version, lineItemId, quantity }: CartData & LineItem) {
+    return this.clientService
+      .getApiRoot()
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'changeLineItemQuantity',
+              lineItemId,
+              quantity,
+            },
+          ],
         },
       })
       .execute()

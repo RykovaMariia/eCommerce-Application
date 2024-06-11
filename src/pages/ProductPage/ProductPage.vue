@@ -32,12 +32,12 @@ function retrieveVariantsData({ attributes, prices }: ProductVariant) {
   }
 }
 
-const productKey = localStorageService.getData('productKey')
+const productId = localStorageService.getData('productId')
 const selectedVariants: Ref<string[]> = ref([])
 
-if (productKey !== null) {
+if (productId !== null) {
   productsService
-    .getProduct(productKey)
+    .getProduct(productId)
     .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
       product.description = description?.['en-GB'] ?? ''
       product.name = name?.['en-GB']

@@ -5,7 +5,7 @@ import { InputLabel } from '@/enums/inputLabel'
 
 const props = defineProps<{
   label: string
-  type: string
+  type?: string
   placeholder?: string
   icon?: string
   disabled?: boolean
@@ -24,7 +24,7 @@ const props = defineProps<{
 
 const data = defineModel()
 
-const rules = computed(() => chooseRules(props.type, props.label))
+const rules = computed(() => chooseRules(props.type || 'text', props.label))
 const marker = ref(true)
 function togglePassword() {
   marker.value = !marker.value

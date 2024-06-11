@@ -17,11 +17,17 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categories'
 import Input from '@/components/inputs/Input.vue'
 import { useAlertStore } from '@/stores/alert'
+import { cartService } from '@/services/cartService'
+import { useCartStore } from '@/stores/cart'
+import { localStorageService } from '@/services/storageService'
+import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
 
 const route = useRoute()
 const router = useRouter()
 const { categories } = storeToRefs(useCategoriesStore())
 const categoryId = ref()
+
+const timeLoading = 200
 
 watchEffect(() => {
   const category = route.params.categoryId
@@ -47,6 +53,9 @@ const products: Ref<ProductProjection[]> = ref([])
 const totalProductsCount = ref(0)
 const colorItems: Ref<string[]> = ref([])
 const quantityItems: Ref<string[]> = ref([])
+
+const { cart } = storeToRefs(useCartStore())
+const loadingStates: Ref<{ [key: string]: boolean }> = ref({})
 
 const selectedFilters = reactive({
   sorting: (route.query.sorting as SortBy) ?? 'default',
@@ -108,6 +117,39 @@ watch(
   },
   { deep: true, immediate: true },
 )
+
+function createCart() {
+  return cartService.create().then(({ body }) => {
+    localStorageService.saveData('cartId', body.id)
+    useCartStore().setCart(body)
+  })
+}
+
+async function addProductToCart(productId: string) {
+  loadingStates.value[productId] = true
+  const cartId = localStorageService.getData('cartId')
+  if (!cartId) {
+    await createCart()
+  }
+  if (cart.value?.id) {
+    cartService.addProductToCart(cart.value.id, cart.value.version, productId).then(({ body }) => {
+      setTimeout(() => {
+        useCartStore().setCart(body)
+        loadingStates.value[productId] = false
+      }, timeLoading)
+    })
+  }
+}
+function isProduct(productId: string) {
+  if (!cart.value?.lineItems) {
+    return false
+  }
+  return cart.value.lineItems.some((item) => item.productId === productId)
+}
+
+function getLoadingState(productId: string) {
+  return loadingStates.value[productId] || false
+}
 </script>
 
 <template>
@@ -154,15 +196,20 @@ watch(
 
   <div class="d-flex">
     <ProductCard
-      v-for="product in products"
-      :key="product.id"
-      :src="product.masterVariant.images?.[0]?.url"
-      :name="product.name['en-GB']"
-      :description="product.description?.['en-GB']"
-      :price="product.masterVariant.prices?.[0]?.value?.centAmount ?? 0"
-      :discountedPrice="product.masterVariant.prices?.[0]?.discounted?.value.centAmount ?? 0"
-      :productSlug="product.slug['en-GB']"
-      :productKey="product.key"
+      v-for="{ id, masterVariant, name, description, slug } in products"
+      :key="id"
+      :src="masterVariant.images?.[0]?.url"
+      :name="name['en-GB']"
+      :description="description?.['en-GB']"
+      :price="getPriceAccordingToFractionDigits(masterVariant.prices?.[0]?.value)"
+      :discountedPrice="
+        getPriceAccordingToFractionDigits(masterVariant.prices?.[0]?.discounted?.value)
+      "
+      :productSlug="slug['en-GB']"
+      :productId="id"
+      :isAdd="isProduct(id)"
+      :loading="getLoadingState(id)"
+      @addProductToCart="addProductToCart($event)"
     />
   </div>
   <v-pagination

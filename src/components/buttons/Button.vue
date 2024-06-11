@@ -39,6 +39,8 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 }
 
 .primary {
+  color: constants.$color-text-light;
+  text-transform: capitalize;
   background-color: constants.$color-primary;
 }
 

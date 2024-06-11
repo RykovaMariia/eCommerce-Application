@@ -2,52 +2,83 @@
 import { FULL_PERCENTAGE } from '@/constants/constants'
 import Button from '@components/buttons/Button.vue'
 import { localStorageService } from '@/services/storageService'
+import { computed } from 'vue'
 
 const props = defineProps<{
+  loading: boolean
   src: string
   name: string
   description: string
   price: number
   discountedPrice: number
   productSlug: string
-  productKey: string
+  productId: string
+  isAdd: boolean
 }>()
+
+const emit = defineEmits(['addProductToCart'])
 
 const href = { name: 'productId', params: { productId: props.productSlug } }
 
 function getDiscountPercentage(price: number, discountedPrice: number) {
   return FULL_PERCENTAGE - Math.ceil((discountedPrice * FULL_PERCENTAGE) / price)
 }
-const passProductKey = () => {
-  localStorageService.saveData('productKey', props.productKey)
+const passProductId = () => {
+  localStorageService.saveData('productId', props.productId)
 }
+
+const color = computed(() => {
+  return !props.isAdd ? 'secondary' : 'primary'
+})
+
+const textContent = computed(() => {
+  return !props.isAdd ? 'Add to cart' : 'Added to cart'
+})
+
+const to = computed(() => {
+  return props.isAdd ? '/cart' : undefined
+})
+
+const click = computed(() => {
+  return !props.isAdd ? emit('addProductToCart', props.productId) : undefined
+})
+
+const priceClass = computed(() => {
+  return props.discountedPrice ? 'line-through' : 'price'
+})
 </script>
 <template>
   <v-col>
     <v-card
+      :disabled="loading"
+      :loading="loading"
       elevation="0"
       max-width="290"
       variant="text"
       class="product-card"
       :to="href"
-      @click="passProductKey"
+      @click="passProductId"
     >
+      <template v-slot:loader="{ isActive }">
+        <v-progress-linear
+          :active="isActive"
+          color="secondary"
+          height="4"
+          indeterminate
+        ></v-progress-linear>
+      </template>
       <v-img height="340" :src="src" cover></v-img>
       <v-card-title>{{ name }}</v-card-title>
       <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>
       <v-card-text
-        ><span class="price_discount" v-if="discountedPrice"
-          >€{{ discountedPrice / FULL_PERCENTAGE }}&nbsp;</span
-        >
-        <span :class="discountedPrice ? 'line-through' : 'price'"
-          >€{{ price / FULL_PERCENTAGE }}</span
-        >
+        ><span class="price_discount" v-if="discountedPrice">€{{ discountedPrice }}&nbsp;</span>
+        <span :class="priceClass">€{{ price }}</span>
       </v-card-text>
       <div class="discount" v-if="discountedPrice">
         -{{ getDiscountPercentage(price, discountedPrice) }}%
       </div>
     </v-card>
-    <Button textContent="Add to card" />
+    <Button :disabled="loading" :color :textContent :to @click="() => click" />
   </v-col>
 </template>
 
