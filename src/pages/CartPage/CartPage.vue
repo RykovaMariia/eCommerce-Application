@@ -16,21 +16,12 @@ const promoCode = ref('')
 <template>
   <div v-if="cart?.totalLineItemQuantity">
     <ProductInCart
-      v-for="{
-        name,
-        variant,
-        totalPrice,
-        price,
-        productSlug,
-        productId,
-        quantity,
-        id,
-      } in cart.lineItems"
+      v-for="{ name, variant, price, productSlug, productId, quantity, id } in cart.lineItems"
       :key="name['en-GB']"
-      :srcImg="variant.images?.[0].url ?? ''"
+      :srcImg="variant.images?.length ? variant.images?.[0].url : ''"
       :name="name['en-GB']"
-      :price="getPriceAccordingToFractionDigits(totalPrice)"
-      :discountedPrice="getPriceAccordingToFractionDigits(price.discounted?.value)"
+      :price="getPriceAccordingToFractionDigits(price.value) * quantity"
+      :discountedPrice="getPriceAccordingToFractionDigits(price.discounted?.value) * quantity"
       :productSlug="productSlug?.['en-GB'] ?? ''"
       :product-id="productId"
       :quantity="quantity"

@@ -6,6 +6,7 @@ import { cartService } from '@/services/cartService'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cart'
 import type { Attribute } from '@commercetools/platform-sdk'
+import IconNoImg from '@components/icons/IconNoImg.vue'
 
 const props = defineProps<{
   srcImg: string
@@ -61,8 +62,9 @@ function removeLineItem() {
 <template>
   <v-card elevation="0" variant="text" class="d-flex product-in-cart">
     <RouterLink :to="href" @click="passProductId">
-      <v-img height="200" width="200" :src="srcImg" cover></v-img
-    ></RouterLink>
+      <v-img v-if="srcImg" height="200" width="200" :src="srcImg" cover></v-img>
+      <IconNoImg v-if="!srcImg" class="no-img" />
+    </RouterLink>
 
     <v-col class="product-info">
       <div class="d-flex product-title">
@@ -127,6 +129,17 @@ function removeLineItem() {
 
 .v-img {
   flex: 0 0 auto;
+  border: 1px solid constants.$color-primary;
+  border-radius: 10px;
+}
+
+.no-img {
+  flex: 0 0 auto;
+
+  width: 200px;
+  height: 200px;
+  padding: 3.5rem;
+
   border: 1px solid constants.$color-primary;
   border-radius: 10px;
 }
