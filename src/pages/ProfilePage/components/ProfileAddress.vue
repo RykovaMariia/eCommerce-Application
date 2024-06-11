@@ -111,7 +111,7 @@ function cancel() {
   <v-col v-if="!isOpenForm">
     <Button
       textContent="Add new"
-      classes="secondary"
+      color="secondary"
       buttonType="button"
       @click.prevent="openFormForAddress()"
     />

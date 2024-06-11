@@ -75,7 +75,7 @@ function update() {
       <DateInput :label="InputLabel.BirthDate" :type="InputType.Text" v-model="dateOfBirth" />
     </v-col>
     <v-col class="col-button-link">
-      <Button textContent="Save" classes="secondary" buttonType="submit" />
+      <Button textContent="Save" color="secondary" buttonType="submit" />
     </v-col>
   </v-form>
 </template>

@@ -162,7 +162,7 @@ const price = computed(() => {
           </div>
         </div>
       </div>
-      <Button textContent="Add to cart" />
+      <Button textContent="Add to cart" color="secondary" />
     </v-col>
     <ModalWindow activator="#activator" :productImages="product.images" />
   </div>

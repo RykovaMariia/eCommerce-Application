@@ -39,19 +39,14 @@ const promoCode = ref('')
             v-model="promoCode"
             isHideDetails="auto"
           />
-          <Button
-            textContent="Apply"
-            variant="outlined"
-            classes="primary"
-            buttonType="submit"
-            :disabled="!promoCode"
-          />
+          <Button textContent="Apply" color="primary" buttonType="submit" :disabled="!promoCode" />
         </div>
       </v-form>
       <div class="total-price">
         Total: €{{ getPriceAccordingToFractionDigits(cart.totalPrice) }}
       </div>
     </div>
+    <Button textContent="Clear Shopping Cart" color="primary" />
   </div>
   <div v-if="!cart?.totalLineItemQuantity" class="d-flex empty-cart">
     <IconHeart class="icon-heart" />

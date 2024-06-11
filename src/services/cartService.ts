@@ -88,6 +88,15 @@ export class CartService {
       })
       .execute()
   }
+
+  public deleteCart({ id, version }: CartData) {
+    return this.clientService
+      .getApiRoot()
+      .carts()
+      .withId({ ID: id })
+      .delete({ queryArgs: { version } })
+      .execute()
+  }
 }
 
 export const cartService = new CartService(clientService)
