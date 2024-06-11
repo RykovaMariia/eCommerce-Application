@@ -8,7 +8,7 @@ import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
 import { productsService } from '@/services/productsService'
-import { FULL_PERCENTAGE } from '@/constants/constants'
+import { getPriceAccordingToFractionDigits } from '@/utils/getPriceAccordingToFractionDigits'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cart'
 import { cartService } from '@/services/cartService'
@@ -18,7 +18,6 @@ import { useAlertStore } from '@/stores/alert'
 const alert = useAlertStore()
 
 const imageIndex = ref(0)
-const multiplier = ref(1)
 const isMainAttribute = ref(true)
 
 const product: ProductData = reactive({
@@ -36,8 +35,8 @@ function retrieveVariantsData({ id, attributes, prices }: ProductVariant) {
   return {
     id,
     attributes: attributes?.map((value) => value.value[0].key) ?? [],
-    price: prices?.[0].value.centAmount ?? 0,
-    discountPrice: prices?.[0].discounted?.value.centAmount ?? 0,
+    price: getPriceAccordingToFractionDigits(prices?.[0].value),
+    discountPrice: getPriceAccordingToFractionDigits(prices?.[0].discounted?.value),
   }
 }
 
@@ -79,14 +78,8 @@ const setVariant = (value: string, index: number) => {
   selectedVariants.value[index] = value
 }
 
-const formatPrice = (price: number) => {
-  return ((price / FULL_PERCENTAGE) * multiplier.value).toFixed(2)
-}
-
 const definePrice = ({ price, discountPrice }: ProductItem) => {
-  const formattedPrice = formatPrice(price)
-  const formattedDiscountPrice = formatPrice(discountPrice)
-  return discountPrice ? { formattedPrice, formattedDiscountPrice } : { formattedPrice }
+  return discountPrice ? { price, discountPrice } : { price }
 }
 const price = computed(() => {
   const variant = cartService.getVariantByAttribute(product.variants, selectedVariants.value)
@@ -226,11 +219,9 @@ const setAction = computed(() => {
       <div class="price-wrapper">
         <Button :textContent :color @click="setAction" />
         <div v-if="isProductDataLoaded" class="price-wrapper">
-          <div class="price_discount" v-if="price.formattedDiscountPrice">
-            € {{ price.formattedDiscountPrice }}
-          </div>
-          <div class="price" :class="{ 'price_line-through': price.formattedDiscountPrice }">
-            € {{ price.formattedPrice }}
+          <div class="price_discount" v-if="price.discountPrice">€ {{ price.discountPrice }}</div>
+          <div class="price" :class="{ 'price_line-through': price.discountPrice }">
+            € {{ price.price }}
           </div>
         </div>
       </div>
@@ -254,7 +245,6 @@ const setAction = computed(() => {
 
 .product-container {
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 

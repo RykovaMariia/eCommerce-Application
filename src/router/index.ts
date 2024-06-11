@@ -68,7 +68,7 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      component: () => import('@pages/AboutPage.vue'),
+      component: () => import('@pages/AboutUsPage/AboutPage.vue'),
       meta: { breadcrumb: 'About us' },
     },
     {
