@@ -11,8 +11,7 @@ export const YEAR_TO_SHOW = 2000
 export const OUR_INFO = [
   {
     name: 'Maria',
-    imageSrc:
-      'https://avatars.githubusercontent.com/u/129385242?v=4',
+    imageSrc: 'https://avatars.githubusercontent.com/u/129385242?v=4',
     role: 'Team lead / Frontend developer',
     bio: 'A meticulous perfectionist with a keen eye for detail',
     contributions:
