@@ -83,7 +83,14 @@ const { categoriesLinks } = storeToRefs(useCategoriesStore())
     />
 
     <v-btn icon to="/cart">
-      <v-badge v-if="countProduct > 0" color="error" :content="countProduct" offset-x="-3" offset-y="0" max="99">
+      <v-badge
+        v-if="countProduct > 0"
+        color="error"
+        :content="countProduct"
+        offset-x="-3"
+        offset-y="0"
+        max="99"
+      >
         <v-icon>mdi-basket-outline</v-icon>
       </v-badge>
       <v-icon v-else>mdi-basket-outline</v-icon>
