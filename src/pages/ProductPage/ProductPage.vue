@@ -125,9 +125,8 @@ function removeProductFromCart() {
   if (!lineItemId) {
     return
   }
-  const quantity = 1
   cartApiService
-    .removeLineItem({ id: cart.value.id, version: cart.value.version, lineItemId, quantity })
+    .removeLineItem({ id: cart.value.id, version: cart.value.version, lineItemId })
     .then(({ body }) => {
       alert.show('Product is removed', 'success')
       useCartStore().setCart(body)

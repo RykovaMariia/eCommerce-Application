@@ -87,7 +87,7 @@ export class CartApiService {
             {
               action: 'changeLineItemQuantity',
               lineItemId,
-              quantity,
+              quantity: quantity ?? 0,
             },
           ],
         },
