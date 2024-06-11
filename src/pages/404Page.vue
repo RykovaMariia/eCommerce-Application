@@ -19,10 +19,12 @@ import IconZero from '@components/icons/IconZero.vue'
 .container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   gap: 2rem;
+  align-items: center;
+  justify-content: center;
+
   padding: 4rem 0;
+
   text-align: center;
 }
 

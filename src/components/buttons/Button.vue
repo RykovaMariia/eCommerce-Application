@@ -19,11 +19,9 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 </template>
 
 <style lang="scss" scoped>
-@use '@styles/constants.scss';
-
 .v-btn {
+  font-size: 16px;
   text-transform: none;
   border-radius: 6px;
-  font-size: 16px;
 }
 </style>

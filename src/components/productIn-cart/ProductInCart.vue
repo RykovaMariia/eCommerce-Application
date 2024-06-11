@@ -62,7 +62,7 @@ function removeLineItem() {
 <template>
   <v-card elevation="0" variant="text" class="d-flex product-in-cart">
     <RouterLink :to="href" @click="passProductId">
-      <v-img v-if="srcImg" height="200" width="200" :src="srcImg" cover></v-img>
+      <v-img v-if="srcImg" :src="srcImg" cover></v-img>
       <IconNoImg v-if="!srcImg" class="no-img" />
     </RouterLink>
 
@@ -95,31 +95,48 @@ function removeLineItem() {
     </v-col>
   </v-card>
 
-  <v-divider inset color="primary" opacity="0.4" thickness="2"></v-divider>
+  <v-divider class="divider" color="primary" opacity="0.4" thickness="2"></v-divider>
 </template>
 
 <style lang="scss" scoped>
 @use '@/styles/constants.scss';
-
-.product-info {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  justify-content: space-between;
-}
-
-.product-title {
-  align-items: center;
-  justify-content: space-between;
-}
+@use '@/styles/mixins.scss';
 
 .product-in-cart {
+  @include mixins.media-tablet {
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    padding: 1rem 0;
+  }
+
   gap: 3rem;
+  align-items: center;
+  justify-content: center;
   padding: 2rem;
 }
 
-::v-deep(.v-card__overlay) {
-  display: none;
+.v-img {
+  @include mixins.media-tablet {
+    width: 150px;
+    height: 150px;
+  }
+
+  flex: 0 0 auto;
+
+  width: 200px;
+  height: 200px;
+
+  border: 1px solid constants.$color-primary;
+  border-radius: 10px;
+
+  &:hover {
+    color: constants.$color-text-dark;
+
+    ::v-deep(.v-img__img--cover) {
+      transform: scale(1.1);
+    }
+  }
 }
 
 ::v-deep(.v-img__img--cover) {
@@ -127,13 +144,11 @@ function removeLineItem() {
   transition: all 0.6s ease 0s;
 }
 
-.v-img {
-  flex: 0 0 auto;
-  border: 1px solid constants.$color-primary;
-  border-radius: 10px;
-}
-
 .no-img {
+  @include mixins.media-tablet {
+    width: 150px;
+    height: 150px;
+  }
   flex: 0 0 auto;
 
   width: 200px;
@@ -144,16 +159,88 @@ function removeLineItem() {
   border-radius: 10px;
 }
 
+.product-info {
+  @include mixins.media-tablet {
+    justify-content: start;
+  }
+
+  @include mixins.media-mini-mobile {
+    min-width: 20rem;
+  }
+
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
+
+  min-width: 25rem;
+}
+
+.product-title {
+  align-items: center;
+  justify-content: space-between;
+}
+
 .v-card-title {
+  @include mixins.media-tablet {
+    max-width: 18rem;
+    font-size: 1.2rem;
+  }
+
+  @include mixins.media-mini-mobile {
+    font-size: 1.1rem;
+  }
+
+  @include mixins.media-mini-mobile {
+    max-width: 14rem;
+  }
+
+  max-width: 28rem;
   padding: 0.5rem 0;
+
   font-size: 1.7rem;
   color: constants.$color-primary;
   white-space: normal;
 }
 
+.v-btn--icon .v-icon {
+  @include mixins.media-tablet {
+    --v-icon-size-multiplier: 0.8;
+  }
+}
+
+.v-card-actions {
+  @include mixins.media-tablet {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  @include mixins.media-mini-mobile {
+    width: 1.7rem;
+    height: 1.7rem;
+  }
+  padding: 0;
+}
+
+.v-btn {
+  @include mixins.media-tablet {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  @include mixins.media-mini-mobile {
+    width: 1.7rem;
+    height: 1.7rem;
+  }
+}
+
 .v-card-text {
+  @include mixins.media-tablet {
+    font-size: 1.2rem;
+  }
+
   flex-grow: 0;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
 }
 
 .product-prices {
@@ -195,7 +282,11 @@ function removeLineItem() {
   opacity: 0.8;
 }
 
-.v-card-actions {
-  padding: 0;
+.divider {
+  @include mixins.media-tablet {
+    margin: 0;
+  }
+  margin-right: 1rem;
+  margin-left: 15.6rem;
 }
 </style>

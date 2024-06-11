@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ProductInCart from '@/components/productIn-cart/ProductInCart.vue'
+import ClearCartDialog from './components/ClearCartDialog.vue'
 import Input from '@/components/inputs/Input.vue'
 import Button from '@/components/buttons/Button.vue'
 import { ref } from 'vue'
@@ -34,7 +35,7 @@ const promoCode = ref('')
         <div class="d-flex promo-code">
           <Input
             class="promo-code-input"
-            label="Enter your promo code:"
+            label="Enter promo code:"
             placeholder="Your promo code"
             v-model="promoCode"
             isHideDetails="auto"
@@ -46,7 +47,7 @@ const promoCode = ref('')
         Total: €{{ getPriceAccordingToFractionDigits(cart.totalPrice) }}
       </div>
     </div>
-    <Button textContent="Clear Shopping Cart" color="primary" />
+    <v-col class="clear-cart"> <ClearCartDialog /></v-col>
   </div>
   <div v-if="!cart?.totalLineItemQuantity" class="d-flex empty-cart">
     <IconHeart class="icon-heart" />
@@ -58,17 +59,37 @@ const promoCode = ref('')
   </div>
 </template>
 <style scoped lang="scss">
-@use '@styles/constants.scss';
+@use '@/styles/mixins.scss';
 
 .cart-total {
+  @include mixins.media-tablet {
+    padding: 1rem 0;
+  }
+
+  @include mixins.media-mobile {
+    justify-content: end;
+  }
+  flex-wrap: wrap;
+  gap: 1rem 3rem;
   align-items: center;
   justify-content: space-between;
+
   padding: 2rem;
 }
 
 .promo-code-input {
+  @include mixins.media-tablet {
+    width: 12.5rem;
+  }
   width: 20rem;
   padding: 0;
+}
+
+.v-form {
+  @include mixins.media-mobile {
+    display: flex;
+    width: 100%;
+  }
 }
 
 .promo-code {
@@ -78,7 +99,19 @@ const promoCode = ref('')
 }
 
 .total-price {
-  font-size: 1.7rem;
+  @include mixins.media-tablet {
+    font-size: 1.3rem;
+  }
+  font-size: 1.5rem;
+}
+
+.clear-cart {
+  @include mixins.media-tablet {
+    padding: 1rem 0;
+  }
+  display: flex;
+  justify-content: end;
+  padding: 1rem 2rem;
 }
 
 .empty-cart {
