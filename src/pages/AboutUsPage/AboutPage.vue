@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import IconRSSLogo from '@components/icons/IconRSSLogo.vue'
 import AboutCard from './component/AboutCard.vue'
-import { OUR_INFO } from '@/constants/constants';
+import { OUR_INFO } from '@/constants/constants'
 </script>
 
 <template>
