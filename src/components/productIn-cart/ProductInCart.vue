@@ -49,7 +49,7 @@ const priceClass = computed(() => {
 
 function removeLineItem() {
   if (cart.value) {
-    cartService
+    cartApiService
       .removeLineItem({
         id: cart.value.id,
         version: cart.value.version,

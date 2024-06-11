@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { cartService } from '@/services/cartService'
 import Button from '@/components/buttons/Button.vue'
 import { localStorageService } from '@/services/storageService'
 import { useCartStore } from '@/stores/cart'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
+import { cartApiService } from '@/services/cartApiService'
 
 const dialog = ref(false)
 
@@ -13,7 +13,7 @@ const { cart } = storeToRefs(useCartStore())
 function deleteCart() {
   dialog.value = false
   if (cart.value) {
-    cartService.deleteCart({ id: cart.value.id, version: cart.value.version }).then(() => {
+    cartApiService.deleteCart({ id: cart.value.id, version: cart.value.version }).then(() => {
       cart.value = undefined
       localStorageService.removeData('cartId')
     })
