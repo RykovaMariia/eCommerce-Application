@@ -1,25 +1,37 @@
 <script setup lang="ts">
+import IconGithub from '@components/icons/IconGithub.vue'
+
 const props = defineProps<{
   name: string
   role: string
+  bio: string
   imageSrc: string
-  description: string
+  contributions: string
   githubLink: string
+  indexNumber: number
 }>()
 </script>
 
 <template>
-  <div class="d-flex">
-    <v-img :src="props.imageSrc" class="image" height="70svh" cover aspect-ratio="16/9"></v-img>
-    <v-col>
-      <h2 class="name">{{ props.name }}</h2>
+  <div
+    class="d-flex flex-wrap card-wrapper"
+    :class="{ card: props.indexNumber === 1 }"
+  >
+    <v-col class="d-flex image-container" :class="{ 'justify-md-end': props.indexNumber === 1 }"
+      ><v-img :src="props.imageSrc" class="image" cover></v-img
+    ></v-col>
+    <v-col class="wrapper">
+      <div class="d-flex justify-space-between">
+        <h2 class="name">{{ props.name }}</h2>
+        <a :href="props.githubLink" class="github-link d-flex align-center"><IconGithub /></a>
+      </div>
       <div class="info-container">
         <v-divider></v-divider>
       </div>
-      <div class="d-flex flex-column justify-center">
+      <div class="flex-column">
         <div class="role">{{ props.role }}</div>
-        <div>{{ props.description }}</div>
-        <a :href="props.githubLink">My github</a>
+        <div>Bio: {{ props.bio }}</div>
+        <div>Contributions: {{ props.contributions }}</div>
       </div>
     </v-col>
   </div>
@@ -27,12 +39,15 @@ const props = defineProps<{
 
 <style lang="scss" scoped>
 @use '@/styles/constants.scss';
+@use '@styles/mixins.scss';
 
 .name {
   color: constants.$color-primary;
 }
 
 .image {
+  max-width: 300px;
+  max-height: 300px;
   border: 1px solid constants.$color-primary;
   border-radius: 6px;
 }
@@ -42,7 +57,44 @@ const props = defineProps<{
 }
 
 .role {
-  font-size: 1.5rem;
   padding: 0 0 0.7rem;
+  font-size: 1.5rem;
+}
+
+.github-link {
+  width: max-content;
+  padding: auto 1rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.image-container {
+  max-width: 400px;
+  min-width: 200px;
+  padding: 0;
+}
+
+.wrapper {
+  padding: 0 1rem;
+}
+
+@media screen and (390px <= width <= 1375px) {
+  .wrapper {
+    padding: 0;
+  }
+}
+
+@include mixins.media-middle {
+  .card-wrapper {
+    flex-direction: column;
+    justify-items: center;
+  }
+
+  .card {
+    flex-direction: column;
+  }
 }
 </style>

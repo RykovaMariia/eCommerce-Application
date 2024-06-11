@@ -148,9 +148,7 @@ const price = computed(() => {
 
       <div class="price-wrapper">
         <div v-if="isProductDataLoaded" class="price-wrapper">
-          <div class="price_discount" v-if="price.discountPrice">
-            € {{ price.discountPrice }}
-          </div>
+          <div class="price_discount" v-if="price.discountPrice">€ {{ price.discountPrice }}</div>
           <div class="price" :class="{ 'price_line-through': price.discountPrice }">
             € {{ price.price }}
           </div>
