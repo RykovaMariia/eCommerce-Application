@@ -9,6 +9,13 @@ import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
 import { productsService } from '@/services/productsService'
 import { FULL_PERCENTAGE } from '@/constants/constants'
+import { storeToRefs } from 'pinia'
+import { useCartStore } from '@/stores/cart'
+import { cartService } from '@/services/cartService'
+import { cartApiService } from '@/services/cartApiService'
+import { useAlertStore } from '@/stores/alert'
+
+const alert = useAlertStore()
 
 const imageIndex = ref(0)
 const multiplier = ref(1)
@@ -25,8 +32,9 @@ let attributeValues: string[][] = []
 let masterAttributeNames: string[] = []
 const isProductDataLoaded = ref(false)
 
-function retrieveVariantsData({ attributes, prices }: ProductVariant) {
+function retrieveVariantsData({ id, attributes, prices }: ProductVariant) {
   return {
+    id,
     attributes: attributes?.map((value) => value.value[0].key) ?? [],
     price: prices?.[0].value.centAmount ?? 0,
     discountPrice: prices?.[0].discounted?.value.centAmount ?? 0,
@@ -81,11 +89,74 @@ const definePrice = ({ price, discountPrice }: ProductItem) => {
   return discountPrice ? { formattedPrice, formattedDiscountPrice } : { formattedPrice }
 }
 const price = computed(() => {
-  const variant = product.variants.find(
-    ({ attributes }) =>
-      attributes[0] === selectedVariants.value[0] && attributes[1] === selectedVariants.value[1],
-  )
+  const variant = cartService.getVariantByAttribute(product.variants, selectedVariants.value)
   return definePrice(variant ?? product.variants[0])
+})
+
+const { cart } = storeToRefs(useCartStore())
+
+async function addProductToCart() {
+  const cartId = localStorageService.getData('cartId')
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!cartId) {
+    await cartService.createCart()
+  }
+  if (cart.value?.id && productId) {
+    cartApiService
+      .addProductToCart({ id: cart.value.id, version: cart.value.version, productId, variantId })
+      .then(({ body }) => {
+        useCartStore().setCart(body)
+      })
+      .catch((error: Error) => {
+        alert.show(`Error: ${error.message}`, 'warning')
+      })
+  }
+}
+
+function removeProductFromCart() {
+  if (!cart.value?.lineItems || !productId) {
+    return
+  }
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId) {
+    return
+  }
+  const lineItemId = cartService.getLineIdByProduct(cart.value?.lineItems, productId, variantId)
+  if (!lineItemId) {
+    return
+  }
+  cartApiService
+    .removeLineItem({ id: cart.value.id, version: cart.value.version, lineItemId })
+    .then(({ body }) => {
+      alert.show('Product is removed', 'success')
+      useCartStore().setCart(body)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
+}
+
+const isInCart = computed(() => {
+  if (!cart.value?.lineItems) {
+    return
+  }
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId || !productId) {
+    return
+  }
+  return cartService.findItemByVariantIdAndProductId(cart.value?.lineItems, productId, variantId)
+})
+
+const textContent = computed(() => {
+  return !isInCart.value ? 'Add to cart' : 'Remove from cart'
+})
+
+const color = computed(() => {
+  return !isInCart.value ? 'secondary' : 'primary'
+})
+
+const setAction = computed(() => {
+  return !isInCart.value ? () => addProductToCart() : () => removeProductFromCart()
 })
 </script>
 
@@ -153,6 +224,7 @@ const price = computed(() => {
       </div>
 
       <div class="price-wrapper">
+        <Button :textContent :color @click="setAction" />
         <div v-if="isProductDataLoaded" class="price-wrapper">
           <div class="price_discount" v-if="price.formattedDiscountPrice">
             € {{ price.formattedDiscountPrice }}
@@ -162,7 +234,6 @@ const price = computed(() => {
           </div>
         </div>
       </div>
-      <Button textContent="Add to cart" color="secondary" />
     </v-col>
     <ModalWindow activator="#activator" :productImages="product.images" />
   </div>
@@ -215,6 +286,7 @@ const price = computed(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  align-items: center;
   justify-content: space-between;
 
   padding: 1rem 0;

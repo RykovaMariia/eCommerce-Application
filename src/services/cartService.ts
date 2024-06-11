@@ -1,102 +1,63 @@
-import type { CartData, LineItem } from '@/interfaces/cart'
-import { ClientService, clientService } from '@/services/clientService'
+import { useCartStore } from '@/stores/cart'
+import { cartApiService, type CartApiService } from './cartApiService'
+import { localStorageService } from './storageService'
+import type { LineItem } from '@commercetools/platform-sdk'
+import type { ProductItem } from '@/interfaces/productData'
+const cartId = localStorageService.getData('cartId')
+const anonymousId = localStorageService.getData('anonymousId')
 
 export class CartService {
-  constructor(private clientService: ClientService) {}
+  constructor(private cartApiService: CartApiService) {}
 
-  public create() {
-    return this.clientService
-      .getApiRoot()
-      .me()
-      .carts()
-      .post({ body: { currency: 'EUR' } })
-      .execute()
-  }
-
-  public getCartById(cartId: string) {
-    return this.clientService.getApiRoot().carts().withId({ ID: cartId }).get().execute()
-  }
-
-  public updateAnonymousId({ id, version, anonymousId }: CartData) {
-    return this.clientService
-      .getApiRoot()
-      .carts()
-      .withId({ ID: id })
-      .post({
-        body: {
-          version,
-          actions: [{ action: 'setAnonymousId', anonymousId }],
-        },
+  public setAnonymousSession() {
+    if (!cartId) {
+      return
+    }
+    cartApiService
+      .getCartById(cartId)
+      .then(({ body }) => {
+        if (anonymousId && body.createdBy?.anonymousId !== anonymousId) {
+          return cartApiService
+            .updateAnonymousId({ id: cartId, version: body.version, anonymousId })
+            .then(({ body }) => body)
+        }
+        return body
       })
-      .execute()
+      .then((body) => {
+        useCartStore().setCart(body)
+      })
   }
 
-  public addProductToCart(id: string, version: number, productId: string, quantity?: number) {
-    return this.clientService
-      .getApiRoot()
-      .carts()
-      .withId({ ID: id })
-      .post({
-        body: {
-          version,
-          actions: [
-            {
-              action: 'addLineItem',
-              productId,
-              quantity,
-            },
-          ],
-        },
-      })
-      .execute()
-  }
-  public changeProductQuantity({ id, version, lineItemId, quantity }: CartData & LineItem) {
-    return this.clientService
-      .getApiRoot()
-      .carts()
-      .withId({ ID: id })
-      .post({
-        body: {
-          version,
-          actions: [
-            {
-              action: 'changeLineItemQuantity',
-              lineItemId,
-              quantity: quantity ?? 0,
-            },
-          ],
-        },
-      })
-      .execute()
+  public createCart() {
+    return cartApiService.create().then(({ body }) => {
+      localStorageService.saveData('cartId', body.id)
+      useCartStore().setCart(body)
+    })
   }
 
-  public removeLineItem({ id, version, lineItemId }: CartData & LineItem) {
-    return this.clientService
-      .getApiRoot()
-      .carts()
-      .withId({ ID: id })
-      .post({
-        body: {
-          version,
-          actions: [
-            {
-              action: 'removeLineItem',
-              lineItemId,
-            },
-          ],
-        },
-      })
-      .execute()
+  public isProductInCart(lineItems: LineItem[], productId: string) {
+    return lineItems.some((item) => item.productId === productId)
   }
 
-  public deleteCart({ id, version }: CartData) {
-    return this.clientService
-      .getApiRoot()
-      .carts()
-      .withId({ ID: id })
-      .delete({ queryArgs: { version } })
-      .execute()
+  public getLineIdByProduct(lineItems: LineItem[], productId: string, variantId: number) {
+    return lineItems.find((item) => item.productId === productId && item.variant.id === variantId)
+      ?.id
+  }
+
+  public findItemByVariantIdAndProductId(
+    lineItems: LineItem[],
+    productId: string,
+    variantId: number,
+  ) {
+    return lineItems.some((item) => item.productId === productId && item.variant.id === variantId)
+  }
+
+
+  public getVariantByAttribute(variants: ProductItem[], selectedVariants: string[]) {
+    return variants.find(
+      ({ attributes }) =>
+        attributes[0] === selectedVariants[0] && attributes[1] === selectedVariants[1],
+    )
   }
 }
-
-export const cartService = new CartService(clientService)
+export const cartService = new CartService(cartApiService)
