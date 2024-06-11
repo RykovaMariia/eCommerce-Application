@@ -13,10 +13,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div
-    class="d-flex flex-wrap card-wrapper"
-    :class="{ card: props.indexNumber === 1 }"
-  >
+  <div class="d-flex flex-wrap card-wrapper" :class="{ card: props.indexNumber === 1 }">
     <v-col class="d-flex image-container" :class="{ 'justify-md-end': props.indexNumber === 1 }"
       ><v-img :src="props.imageSrc" class="image" cover></v-img
     ></v-col>
@@ -72,8 +69,8 @@ const props = defineProps<{
 }
 
 .image-container {
-  max-width: 400px;
   min-width: 200px;
+  max-width: 400px;
   padding: 0;
 }
 

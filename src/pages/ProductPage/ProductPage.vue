@@ -175,7 +175,6 @@ const price = computed(() => {
 
 .product-container {
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
