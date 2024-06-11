@@ -8,9 +8,16 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categories'
 import { categoryService } from '@/services/categoriesService'
+import { useCartStore } from '@/stores/cart'
 
 const store = useBurgerStore()
 const { isLoggedIn } = storeToRefs(userAuth())
+
+const { cart } = storeToRefs(useCartStore())
+
+const countProduct = computed(() => {
+  return cart.value?.totalLineItemQuantity ?? 0
+})
 
 const userLinks = [
   { name: 'Profile', href: '/profile' },
@@ -76,7 +83,10 @@ const { categoriesLinks } = storeToRefs(useCategoriesStore())
     />
 
     <v-btn icon to="/cart">
-      <v-icon>mdi-basket-outline</v-icon>
+      <v-badge v-if="countProduct > 0" color="error" :content="countProduct" offset-x="-3" offset-y="0" max="99">
+        <v-icon>mdi-basket-outline</v-icon>
+      </v-badge>
+      <v-icon v-else>mdi-basket-outline</v-icon>
     </v-btn>
   </v-app-bar>
 
