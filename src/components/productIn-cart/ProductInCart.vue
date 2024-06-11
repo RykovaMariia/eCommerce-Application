@@ -2,10 +2,10 @@
 import NumberInput from '@components/inputs/NumberInput.vue'
 import { localStorageService } from '@/services/storageService'
 import { computed, ref } from 'vue'
-import { cartService } from '@/services/cartService'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cart'
 import type { Attribute } from '@commercetools/platform-sdk'
+import { cartApiService } from '@/services/cartApiService'
 
 const props = defineProps<{
   srcImg: string
@@ -31,7 +31,7 @@ const { cart } = storeToRefs(useCartStore())
 
 function updateQuantity() {
   if (cart.value) {
-    cartService
+    cartApiService
       .changeProductQuantity({
         id: cart.value.id,
         version: cart.value.version,
@@ -49,7 +49,7 @@ const priceClass = computed(() => {
 <template>
   <v-card elevation="0" variant="text" class="d-flex product-in-cart">
     <RouterLink :to="href" @click="passProductId">
-      <v-img height="200" width="200" :src="srcImg" cover></v-img
+      <v-img v-if="srcImg" height="200" width="200" :src="srcImg" cover></v-img
     ></RouterLink>
 
     <v-col class="product-info">

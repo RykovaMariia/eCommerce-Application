@@ -16,6 +16,7 @@ interface AttributeValue {
 }
 
 export interface ProductItem {
+  id: number
   attributes: string[] | []
   price: number
   discountPrice: number

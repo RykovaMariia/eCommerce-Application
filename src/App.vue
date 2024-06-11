@@ -9,8 +9,6 @@ import { customerService } from './services/customerService'
 import { userAuth } from './stores/userAuth'
 import router from './router'
 import { cartService } from './services/cartService'
-import { localStorageService } from './services/storageService'
-import { useCartStore } from './stores/cart'
 const { isOpenAlert } = storeToRefs(useAlertStore())
 
 const alert = useAlertStore()
@@ -23,24 +21,7 @@ customerService.user().catch((error: Error) => {
   }
 })
 
-const cartId = localStorageService.getData('cartId')
-const anonymousId = localStorageService.getData('anonymousId')
-
-if (cartId) {
-  cartService
-    .getCartById(cartId)
-    .then(({ body }) => {
-      if (anonymousId && body.createdBy?.anonymousId !== anonymousId) {
-        return cartService
-          .updateAnonymousId({ id: cartId, version: body.version, anonymousId })
-          .then(({ body }) => body)
-      }
-      return body
-    })
-    .then((body) => {
-      useCartStore().setCart(body)
-    })
-}
+cartService.setAnonymousSession()
 </script>
 
 <template>
