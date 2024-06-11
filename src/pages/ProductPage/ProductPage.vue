@@ -145,7 +145,7 @@ const isInCart = computed(() => {
   if (!variantId || !productId) {
     return
   }
-  return cartService.findItemByVariantId(cart.value?.lineItems, productId,  variantId)
+  return cartService.findItemByVariantIdAndProductId(cart.value?.lineItems, productId, variantId)
 })
 
 const textContent = computed(() => {

@@ -43,7 +43,11 @@ export class CartService {
       ?.id
   }
 
-  public findItemByVariantId(lineItems: LineItem[], productId: string, variantId: number) {
+  public findItemByVariantIdAndProductId(
+    lineItems: LineItem[],
+    productId: string,
+    variantId: number,
+  ) {
     return lineItems.some((item) => item.productId === productId && item.variant.id === variantId)
   }
 
