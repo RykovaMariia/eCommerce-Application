@@ -42,7 +42,6 @@ if (productKey !== null) {
       product.description = description?.['en-GB'] ?? ''
       product.name = name?.['en-GB']
       product.images = masterVariant.images?.map(({ url }) => url) ?? []
-      console.warn(variants)
       masterAttributeNames = masterVariant.attributes?.map(({ name }) => name) ?? []
       const variantAttributes = variants?.map((variant) => variant.attributes).flat()
       const attributesList = [masterVariant.attributes, ...variantAttributes].flat()
