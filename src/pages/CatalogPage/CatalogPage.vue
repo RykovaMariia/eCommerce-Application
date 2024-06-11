@@ -132,9 +132,9 @@ async function addProductToCart(productId: string) {
       .addProductToCart({ id: cart.value.id, version: cart.value.version, productId })
       .then(({ body }) => {
         setTimeout(() => {
-          useCartStore().setCart(body)
           loadingStates.value[productId] = false
         }, timeLoading)
+        useCartStore().setCart(body)
       })
       .catch((error: Error) => {
         alert.show(`Error: ${error.message}`, 'warning')
