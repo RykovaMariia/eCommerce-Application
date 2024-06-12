@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ProductInCart from '@/components/productIn-cart/ProductInCart.vue'
+import ClearCartDialog from './components/ClearCartDialog.vue'
 import Input from '@/components/inputs/Input.vue'
 import Button from '@/components/buttons/Button.vue'
 import { ref } from 'vue'
@@ -16,21 +17,12 @@ const promoCode = ref('')
 <template>
   <div v-if="cart?.totalLineItemQuantity">
     <ProductInCart
-      v-for="{
-        name,
-        variant,
-        totalPrice,
-        price,
-        productSlug,
-        productId,
-        quantity,
-        id,
-      } in cart.lineItems"
+      v-for="{ name, variant, price, productSlug, productId, quantity, id } in cart.lineItems"
       :key="name['en-GB']"
-      :srcImg="variant.images?.[0].url ?? ''"
+      :srcImg="variant.images?.length ? variant.images?.[0].url : ''"
       :name="name['en-GB']"
-      :price="getPriceAccordingToFractionDigits(totalPrice)"
-      :discountedPrice="getPriceAccordingToFractionDigits(price.discounted?.value)"
+      :price="getPriceAccordingToFractionDigits(price.value, quantity)"
+      :discountedPrice="getPriceAccordingToFractionDigits(price.discounted?.value, quantity)"
       :productSlug="productSlug?.['en-GB'] ?? ''"
       :product-id="productId"
       :quantity="quantity"
@@ -43,28 +35,23 @@ const promoCode = ref('')
         <div class="d-flex promo-code">
           <Input
             class="promo-code-input"
-            label="Enter your promo code:"
+            label="Enter promo code:"
             placeholder="Your promo code"
             v-model="promoCode"
             isHideDetails="auto"
           />
-          <Button
-            textContent="Apply"
-            variant="outlined"
-            classes="primary"
-            buttonType="submit"
-            :disabled="!promoCode"
-          />
+          <Button textContent="Apply" color="primary" buttonType="submit" :disabled="!promoCode" />
         </div>
       </v-form>
       <div class="total-price">
         Total: €{{ getPriceAccordingToFractionDigits(cart.totalPrice) }}
       </div>
     </div>
+    <v-col class="clear-cart"> <ClearCartDialog /></v-col>
   </div>
   <div v-if="!cart?.totalLineItemQuantity" class="d-flex empty-cart">
     <IconHeart class="icon-heart" />
-    <div class="tittle">The cart is empty</div>
+    <div class="title">The cart is empty</div>
     <div>
       It's time to add something:
       <RouterLink class="catalog-link" to="/catalog">Go to catalog</RouterLink>
@@ -72,17 +59,37 @@ const promoCode = ref('')
   </div>
 </template>
 <style scoped lang="scss">
-@use '@styles/constants.scss';
+@use '@/styles/mixins.scss';
 
 .cart-total {
+  @include mixins.media-tablet {
+    padding: 1rem 0;
+  }
+
+  @include mixins.media-mobile {
+    justify-content: end;
+  }
+  flex-wrap: wrap;
+  gap: 1rem 3rem;
   align-items: center;
   justify-content: space-between;
+
   padding: 2rem;
 }
 
 .promo-code-input {
+  @include mixins.media-tablet {
+    width: 12.5rem;
+  }
   width: 20rem;
   padding: 0;
+}
+
+.v-form {
+  @include mixins.media-mobile {
+    display: flex;
+    width: 100%;
+  }
 }
 
 .promo-code {
@@ -92,7 +99,19 @@ const promoCode = ref('')
 }
 
 .total-price {
-  font-size: 1.7rem;
+  @include mixins.media-tablet {
+    font-size: 1.3rem;
+  }
+  font-size: 1.5rem;
+}
+
+.clear-cart {
+  @include mixins.media-tablet {
+    padding: 1rem 0;
+  }
+  display: flex;
+  justify-content: end;
+  padding: 1rem 2rem;
 }
 
 .empty-cart {
@@ -105,7 +124,7 @@ const promoCode = ref('')
   margin-bottom: 1.4rem;
 }
 
-.tittle {
+.title {
   font-size: 1.4rem;
   opacity: 0.7;
 }

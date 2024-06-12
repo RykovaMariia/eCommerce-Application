@@ -27,7 +27,7 @@ const props = defineProps<{
   </v-overlay>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '@/styles/constants.scss';
 
 .v-carousel__controls {
