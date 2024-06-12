@@ -52,7 +52,6 @@ export class CartService {
     return lineItems.some((item) => item.productId === productId && item.variant.id === variantId)
   }
 
-
   public getVariantByAttribute(variants: ProductItem[], selectedVariants: string[]) {
     return variants.find(
       ({ attributes }) =>
