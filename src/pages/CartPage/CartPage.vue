@@ -11,6 +11,7 @@ import IconHeart from '@/components/icons/IconHeart.vue'
 import { cartApiService } from '@/services/cartApiService'
 import { useAlertStore } from '@/stores/alert'
 import Price from '@/components/price/Price.vue'
+import type { CartLineItem } from '@/interfaces/cartLineItem'
 
 const { cart } = storeToRefs(useCartStore())
 
@@ -29,20 +30,7 @@ function applyPromoCode() {
   }
 }
 
-interface CartInfo {
-  name: string
-  srcImg: string
-  price: number
-  discountedPrice: number
-  productSlug: string
-  productId: string
-  quantity: number
-  lineItemId: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  attributes: { readonly name: string; readonly value: any }[] | undefined
-}
-
-const cartInfo: Ref<CartInfo[] | undefined> = ref()
+const cartLineItem: Ref<CartLineItem[] | undefined> = ref()
 
 const totalPriceWithoutDiscount = ref(0)
 
@@ -53,7 +41,7 @@ watch(
   () => {
     if (cart.value?.totalLineItemQuantity) {
       totalPriceWithoutDiscount.value = 0
-      cartInfo.value = cart.value.lineItems.map((lineItem) => {
+      cartLineItem.value = cart.value.lineItems.map((lineItem) => {
         const {
           name,
           variant,
@@ -103,7 +91,7 @@ watch(
         quantity,
         lineItemId,
         attributes,
-      } in cartInfo"
+      } in cartLineItem"
       :key="productId"
       :srcImg
       :name

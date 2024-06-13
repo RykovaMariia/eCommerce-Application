@@ -219,6 +219,7 @@ function getLoadingState(productId: string) {
     :length="totalPages"
     color="primary"
     density="comfortable"
+    rounded="circle"
   ></v-pagination>
 </template>
 
@@ -228,5 +229,9 @@ function getLoadingState(productId: string) {
   gap: 2.5rem;
   justify-content: center;
   margin-top: 3rem;
+}
+
+.v-pagination {
+  margin-top: 2.5rem;
 }
 </style>

@@ -219,7 +219,7 @@ const setAction = computed(() => {
 
       <div class="price-wrapper">
         <Button :textContent :color @click="setAction" />
-        <div v-if="isProductDataLoaded" class="price-wrapper">
+        <div class="price-wrapper">
           <Price
             :isWithDiscount="!!price.discountPrice"
             :price="price.price"
