@@ -3,35 +3,121 @@ import ProductInCart from '@/components/productIn-cart/ProductInCart.vue'
 import ClearCartDialog from './components/ClearCartDialog.vue'
 import Input from '@/components/inputs/Input.vue'
 import Button from '@/components/buttons/Button.vue'
-import { ref } from 'vue'
+import { computed, ref, watch, type Ref } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import { storeToRefs } from 'pinia'
 import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
 import IconHeart from '@/components/icons/IconHeart.vue'
+import { cartApiService } from '@/services/cartApiService'
+import { useAlertStore } from '@/stores/alert'
+import Price from '@/components/price/Price.vue'
 
 const { cart } = storeToRefs(useCartStore())
 
 const promoCode = ref('')
+
+function applyPromoCode() {
+  if (cart.value) {
+    cartApiService
+      .applyPromoCode(cart.value.id, cart.value.version, promoCode.value)
+      .then(({ body }) => {
+        useCartStore().setCart(body)
+      })
+      .catch((error: Error) => {
+        useAlertStore().show(error.message, 'warning')
+      })
+  }
+}
+
+interface CartInfo {
+  name: string
+  srcImg: string
+  price: number
+  discountedPrice: number
+  productSlug: string
+  productId: string
+  quantity: number
+  lineItemId: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  attributes: { readonly name: string; readonly value: any }[] | undefined
+}
+
+const cartInfo: Ref<CartInfo[] | undefined> = ref()
+
+const totalPriceWithoutDiscount = ref(0)
+
+const totalPrice = computed(() => getPriceAccordingToFractionDigits(cart.value?.totalPrice))
+
+watch(
+  () => cart,
+  () => {
+    if (cart.value?.totalLineItemQuantity) {
+      totalPriceWithoutDiscount.value = 0
+      cartInfo.value = cart.value.lineItems.map((lineItem) => {
+        const {
+          name,
+          variant,
+          price,
+          discountedPricePerQuantity,
+          productSlug,
+          productId,
+          quantity,
+          id,
+        } = lineItem
+
+        totalPriceWithoutDiscount.value += getPriceAccordingToFractionDigits(price.value, quantity)
+
+        return {
+          name: name['en-GB'],
+          srcImg: variant.images?.length ? variant.images?.[0].url : '',
+          price: getPriceAccordingToFractionDigits(price.value, quantity),
+          discountedPrice: getPriceAccordingToFractionDigits(
+            discountedPricePerQuantity.length
+              ? discountedPricePerQuantity[0].discountedPrice.value
+              : price.discounted?.value,
+            quantity,
+          ),
+          productSlug: productSlug?.['en-GB'] ?? '',
+          productId,
+          quantity,
+          lineItemId: id,
+          attributes: variant.attributes,
+        }
+      })
+    }
+  },
+  { deep: true, immediate: true },
+)
 </script>
 
 <template>
   <div v-if="cart?.totalLineItemQuantity">
     <ProductInCart
-      v-for="{ name, variant, price, productSlug, productId, quantity, id } in cart.lineItems"
-      :key="name['en-GB']"
-      :srcImg="variant.images?.length ? variant.images?.[0].url : ''"
-      :name="name['en-GB']"
-      :price="getPriceAccordingToFractionDigits(price.value, quantity)"
-      :discountedPrice="getPriceAccordingToFractionDigits(price.discounted?.value, quantity)"
-      :productSlug="productSlug?.['en-GB'] ?? ''"
+      v-for="{
+        name,
+        srcImg,
+        price,
+        discountedPrice,
+        productSlug,
+        productId,
+        quantity,
+        lineItemId,
+        attributes,
+      } in cartInfo"
+      :key="productId"
+      :srcImg
+      :name
+      :price
+      :discountedPrice
+      :productSlug
       :product-id="productId"
-      :quantity="quantity"
-      :lineItemId="id"
-      :attributes="variant.attributes"
+      :quantity
+      :lineItemId
+      :attributes
     />
 
     <div class="d-flex cart-total">
-      <v-form>
+      <v-form @submit.prevent="applyPromoCode">
         <div class="d-flex promo-code">
           <Input
             class="promo-code-input"
@@ -44,7 +130,12 @@ const promoCode = ref('')
         </div>
       </v-form>
       <div class="total-price">
-        Total: €{{ getPriceAccordingToFractionDigits(cart.totalPrice) }}
+        Total:
+        <Price
+          :isWithDiscount="totalPriceWithoutDiscount !== totalPrice"
+          :price="totalPriceWithoutDiscount"
+          :priceWithDiscount="totalPrice"
+        />
       </div>
     </div>
     <v-col class="clear-cart"> <ClearCartDialog /></v-col>

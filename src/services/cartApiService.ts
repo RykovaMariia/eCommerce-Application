@@ -103,6 +103,20 @@ export class CartApiService {
       .delete({ queryArgs: { version } })
       .execute()
   }
+
+  public applyPromoCode(id: string, version: number, code: string) {
+    return this.clientService
+      .getApiRoot()
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version,
+          actions: [{ action: 'addDiscountCode', code }],
+        },
+      })
+      .execute()
+  }
 }
 
 export const cartApiService = new CartApiService(clientService)
