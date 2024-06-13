@@ -9,17 +9,22 @@ import { customerService } from './services/customerService'
 import { userAuth } from './stores/userAuth'
 import router from './router'
 import { cartService } from './services/cartService'
+import { localStorageService } from './services/storageService'
 const { isOpenAlert } = storeToRefs(useAlertStore())
 
 const alert = useAlertStore()
 
-customerService.user().catch((error: Error) => {
-  if (error.message.includes('The refresh token was not found')) {
-    alert.show(`Error: The token has expired. Please re-authorize`, 'warning')
-    userAuth().logout()
-    router.replace({ name: 'login' })
-  }
-})
+const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
+
+if (refreshToken) {
+  customerService.user().catch((error: Error) => {
+    if (error.message.includes('The refresh token was not found')) {
+      alert.show(`Error: The token has expired. Please re-authorize`, 'warning')
+      userAuth().logout()
+      router.replace({ name: 'login' })
+    }
+  })
+}
 
 cartService.setAnonymousSession()
 </script>
