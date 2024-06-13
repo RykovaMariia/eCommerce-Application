@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import NumberInput from '@components/inputs/NumberInput.vue'
 import { localStorageService } from '@/services/storageService'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cart'
 import type { Attribute } from '@commercetools/platform-sdk'
 import IconNoImg from '@components/icons/IconNoImg.vue'
 import { cartApiService } from '@/services/cartApiService'
+import Price from '@components/price/Price.vue'
 
 const props = defineProps<{
   srcImg: string
@@ -42,10 +43,6 @@ function updateQuantity() {
       .then(({ body }) => useCartStore().setCart(body))
   }
 }
-
-const priceClass = computed(() => {
-  return props.discountedPrice ? 'line-through' : 'price'
-})
 
 function removeLineItem() {
   if (cart.value) {
@@ -88,9 +85,11 @@ function removeLineItem() {
       <div class="d-flex product-prices">
         <NumberInput v-model="quantity" @update:modelValue="updateQuantity" />
         <v-card-text
-          ><span class="price_discount" v-if="discountedPrice">€{{ discountedPrice }}&nbsp;</span>
-          <span :class="priceClass">€{{ price }}</span>
-        </v-card-text>
+          ><Price
+            :isWithDiscount="!!discountedPrice"
+            :price="price"
+            :priceWithDiscount="discountedPrice"
+        /></v-card-text>
       </div>
     </v-col>
   </v-card>
@@ -246,40 +245,6 @@ function removeLineItem() {
 .product-prices {
   align-items: center;
   justify-content: space-between;
-}
-
-.price {
-  flex-grow: 0;
-  font-weight: 500;
-
-  &_discount {
-    color: constants.$color-sale;
-  }
-}
-
-.discount {
-  position: absolute;
-  top: 1px;
-  left: 20px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 3.3rem;
-  height: 4.1rem;
-  padding-top: 10px;
-
-  color: constants.$color-text-light;
-
-  background-color: constants.$color-sale;
-  border-radius: 0 0 10px 10px;
-}
-
-.line-through {
-  color: constants.$color-text-dark;
-  text-decoration: line-through;
-  opacity: 0.8;
 }
 
 .divider {

@@ -136,4 +136,8 @@ const { categoriesLinks } = storeToRefs(useCategoriesStore())
     padding: 0;
   }
 }
+
+::v-deep(.v-btn__overlay) {
+  display: none;
+}
 </style>
