@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ProductInCart from '@/components/productIn-cart/ProductInCart.vue'
+import ProductInCart from './components/ProductInCart.vue'
 import ClearCartDialog from './components/ClearCartDialog.vue'
 import Input from '@/components/inputs/Input.vue'
 import Button from '@/components/buttons/Button.vue'

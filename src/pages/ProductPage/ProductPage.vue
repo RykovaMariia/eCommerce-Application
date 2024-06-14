@@ -93,7 +93,7 @@ async function addProductToCart() {
   const cartId = localStorageService.getData('cartId')
   const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
   if (!cartId) {
-    await cartService.createCart()
+    await cartService.createCartAndSaveState()
   }
   if (cart.value?.id && productId) {
     cartApiService
@@ -219,7 +219,7 @@ const setAction = computed(() => {
 
       <div class="price-wrapper">
         <Button :textContent :color @click="setAction" />
-        <div class="price-wrapper">
+        <div v-if="isProductDataLoaded" class="price-wrapper">
           <Price
             :isWithDiscount="!!price.discountPrice"
             :price="price.price"

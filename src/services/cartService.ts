@@ -1,23 +1,23 @@
 import { useCartStore } from '@/stores/cart'
-import { cartApiService, type CartApiService } from './cartApiService'
+import { cartApiService, type CartApiServiceType } from './cartApiService'
 import { localStorageService } from './storageService'
 import type { LineItem } from '@commercetools/platform-sdk'
 import type { ProductItem } from '@/interfaces/productData'
 const cartId = localStorageService.getData('cartId')
 const anonymousId = localStorageService.getData('anonymousId')
 
-export class CartService {
-  constructor(private cartApiService: CartApiService) {}
+class CartService {
+  constructor(private cartApiService: CartApiServiceType) {}
 
   public setAnonymousSession() {
     if (!cartId) {
       return
     }
-    cartApiService
+    this.cartApiService
       .getCartById(cartId)
       .then(({ body }) => {
         if (anonymousId && body.createdBy?.anonymousId !== anonymousId) {
-          return cartApiService
+          return this.cartApiService
             .updateAnonymousId({ id: cartId, version: body.version, anonymousId })
             .then(({ body }) => body)
         }
@@ -28,8 +28,8 @@ export class CartService {
       })
   }
 
-  public createCart() {
-    return cartApiService.create().then(({ body }) => {
+  public createCartAndSaveState() {
+    return this.cartApiService.createCart().then(({ body }) => {
       localStorageService.saveData('cartId', body.id)
       useCartStore().setCart(body)
     })
@@ -59,4 +59,5 @@ export class CartService {
     )
   }
 }
+
 export const cartService = new CartService(cartApiService)

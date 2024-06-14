@@ -4,6 +4,10 @@ import Button from '@components/buttons/Button.vue'
 import { localStorageService } from '@/services/storageService'
 import { computed } from 'vue'
 import Price from '@components/price/Price.vue'
+import router from '@/router'
+import { favoritesService } from '@/services/favoritesService'
+import { useFavoritesStore } from '@/stores/favorites'
+import type { ShoppingListLineItem } from '@commercetools/platform-sdk'
 
 const props = defineProps<{
   loading: boolean
@@ -14,34 +18,56 @@ const props = defineProps<{
   discountedPrice: number
   productSlug: string
   productId: string
-  isAdd: boolean
+  isAddedInCart?: boolean
+  isAddedInFavorites?: boolean
 }>()
 
-const emit = defineEmits(['addProductToCart'])
-
-const href = { name: 'productId', params: { productId: props.productSlug } }
+const emit = defineEmits([
+  'addProductToCart',
+  'addProductToFavorites',
+  'deleteProductFromFavorites',
+])
 
 function getDiscountPercentage(price: number, discountedPrice: number) {
   return FULL_PERCENTAGE - Math.ceil((discountedPrice * FULL_PERCENTAGE) / price)
 }
-const passProductId = () => {
+
+const toProduct = () => {
   localStorageService.saveData('productId', props.productId)
+  router.push({ name: 'productId', params: { productId: props.productSlug } })
 }
 
 const color = computed(() => {
-  return !props.isAdd ? 'secondary' : 'primary'
+  return !props.isAddedInCart ? 'secondary' : 'primary'
 })
 
 const textContent = computed(() => {
-  return !props.isAdd ? 'Add to cart' : 'Added to cart'
+  return !props.isAddedInCart ? 'Add to cart' : 'Added to cart'
 })
 
 const to = computed(() => {
-  return props.isAdd ? '/cart' : undefined
+  return props.isAddedInCart ? '/cart' : undefined
 })
 
-const click = computed(() => {
-  return !props.isAdd ? emit('addProductToCart', props.productId) : undefined
+const heartIcon = computed(() => {
+  return props.isAddedInFavorites ? 'mdi-heart' : 'mdi-heart-outline'
+})
+
+const addToFavorites = computed(() => {
+  return !props.isAddedInFavorites
+    ? emit('addProductToFavorites', props.productId)
+    : emit(
+        'deleteProductFromFavorites',
+        favoritesService.getLineIdByProduct(
+          useFavoritesStore().favorites?.lineItems as ShoppingListLineItem[],
+          props.productId,
+          1,
+        ),
+      )
+})
+
+const addToCart = computed(() => {
+  return !props.isAddedInCart ? emit('addProductToCart', props.productId) : undefined
 })
 </script>
 <template>
@@ -53,8 +79,7 @@ const click = computed(() => {
       max-width="290"
       variant="text"
       class="product-card"
-      :to="href"
-      @click="passProductId"
+      @click="toProduct"
     >
       <template v-slot:loader="{ isActive }">
         <v-progress-linear
@@ -77,8 +102,13 @@ const click = computed(() => {
       <div class="discount" v-if="discountedPrice">
         -{{ getDiscountPercentage(price, discountedPrice) }}%
       </div>
+      <v-card-actions class="favorites">
+        <v-btn icon @click.stop="() => addToFavorites">
+          <v-icon color="primary">{{ heartIcon }}</v-icon>
+        </v-btn>
+      </v-card-actions>
     </v-card>
-    <Button :disabled="loading" :color :textContent :to @click="() => click" />
+    <Button :disabled="loading" :color :textContent :to @click="() => addToCart" />
   </v-col>
 </template>
 
@@ -155,6 +185,18 @@ const click = computed(() => {
 
   background-color: constants.$color-sale;
   border-radius: 0 0 10px 10px;
+}
+
+.favorites {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+}
+
+.favorites .v-btn {
+  padding: 0;
+  background-color: constants.$color-text-light;
+  border-radius: 100%;
 }
 
 .v-btn {

@@ -22,6 +22,9 @@ import { useCartStore } from '@/stores/cart'
 import { localStorageService } from '@/services/storageService'
 import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
 import { cartService } from '@/services/cartService'
+import { useFavoritesStore } from '@/stores/favorites'
+import { favoritesApiService } from '@/services/favoritesApiService'
+import { favoritesService } from '@/services/favoritesService'
 
 const alert = useAlertStore()
 
@@ -58,6 +61,7 @@ const colorItems: Ref<string[]> = ref([])
 const quantityItems: Ref<string[]> = ref([])
 
 const { cart } = storeToRefs(useCartStore())
+const { favorites } = storeToRefs(useFavoritesStore())
 const loadingStates: Ref<{ [key: string]: boolean }> = ref({})
 
 const selectedFilters = reactive({
@@ -121,11 +125,11 @@ watch(
   { deep: true, immediate: true },
 )
 
-async function addProductToCart(productId: string) {
+async function addProductToCartById(productId: string) {
   loadingStates.value[productId] = true
   const cartId = localStorageService.getData('cartId')
   if (!cartId) {
-    await cartService.createCart()
+    await cartService.createCartAndSaveState()
   }
   if (cart.value?.id) {
     cartApiService
@@ -141,11 +145,58 @@ async function addProductToCart(productId: string) {
       })
   }
 }
+
+async function addProductToFavoritesById(productId: string) {
+  const favoritesId = localStorageService.getData('favoritesListId')
+  if (!favoritesId) {
+    await favoritesService.createFavoritesListAndSaveState()
+  }
+  if (favorites.value?.id) {
+    favoritesApiService
+      .addProductToFavorites({
+        id: favorites.value.id,
+        version: favorites.value.version,
+        productId,
+        variantId: 1,
+      })
+      .then(({ body }) => {
+        useFavoritesStore().setFavorites(body)
+      })
+      .catch((error: Error) => {
+        alert.show(`Error: ${error.message}`, 'warning')
+      })
+  }
+}
+
+async function deleteProductFromFavoritesById(lineItemId: string) {
+  if (favorites.value?.id) {
+    favoritesApiService
+      .removeLineItemFromFavorites({
+        id: favorites.value.id,
+        version: favorites.value.version,
+        lineItemId,
+      })
+      .then(({ body }) => {
+        useFavoritesStore().setFavorites(body)
+      })
+      .catch((error: Error) => {
+        alert.show(`Error: ${error.message}`, 'warning')
+      })
+  }
+}
+
 function isProductInCart(productId: string) {
   if (!cart.value?.lineItems) {
     return false
   }
   return cartService.isProductInCart(cart.value?.lineItems, productId)
+}
+
+function isProductInFavorites(productId: string) {
+  if (!favorites.value?.lineItems) {
+    return false
+  }
+  return favoritesService.isProductInFavorites(favorites.value?.lineItems, productId)
 }
 
 function getLoadingState(productId: string) {
@@ -208,9 +259,12 @@ function getLoadingState(productId: string) {
       "
       :productSlug="slug['en-GB']"
       :productId="id"
-      :isAdd="isProductInCart(id)"
+      :isAddedInCart="isProductInCart(id)"
+      :isAddedInFavorites="isProductInFavorites(id)"
       :loading="getLoadingState(id)"
-      @addProductToCart="addProductToCart($event)"
+      @addProductToCart="addProductToCartById($event)"
+      @addProductToFavorites="addProductToFavoritesById($event)"
+      @deleteProductFromFavorites="deleteProductFromFavoritesById($event)"
     />
   </div>
   <v-pagination
