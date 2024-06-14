@@ -133,13 +133,15 @@ async function deleteProductFromFavoritesById(lineItemId: string) {
       @deleteProductFromFavorites="deleteProductFromFavoritesById($event)"
     />
   </TransitionGroup>
-  <div v-else class="d-flex empty-favorites">
-    <IconHeart class="icon-heart" />
-    <div class="text-favorites">
-      The products you liked will be here. Just click on the heart on the product card
-      <RouterLink class="catalog-link" to="/catalog">Go to catalog</RouterLink>
+  <Transition name="empty-fade" class="d-flex empty-favorites">
+    <div v-if="!favoritesProducts.length">
+      <IconHeart class="icon-heart" />
+      <div class="text-favorites">
+        The products you liked will be here. Just click on the heart on the product card
+        <RouterLink class="catalog-link" to="/catalog">Go to catalog</RouterLink>
+      </div>
     </div>
-  </div>
+  </Transition>
 </template>
 <style lang="scss" scoped>
 .d-flex {
@@ -158,11 +160,20 @@ async function deleteProductFromFavoritesById(lineItemId: string) {
   opacity: 0;
 }
 
+.empty-fade-enter-active {
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.empty-fade-enter-from {
+  transform: scaleY(0.01) translate(30px, 0);
+  opacity: 0;
+}
+
 .empty-favorites {
   flex-direction: column;
+  gap: 0.5rem;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
 }
 
 .icon-heart {
