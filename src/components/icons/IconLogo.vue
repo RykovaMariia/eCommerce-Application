@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 const props = defineProps<{
   isLight?: boolean
+  isWithText?: boolean
 }>()
 </script>
 
@@ -29,10 +30,10 @@ const props = defineProps<{
       </filter>
     </defs>
 
-    <text id="GREEN_CITY" data-name="GREEN CITY" class="green-city" x="205.852" y="378.68">
+    <text id="GREEN_CITY" data-name="GREEN CITY" class="green-city" x="205.852" y="378.68"  v-if="isWithText">
       GREEN CITY
     </text>
-    <text id="eco_goods" data-name="eco goods" class="eco-goods" x="200.853" y="412.681">
+    <text id="eco_goods" data-name="eco goods" class="eco-goods" x="200.853" y="412.681"  v-if="isWithText">
       eco goods
     </text>
     <g transform="translate(-85.375 -101.406)" style="filter: url('#filter')">

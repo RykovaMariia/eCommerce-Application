@@ -68,7 +68,7 @@ const { categoriesLinks } = storeToRefs(useCategoriesStore())
 
     <v-spacer></v-spacer>
 
-    <RouterLink to="/main"><IconLogo /></RouterLink>
+    <RouterLink to="/main"><IconLogo :isWithText="true"/></RouterLink>
 
     <v-spacer></v-spacer>
 

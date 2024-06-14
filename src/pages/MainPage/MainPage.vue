@@ -9,6 +9,7 @@ import IconLeaf from '@components/icons/IconLeaf.vue'
 import IconGift from '@components/icons/IconGift.vue'
 import IconRocket from '@components/icons/IconRocket.vue'
 import IconLicense from '@components/icons/IconLicense.vue'
+import IconLogo from '@components/icons/IconLogo.vue'
 import { useCategoriesStore } from '@/stores/categories'
 import { storeToRefs } from 'pinia'
 import AdvantageCard from '@pages/MainPage/components/AdvantageCard.vue'
@@ -19,9 +20,9 @@ const { categoriesLinks } = storeToRefs(useCategoriesStore())
 
 const INTERVAL_DURATION = 6000
 
-const carouselImages = [CarouselImage1, CarouselImage2, CarouselImage3]
+const carouselImages = [CarouselImage1, CarouselImage2, CarouselImage3] as const
 
-const categoryImages = [Kitchen, BathBody, Bedding]
+const categoryImages = [Kitchen, BathBody, Bedding] as const
 
 const titleGreeting = ['Welcome', 'Sustainability and style', 'Discover organic products'] as const
 
@@ -50,10 +51,10 @@ const advantages = [
   <div class="wrapper">
     <v-carousel :interval="INTERVAL_DURATION" class="carousel" :show-arrows="false" :touch="true">
       <v-carousel-item v-for="(url, n) in carouselImages" :key="url" :src="url" cover>
-        <v-col class="carousel-item-wrapper">
-          <h1 class="title-greeting" v-if="n === 0">{{ titleGreeting[n] }}</h1>
-          <div class="carousel-text" v-else>{{ titleGreeting[n] }}</div>
-          <RouterLink to="/catalog" class="text"
+        <v-col class="carousel__carousel-item-wrapper">
+          <h1 class="carousel__title-greeting" v-if="n === 0">{{ titleGreeting[n] }}</h1>
+          <div class="carousel__carousel-text" v-else>{{ titleGreeting[n] }}</div>
+          <RouterLink to="/catalog" class="carousel__link"
             >Go to catalog <v-icon icon="mdi-chevron-right"></v-icon
           ></RouterLink>
         </v-col>
@@ -68,12 +69,27 @@ const advantages = [
   </div>
 
   <div class="wrapper">
-    <h2 class="title-category">Categories</h2>
-    <div class="categories">
+    <h2 class="categories__title">Categories</h2>
+    <div class="categories__container">
       <div v-for="(link, index) in categoriesLinks.slice(1)" :key="index">
         <RouterLink :to="link.parent.href">
           <CategoryCard :categoryTitle="link.parent.name" :imageSource="categoryImages[index]" />
         </RouterLink>
+      </div>
+    </div>
+  </div>
+
+  <div class="promocodes">
+    <div class="promocodes__text d-flex flex-column justify-center">
+      <div>Get your promo code:</div>
+      <div class="promocodes__container">
+        <div class="promocodes__icon">
+          <IconLogo :isLight="true" />
+        </div>
+        <div class="promocodes__names">
+          <div>UTIANELOX - <span class="promocodes__discount">10%</span></div>
+          <div>THE-BEST-MENTOR-YAUHENI - <span class="promocodes__discount">80.1%</span></div>
+        </div>
       </div>
     </div>
   </div>
@@ -101,17 +117,6 @@ const advantages = [
   }
 }
 
-.links {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  justify-content: center;
-
-  a {
-    max-width: max-content;
-  }
-}
-
 .wrapper {
   padding: 3rem 0;
 }
@@ -119,6 +124,43 @@ const advantages = [
 .carousel {
   border: 1px solid constants.$color-primary;
   border-radius: 10px;
+  font-family: constants.$font-heading;
+
+  &__carousel-item-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: space-around;
+
+    width: 50%;
+    height: 100%;
+    padding: 5rem;
+
+    background-color: constants.$color-background-opacity;
+  }
+
+  &__title-greeting {
+    font-size: 4rem;
+    color: constants.$color-text-dark;
+  }
+
+  &__carousel-text {
+    font-size: 3rem;
+    color: constants.$color-text-dark;
+  }
+
+  &__link {
+    font-family: constants.$font-base;
+    font-size: 1.2rem;
+    transition: 0.3s;
+
+    @media (hover: hover) {
+      &:hover {
+        color: constants.$color-secondary;
+        transition: 0.3s;
+      }
+    }
+  }
 }
 
 ::v-deep(.v-carousel__controls) {
@@ -130,47 +172,6 @@ const advantages = [
   opacity: 0.8;
 }
 
-.container {
-  padding: 1rem;
-  color: constants.$color-text-light;
-  border-radius: 10px;
-}
-
-a {
-  font-size: 1.2rem;
-  transition: 0.3s;
-}
-
-a:hover {
-  color: constants.$color-secondary;
-  transition: 0.3s;
-}
-
-.carousel-item-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  justify-content: space-around;
-
-  width: 50%;
-  height: 100%;
-  padding: 5rem;
-
-  background-color: constants.$color-background-opacity;
-}
-
-.title-greeting {
-  font-family: constants.$font-heading;
-  font-size: 4rem;
-  color: constants.$color-text-dark;
-}
-
-.carousel-text {
-  font-family: constants.$font-heading;
-  font-size: 3rem;
-  color: constants.$color-text-dark;
-}
-
 .advantages-wrapper {
   display: flex;
   flex-wrap: wrap;
@@ -179,16 +180,86 @@ a:hover {
 }
 
 .categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.9rem;
-  justify-content: space-between;
+  &__title {
+    padding-bottom: 1rem;
+    color: constants.$color-primary;
+  }
+
+  &__container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    justify-content: space-between;
+  }
+}
+
+.promocodes {
+  padding: 3rem;
+  background-color: constants.$color-primary;
+  border-radius: 10px;
+
+  &__text {
+    font-family: constants.$font-heading;
+    font-size: 3.6rem;
+    color: constants.$color-text-light;
+    text-transform: uppercase;
+  }
+
+  &__names {
+    font-size: 3rem;
+  }
+
+  &__container {
+    display: flex;
+    gap: 1rem;
+    justify-content: end;
+  }
+
+  &__icon svg {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  &__discount {
+    color: constants.$color-secondary;
+  }
+}
+
+@include mixins.media-mobile {
+  .carousel {
+    &__title-greeting,
+    &__carousel-text {
+      font-size: 2rem;
+    }
+
+    &__carousel-item-wrapper {
+      width: 100%;
+      padding: 2rem;
+    }
+  }
+
+  .promocodes {
+    &__text {
+      font-size: 2rem;
+    }
+
+    &__icon svg {
+      width: 3rem;
+      height: 3rem;
+    }
+
+    &__names {
+      font-size: 1.6rem;
+    }
+  }
 }
 
 @include mixins.media-tablet {
   .categories {
-    align-items: center;
-    justify-content: center;
+    &__container {
+      align-items: center;
+      justify-content: center;
+    }
   }
 
   .advantages-wrapper {
@@ -201,35 +272,20 @@ a:hover {
     font-size: 3rem;
   }
 
-  .title-greeting,
-  .carousel-text {
-    font-size: 3rem;
-  }
+  .carousel {
+    &__title-greeting,
+    &__carousel-text {
+      font-size: 3rem;
+    }
 
-  .text {
-    font-size: 1rem;
-  }
+    &__link {
+      font-size: 1rem;
+    }
 
-  .carousel-item-wrapper {
-    width: 50%;
-    padding: 4rem;
+    &__carousel-item-wrapper {
+      width: 50%;
+      padding: 4rem;
+    }
   }
-}
-
-@include mixins.media-mobile {
-  .title-greeting,
-  .carousel-text {
-    font-size: 2rem;
-  }
-
-  .carousel-item-wrapper {
-    width: 100%;
-    padding: 2rem;
-  }
-}
-
-.title-category {
-  padding-bottom: 1rem;
-  color: constants.$color-primary;
 }
 </style>
