@@ -122,9 +122,9 @@ const advantages = [
 }
 
 .carousel {
+  font-family: constants.$font-heading;
   border: 1px solid constants.$color-primary;
   border-radius: 10px;
-  font-family: constants.$font-heading;
 
   &__carousel-item-wrapper {
     display: flex;
