@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import CarouselImage1 from '@assets/images/main/main-carousel1.jpg'
-import CarouselImage2 from '@assets/images/main/main-carousel2.jpg'
-import CarouselImage3 from '@assets/images/main/main-carousel3.jpg'
-import Kitchen from '@assets/images/main/kitchen.jpg'
-import BathBody from '@assets/images/main/bathBody.jpg'
-import Bedding from '@assets/images/main/bedding.jpg'
 import IconLeaf from '@components/icons/IconLeaf.vue'
 import IconGift from '@components/icons/IconGift.vue'
 import IconRocket from '@components/icons/IconRocket.vue'
@@ -20,9 +14,11 @@ const { categoriesLinks } = storeToRefs(useCategoriesStore())
 
 const INTERVAL_DURATION = 6000
 
-const carouselImages = [CarouselImage1, CarouselImage2, CarouselImage3] as const
-
-const categoryImages = [Kitchen, BathBody, Bedding] as const
+const carouselImages = [
+  './src/assets/images/main/main-carousel1.jpg',
+  'https://cdn.shopify.com/s/files/1/2806/9936/t/71/assets/feb2023_banner_beddingandbath_websize-1677783445347.jpg?v=1677783446',
+  'https://cdn.shopify.com/s/files/1/2806/9936/t/71/assets/zws_banner_collection_oralhygiene-1673304608529.jpg?v=1673304632',
+] as const
 
 const titleGreeting = ['Welcome', 'Sustainability and style', 'Discover organic products'] as const
 
@@ -79,7 +75,7 @@ const advantages = [
     <div class="categories__container">
       <div v-for="(link, index) in categoriesLinks.slice(1)" :key="index">
         <RouterLink :to="link.parent.href">
-          <CategoryCard :categoryTitle="link.parent.name" :imageSource="categoryImages[index]" />
+          <CategoryCard :categoryTitle="link.parent.name" :imageSource="link.parent.description" />
         </RouterLink>
       </div>
     </div>
@@ -142,7 +138,7 @@ const advantages = [
     height: 100%;
     padding: 5rem;
 
-    background-color: constants.$color-background-opacity;
+    background: linear-gradient( 90deg, constants.$color-secondary 30%, transparent);
   }
 
   &__title-greeting {
@@ -158,6 +154,7 @@ const advantages = [
   &__link {
     font-family: constants.$font-base;
     font-size: 1.2rem;
+    text-decoration: underline;
     transition: 0.3s;
 
     @media (hover: hover) {
