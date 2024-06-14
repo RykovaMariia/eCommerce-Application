@@ -28,20 +28,11 @@ class CartService {
       })
   }
 
-  private async createCartAndSaveState() {
+  public async createCartAndSaveState() {
     const { body } = await this.cartApiService.createCart()
     localStorageService.saveData('cartId', body.id)
     useCartStore().setCart(body)
     return body
-  }
-
-  public isProductInCart(lineItems: LineItem[], productId: string) {
-    return lineItems.some((item) => item.productId === productId)
-  }
-
-  public getLineIdByProduct(lineItems: LineItem[], productId: string, variantId: number) {
-    return lineItems.find((item) => item.productId === productId && item.variant.id === variantId)
-      ?.id
   }
 
   public async addProductToCart(productId: string, cart?: Cart) {
@@ -54,6 +45,15 @@ class CartService {
         .addProductToCart({ id: cart.id, version: cart.version, productId })
         .then(({ body }) => useCartStore().setCart(body))
     }
+  }
+
+  public isProductInCart(lineItems: LineItem[], productId: string) {
+    return lineItems.some((item) => item.productId === productId)
+  }
+
+  public getLineIdByProduct(lineItems: LineItem[], productId: string, variantId: number) {
+    return lineItems.find((item) => item.productId === productId && item.variant.id === variantId)
+      ?.id
   }
 
   public findItemByVariantIdAndProductId(

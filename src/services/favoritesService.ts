@@ -1,6 +1,5 @@
 import { localStorageService } from './storageService'
-import type { ShoppingListLineItem } from '@commercetools/platform-sdk'
-// import type { ProductItem } from '@/interfaces/productData'
+import type { ShoppingList, ShoppingListLineItem } from '@commercetools/platform-sdk'
 import { type FavoritesServiceType, favoritesApiService } from './favoritesApiService'
 import { useFavoritesStore } from '@/stores/favorites'
 const favoritesListId = localStorageService.getData('favoritesListId')
@@ -28,11 +27,28 @@ class FavoritesService {
       })
   }
 
-  public createFavoritesListAndSaveState() {
-    return this.favoritesService.createFavoritesList().then(({ body }) => {
-      localStorageService.saveData('favoritesListId', body.id)
-      useFavoritesStore().setFavorites(body)
-    })
+  public async createFavoritesListAndSaveState() {
+    const { body } = await this.favoritesService.createFavoritesList()
+    localStorageService.saveData('favoritesListId', body.id)
+    useFavoritesStore().setFavorites(body)
+    return body
+  }
+
+  public async addProductToFavoritesList(productId: string, favorites?: ShoppingList) {
+    const favoritesId = localStorageService.getData('favoritesListId')
+    if (!favoritesId) {
+      favorites = await this.createFavoritesListAndSaveState()
+    }
+    if (favorites?.id) {
+      return favoritesApiService
+        .addProductToFavorites({
+          id: favorites.id,
+          version: favorites.version,
+          productId,
+          variantId: 1,
+        })
+        .then(({ body }) => useFavoritesStore().setFavorites(body))
+    }
   }
 
   public isProductInFavorites(lineItems: ShoppingListLineItem[], productId: string) {
@@ -47,20 +63,5 @@ class FavoritesService {
     return lineItems.find((item) => item.productId === productId && item.variantId === variantId)
       ?.id
   }
-
-  // public findItemByVariantIdAndProductId(
-  //   lineItems: ShoppingListLineItem[],
-  //   productId: string,
-  //   variantId: number,
-  // ) {
-  //   return lineItems.some((item) => item.productId === productId && item.variantId === variantId)
-  // }
-
-  // public getVariantByAttribute(variants: ProductItem[], selectedVariants: string[]) {
-  //   return variants.find(
-  //     ({ attributes }) =>
-  //       attributes[0] === selectedVariants[0] && attributes[1] === selectedVariants[1],
-  //   )
-  // }
 }
 export const favoritesService = new FavoritesService(favoritesApiService)

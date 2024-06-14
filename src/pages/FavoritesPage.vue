@@ -34,10 +34,8 @@ async function fetchProducts() {
     return
   }
   const lineItemsPromises = lineItems.map(async (lineItem) => {
-    const {
-      body: { results },
-    } = await productsService.getProductById(lineItem.productId)
-    const currentProduct = results[0].masterData.current
+    const result = await productsService.getProduct(lineItem.productId)
+    const currentProduct = result.masterData.current
     const currentVariant =
       lineItem.variantId && lineItem.variantId !== 1
         ? currentProduct.variants[lineItem.variantId]
@@ -51,7 +49,7 @@ async function fetchProducts() {
       ),
       src: currentVariant.images?.[0].url ?? '',
       productSlug: currentProduct.slug['en-GB'],
-      productId: results[0].id,
+      productId: result.id,
     }
   })
 
@@ -156,7 +154,7 @@ async function deleteProductFromFavoritesById(lineItemId: string) {
 }
 
 .fade-leave-to {
-  transform: scaleY(0.01) translate(30px, 0);
+  transform: scaleX(0.01) translate(30px, 0);
   opacity: 0;
 }
 
@@ -165,7 +163,7 @@ async function deleteProductFromFavoritesById(lineItemId: string) {
 }
 
 .empty-fade-enter-from {
-  transform: scaleY(0.01) translate(30px, 0);
+  transform: scaleX(0.01) translate(30px, 0);
   opacity: 0;
 }
 

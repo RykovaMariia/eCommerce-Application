@@ -18,7 +18,6 @@ import { useCategoriesStore } from '@/stores/categories'
 import Input from '@/components/inputs/Input.vue'
 import { useAlertStore } from '@/stores/alert'
 import { useCartStore } from '@/stores/cart'
-import { localStorageService } from '@/services/storageService'
 import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
 import { cartService } from '@/services/cartService'
 import { useFavoritesStore } from '@/stores/favorites'
@@ -138,25 +137,11 @@ async function addProductToCartById(productId: string) {
 }
 
 async function addProductToFavoritesById(productId: string) {
-  const favoritesId = localStorageService.getData('favoritesListId')
-  if (!favoritesId) {
-    await favoritesService.createFavoritesListAndSaveState()
-  }
-  if (favorites.value?.id) {
-    favoritesApiService
-      .addProductToFavorites({
-        id: favorites.value.id,
-        version: favorites.value.version,
-        productId,
-        variantId: 1,
-      })
-      .then(({ body }) => {
-        useFavoritesStore().setFavorites(body)
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
-  }
+  await favoritesService
+    .addProductToFavoritesList(productId, favorites.value)
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 
 async function deleteProductFromFavoritesById(lineItemId: string) {
@@ -204,6 +189,18 @@ function getLoadingState(productId: string) {
     width="10rem"
     @update:modelValue="selectSorting"
   />
+
+  <Input
+    label="Search"
+    type="text"
+    placeholder="Search"
+    icon="mdi-magnify"
+    isHideDetails
+    isClearable
+    v-model="selectedFilters.search"
+    @update:modelValue="search"
+  />
+
   <SelectInput
     label="Color"
     :items="colorItems"
@@ -224,17 +221,6 @@ function getLoadingState(productId: string) {
     is-clearable
     is-multiple
     @update:modelValue="selectQuantity"
-  />
-
-  <Input
-    label="Search"
-    type="text"
-    placeholder="Search"
-    icon="mdi-magnify"
-    isHideDetails
-    isClearable
-    v-model="selectedFilters.search"
-    @update:modelValue="search"
   />
 
   <div class="d-flex">

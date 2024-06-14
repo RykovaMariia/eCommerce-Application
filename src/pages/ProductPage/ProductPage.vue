@@ -3,7 +3,7 @@ import { computed, reactive, type Ref } from 'vue'
 import Button from '@/components/buttons/Button.vue'
 import { type ProductData, type ProductItem } from '@/interfaces/productData'
 import { ref } from 'vue'
-import type { ProductCatalogData, ProductVariant } from '@commercetools/platform-sdk'
+import type { Product, ProductVariant } from '@commercetools/platform-sdk'
 import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
@@ -47,7 +47,8 @@ const selectedVariants: Ref<string[]> = ref([])
 if (productId !== null) {
   productsService
     .getProduct(productId)
-    .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
+    .then(({ masterData }: Product) => {
+      const { description, name, masterVariant, variants } = masterData.current
       product.description = description?.['en-GB'] ?? ''
       product.name = name?.['en-GB']
       product.images = masterVariant.images?.map(({ url }) => url) ?? []
