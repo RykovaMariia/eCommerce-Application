@@ -138,7 +138,7 @@ const advantages = [
     height: 100%;
     padding: 5rem;
 
-    background: linear-gradient( 90deg, constants.$color-secondary 30%, transparent);
+    background: linear-gradient(90deg, constants.$color-secondary 30%, transparent);
   }
 
   &__title-greeting {
