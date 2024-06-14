@@ -1,13 +1,13 @@
 <script setup lang="ts">
 const props = defineProps<{
   text: string
-  Icon: object
+  iconSrc: string
 }>()
 </script>
 
 <template>
-  <div class="advantages-container">
-    <Icon />
+  <div class="advantages__container">
+    <v-img :src="props.iconSrc" class="advantages__image"></v-img>
     <div>{{ props.text }}</div>
   </div>
 </template>
@@ -15,7 +15,8 @@ const props = defineProps<{
 <style lang="scss" scoped>
 @use '@/styles/constants.scss';
 
-.advantages-container {
+.advantages {
+&__container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,5 +27,11 @@ const props = defineProps<{
 
   border: 1px solid constants.$color-primary;
   border-radius: 10px;
+}
+
+&__image {
+  width: 3rem;
+  height: 3rem;
+}
 }
 </style>

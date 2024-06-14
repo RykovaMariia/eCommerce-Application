@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import IconLeaf from '@components/icons/IconLeaf.vue'
-import IconGift from '@components/icons/IconGift.vue'
-import IconRocket from '@components/icons/IconRocket.vue'
-import IconLicense from '@components/icons/IconLicense.vue'
 import IconLogo from '@components/icons/IconLogo.vue'
+import iconLeaf from '@assets/images/main/icon-leaf.svg'
+import iconGift from '@assets/images/main/icon-gift.svg'
+import iconRocket from '@assets/images/main/icon-rocket.svg'
+import iconLicense from '@assets/images/main/icon-license.svg'
 import { useCategoriesStore } from '@/stores/categories'
 import { storeToRefs } from 'pinia'
 import AdvantageCard from '@pages/MainPage/components/AdvantageCard.vue'
 import CategoryCard from '@pages/MainPage/components/CategoryCard.vue'
 import { RouterLink } from 'vue-router'
+import { computed } from 'vue'
 
 const { categoriesLinks } = storeToRefs(useCategoriesStore())
 
-const INTERVAL_DURATION = 6000
+const INTERVAL_DURATION_CAROUSEL = 6000
 
 const carouselImages = [
   './src/assets/images/main/main-carousel1.jpg',
@@ -23,20 +24,25 @@ const carouselImages = [
 const titleGreeting = ['Welcome', 'Sustainability and style', 'Discover organic products'] as const
 
 const advantages = [
-  { icon: IconLeaf, text: 'Eco friendly goods' },
+  { 
+    iconSrc: iconLeaf, 
+    text: 'Eco friendly goods' 
+  },
   {
-    icon: IconGift,
+    iconSrc: iconGift,
     text: 'Eco packaging',
   },
   {
-    icon: IconRocket,
+    iconSrc: iconRocket,
     text: 'Fast delivery',
-  },
+  }, 
   {
-    icon: IconLicense,
+    iconSrc: iconLicense,
     text: 'Certificated products',
   },
-] as const
+]
+
+const categories = computed(() => categoriesLinks.value.slice(1))
 </script>
 
 <template>
@@ -47,15 +53,14 @@ const advantages = [
   <div class="wrapper">
     <v-carousel
       cycle
-      :interval="INTERVAL_DURATION"
+      :interval="INTERVAL_DURATION_CAROUSEL"
       class="carousel"
       :show-arrows="false"
       :touch="true"
     >
-      <v-carousel-item v-for="(url, n) in carouselImages" :key="url" :src="url" cover>
+      <v-carousel-item v-for="(url, index) in carouselImages" :key="url" :src="url" cover>
         <v-col class="carousel__carousel-item-wrapper">
-          <h1 class="carousel__title-greeting" v-if="n === 0">{{ titleGreeting[n] }}</h1>
-          <div class="carousel__carousel-text" v-else>{{ titleGreeting[n] }}</div>
+          <div class="carousel__carousel-text">{{ titleGreeting[index] }}</div>
           <RouterLink to="/catalog" class="carousel__link"
             >Go to catalog <v-icon icon="mdi-chevron-right"></v-icon
           ></RouterLink>
@@ -65,15 +70,15 @@ const advantages = [
   </div>
 
   <div class="advantages-wrapper">
-    <div v-for="{ icon, text } in advantages" :key="text">
-      <AdvantageCard :Icon="icon" :text="text" />
+    <div v-for="({iconSrc, text}) in advantages" :key="iconSrc">
+      <AdvantageCard :iconSrc="iconSrc" :text="text" />
     </div>
   </div>
 
   <div class="wrapper">
     <h2 class="categories__title">Categories</h2>
     <div class="categories__container">
-      <div v-for="(link, index) in categoriesLinks.slice(1)" :key="index">
+      <div v-for="link in categories" :key="link.parent.name">
         <RouterLink :to="link.parent.href">
           <CategoryCard :categoryTitle="link.parent.name" :imageSource="link.parent.description" />
         </RouterLink>
@@ -89,8 +94,8 @@ const advantages = [
           <IconLogo :isLight="true" />
         </div>
         <div class="promocodes__names">
-          <div>UTIANELOX - <span class="promocodes__discount">10%</span></div>
-          <div>THE-BEST-MENTOR-YAUHENI - <span class="promocodes__discount">80.1%</span></div>
+          <div>UTIANELOX - 10%</div>
+          <div>THE-BEST-MENTOR-YAUHENI - 80.1%</div>
         </div>
       </div>
     </div>
