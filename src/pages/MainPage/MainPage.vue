@@ -49,7 +49,7 @@ const advantages = [
     <div class="title_bottom-line">Eco goods store</div>
   </div>
   <div class="wrapper">
-    <v-carousel :interval="INTERVAL_DURATION" class="carousel" :show-arrows="false" :touch="true">
+    <v-carousel cycle :interval="INTERVAL_DURATION" class="carousel" :show-arrows="false" :touch="true">
       <v-carousel-item v-for="(url, n) in carouselImages" :key="url" :src="url" cover>
         <v-col class="carousel__carousel-item-wrapper">
           <h1 class="carousel__title-greeting" v-if="n === 0">{{ titleGreeting[n] }}</h1>
