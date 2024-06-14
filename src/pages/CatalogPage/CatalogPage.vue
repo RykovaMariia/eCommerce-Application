@@ -9,7 +9,7 @@ import { productsService } from '@/services/productsService'
 import ProductCard from '@components/product-card/ProductCard.vue'
 import { computed, reactive, ref, watch, watchEffect, type Ref } from 'vue'
 import SelectInput from '@components/inputs/SelectInput.vue'
-import { SORTING_ITEMS } from '@/constants/constants'
+import { LOADING_TIMEOUT, SORTING_ITEMS } from '@/constants/constants'
 import { type SortBy } from '@/enums/sortingCommand'
 import { useRoute, useRouter } from 'vue-router'
 import { Facet } from '@/enums/facet'
@@ -17,11 +17,12 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categories'
 import Input from '@/components/inputs/Input.vue'
 import { useAlertStore } from '@/stores/alert'
-import { cartApiService } from '@/services/cartApiService'
 import { useCartStore } from '@/stores/cart'
-import { localStorageService } from '@/services/storageService'
 import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
 import { cartService } from '@/services/cartService'
+import { useFavoritesStore } from '@/stores/favorites'
+import { favoritesApiService } from '@/services/favoritesApiService'
+import { favoritesService } from '@/services/favoritesService'
 
 const alert = useAlertStore()
 
@@ -29,8 +30,6 @@ const route = useRoute()
 const router = useRouter()
 const { categories } = storeToRefs(useCategoriesStore())
 const categoryId = ref()
-
-const timeLoading = 200
 
 watchEffect(() => {
   const category = route.params.categoryId
@@ -58,6 +57,7 @@ const colorItems: Ref<string[]> = ref([])
 const quantityItems: Ref<string[]> = ref([])
 
 const { cart } = storeToRefs(useCartStore())
+const { favorites } = storeToRefs(useFavoritesStore())
 const loadingStates: Ref<{ [key: string]: boolean }> = ref({})
 
 const selectedFilters = reactive({
@@ -121,31 +121,58 @@ watch(
   { deep: true, immediate: true },
 )
 
-async function addProductToCart(productId: string) {
+async function addProductToCartById(productId: string) {
   loadingStates.value[productId] = true
-  const cartId = localStorageService.getData('cartId')
-  if (!cartId) {
-    await cartService.createCart()
-  }
-  if (cart.value?.id) {
-    cartApiService
-      .addProductToCart({ id: cart.value.id, version: cart.value.version, productId })
+
+  await cartService
+    .addProductToCart(productId, cart.value)
+    .then(() => {
+      setTimeout(() => {
+        loadingStates.value[productId] = false
+      }, LOADING_TIMEOUT)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
+}
+
+async function addProductToFavoritesById(productId: string) {
+  await favoritesService
+    .addProductToFavoritesList(productId, favorites.value)
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
+}
+
+async function deleteProductFromFavoritesById(lineItemId: string) {
+  if (favorites.value?.id) {
+    favoritesApiService
+      .removeLineItemFromFavorites({
+        id: favorites.value.id,
+        version: favorites.value.version,
+        lineItemId,
+      })
       .then(({ body }) => {
-        setTimeout(() => {
-          loadingStates.value[productId] = false
-        }, timeLoading)
-        useCartStore().setCart(body)
+        useFavoritesStore().setFavorites(body)
       })
       .catch((error: Error) => {
         alert.show(`Error: ${error.message}`, 'warning')
       })
   }
 }
+
 function isProductInCart(productId: string) {
   if (!cart.value?.lineItems) {
     return false
   }
   return cartService.isProductInCart(cart.value?.lineItems, productId)
+}
+
+function isProductInFavorites(productId: string) {
+  if (!favorites.value?.lineItems) {
+    return false
+  }
+  return favoritesService.isProductInFavorites(favorites.value?.lineItems, productId)
 }
 
 function getLoadingState(productId: string) {
@@ -162,6 +189,18 @@ function getLoadingState(productId: string) {
     width="10rem"
     @update:modelValue="selectSorting"
   />
+
+  <Input
+    label="Search"
+    type="text"
+    placeholder="Search"
+    icon="mdi-magnify"
+    isHideDetails
+    isClearable
+    v-model="selectedFilters.search"
+    @update:modelValue="search"
+  />
+
   <SelectInput
     label="Color"
     :items="colorItems"
@@ -184,17 +223,6 @@ function getLoadingState(productId: string) {
     @update:modelValue="selectQuantity"
   />
 
-  <Input
-    label="Search"
-    type="text"
-    placeholder="Search"
-    icon="mdi-magnify"
-    isHideDetails
-    isClearable
-    v-model="selectedFilters.search"
-    @update:modelValue="search"
-  />
-
   <div class="d-flex">
     <ProductCard
       v-for="{ id, masterVariant, name, description, slug } in products"
@@ -208,9 +236,12 @@ function getLoadingState(productId: string) {
       "
       :productSlug="slug['en-GB']"
       :productId="id"
-      :isAdd="isProductInCart(id)"
+      :isAddedInCart="isProductInCart(id)"
+      :isAddedInFavorites="isProductInFavorites(id)"
       :loading="getLoadingState(id)"
-      @addProductToCart="addProductToCart($event)"
+      @addProductToCart="addProductToCartById($event)"
+      @addProductToFavorites="addProductToFavoritesById($event)"
+      @deleteProductFromFavorites="deleteProductFromFavoritesById($event)"
     />
   </div>
   <v-pagination

@@ -3,7 +3,7 @@ import { computed, reactive, type Ref } from 'vue'
 import Button from '@/components/buttons/Button.vue'
 import { type ProductData, type ProductItem } from '@/interfaces/productData'
 import { ref } from 'vue'
-import type { ProductCatalogData, ProductVariant } from '@commercetools/platform-sdk'
+import type { Product, ProductVariant } from '@commercetools/platform-sdk'
 import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
@@ -47,7 +47,8 @@ const selectedVariants: Ref<string[]> = ref([])
 if (productId !== null) {
   productsService
     .getProduct(productId)
-    .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
+    .then(({ masterData }: Product) => {
+      const { description, name, masterVariant, variants } = masterData.current
       product.description = description?.['en-GB'] ?? ''
       product.name = name?.['en-GB']
       product.images = masterVariant.images?.map(({ url }) => url) ?? []
@@ -93,7 +94,7 @@ async function addProductToCart() {
   const cartId = localStorageService.getData('cartId')
   const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
   if (!cartId) {
-    await cartService.createCart()
+    await cartService.createCartAndSaveState()
   }
   if (cart.value?.id && productId) {
     cartApiService
@@ -219,7 +220,7 @@ const setAction = computed(() => {
 
       <div class="price-wrapper">
         <Button :textContent :color @click="setAction" />
-        <div class="price-wrapper">
+        <div v-if="isProductDataLoaded" class="price-wrapper">
           <Price
             :isWithDiscount="!!price.discountPrice"
             :price="price.price"
