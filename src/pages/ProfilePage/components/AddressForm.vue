@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Input from '@components/inputs/Input.vue'
 import Button from '@components/buttons/Button.vue'
-import Checkbox from '@/components/checkbox/Checkbox.vue'
+import Checkbox from '@/components/inputs/Checkbox.vue'
 import SelectInput from '@/components/inputs/SelectInput.vue'
 import { COUNTRY } from '@/constants/constants'
 import { InputLabel } from '@/enums/inputLabel'

@@ -6,6 +6,7 @@ const ALL_PRODUCTS = {
   parent: {
     name: 'All products',
     href: '/catalog',
+    description: '',
   },
 } as const
 
@@ -31,6 +32,7 @@ export const useCategoriesStore = defineStore('Categories', {
             parent: {
               name: category.parent.key ?? '',
               href: { name: 'category', params: { categoryId: category.parent.key } },
+              description: category.parent.description?.['en-GB'] ?? '',
             },
             children: category.children.map((subCategory) => {
               return {

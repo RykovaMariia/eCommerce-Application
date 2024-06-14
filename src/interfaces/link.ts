@@ -1,11 +1,13 @@
 export interface Link {
   name: string
   href: string
+  description?: string
 }
 
 export interface LinkByName {
   name: string
   href: string | HrefByName
+  description?: string
 }
 
 export interface HrefByName {
