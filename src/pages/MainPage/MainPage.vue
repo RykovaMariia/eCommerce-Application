@@ -159,7 +159,7 @@ const advantages = [
 
     @media (hover: hover) {
       &:hover {
-        color: constants.$color-secondary;
+        color: constants.$color-text-light;
         transition: 0.3s;
       }
     }
@@ -214,17 +214,14 @@ const advantages = [
 
   &__container {
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
+    align-items: center;
     justify-content: end;
   }
 
   &__icon svg {
     width: 4rem;
     height: 4rem;
-  }
-
-  &__discount {
-    color: constants.$color-secondary;
   }
 }
 
