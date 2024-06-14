@@ -115,7 +115,7 @@ function provePassword() {
       <v-col class="col-button-link">
         <Button
           textContent="Save"
-          classes="secondary"
+          color="secondary"
           buttonType="submit"
           :class="setButtonState()"
         />

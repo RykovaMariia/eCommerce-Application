@@ -8,12 +8,13 @@ import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
 import { productsService } from '@/services/productsService'
-import { getPriceAccordingToFractionDigits } from '@/utils/getPriceAccordingToFractionDigits'
+import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cart'
 import { cartService } from '@/services/cartService'
 import { cartApiService } from '@/services/cartApiService'
 import { useAlertStore } from '@/stores/alert'
+import Price from '@/components/price/Price.vue'
 
 const alert = useAlertStore()
 
@@ -218,11 +219,12 @@ const setAction = computed(() => {
 
       <div class="price-wrapper">
         <Button :textContent :color @click="setAction" />
-        <div v-if="isProductDataLoaded" class="price-wrapper">
-          <div class="price_discount" v-if="price.discountPrice">€ {{ price.discountPrice }}</div>
-          <div class="price" :class="{ 'price_line-through': price.discountPrice }">
-            € {{ price.price }}
-          </div>
+        <div class="price-wrapper">
+          <Price
+            :isWithDiscount="!!price.discountPrice"
+            :price="price.price"
+            :priceWithDiscount="price.discountPrice"
+          />
         </div>
       </div>
     </v-col>
@@ -280,6 +282,8 @@ const setAction = computed(() => {
   justify-content: space-between;
 
   padding: 1rem 0;
+
+  font-size: 1.5rem;
 }
 
 .value-wrapper {
@@ -290,20 +294,5 @@ const setAction = computed(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-}
-
-.price {
-  font-size: 1.5rem;
-  color: constants.$color-text-dark;
-  opacity: 0.7;
-
-  &_discount {
-    font-size: 1.5rem;
-    color: constants.$color-sale;
-  }
-
-  &_line-through {
-    text-decoration: line-through;
-  }
 }
 </style>

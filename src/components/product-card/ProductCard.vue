@@ -3,6 +3,7 @@ import { FULL_PERCENTAGE } from '@/constants/constants'
 import Button from '@components/buttons/Button.vue'
 import { localStorageService } from '@/services/storageService'
 import { computed } from 'vue'
+import Price from '@components/price/Price.vue'
 
 const props = defineProps<{
   loading: boolean
@@ -42,10 +43,6 @@ const to = computed(() => {
 const click = computed(() => {
   return !props.isAdd ? emit('addProductToCart', props.productId) : undefined
 })
-
-const priceClass = computed(() => {
-  return props.discountedPrice ? 'line-through' : 'price'
-})
 </script>
 <template>
   <v-col>
@@ -71,8 +68,11 @@ const priceClass = computed(() => {
       <v-card-title>{{ name }}</v-card-title>
       <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>
       <v-card-text
-        ><span class="price_discount" v-if="discountedPrice">€{{ discountedPrice }}&nbsp;</span>
-        <span :class="priceClass">€{{ price }}</span>
+        ><Price
+          :isWithDiscount="!!discountedPrice"
+          :price="price"
+          :priceWithDiscount="discountedPrice"
+        />
       </v-card-text>
       <div class="discount" v-if="discountedPrice">
         -{{ getDiscountPercentage(price, discountedPrice) }}%
@@ -138,15 +138,6 @@ const priceClass = computed(() => {
   font-size: 1.15rem;
 }
 
-.price {
-  flex-grow: 0;
-  font-weight: 500;
-
-  &_discount {
-    color: constants.$color-sale;
-  }
-}
-
 .discount {
   position: absolute;
   top: 1px;
@@ -164,12 +155,6 @@ const priceClass = computed(() => {
 
   background-color: constants.$color-sale;
   border-radius: 0 0 10px 10px;
-}
-
-.line-through {
-  color: constants.$color-text-dark;
-  text-decoration: line-through;
-  opacity: 0.8;
 }
 
 .v-btn {

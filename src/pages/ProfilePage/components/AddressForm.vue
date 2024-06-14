@@ -274,10 +274,10 @@ function updateAddress(address: Address) {
           </v-col>
         </v-col>
         <v-col class="col-button-link">
-          <Button textContent="Save" classes="secondary" buttonType="submit" />
+          <Button textContent="Save" color="secondary" buttonType="submit" />
           <Button
             textContent="Cancel"
-            classes="secondary"
+            color="secondary"
             buttonType="button"
             @click="emit('cancel')"
           />

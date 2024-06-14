@@ -56,7 +56,7 @@ function login() {
       is-validation
     />
     <v-col class="col-button-link">
-      <Button textContent="Login" classes="secondary" buttonType="submit" />
+      <Button textContent="Login" color="secondary" buttonType="submit" />
       <RouterLink class="link_redirect" to="/registration">create new account</RouterLink>
     </v-col>
   </v-form>

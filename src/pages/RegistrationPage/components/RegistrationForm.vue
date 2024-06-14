@@ -231,7 +231,7 @@ function signup() {
       </v-col>
     </v-col>
     <v-col class="col-button-link">
-      <Button textContent="Sign Up" classes="secondary" buttonType="submit" size="large" />
+      <Button textContent="Sign Up" color="secondary" buttonType="submit" size="large" />
       <v-row>
         <span>Already have an account?</span>
         <RouterLink class="link_redirect" to="/login">Login</RouterLink>
