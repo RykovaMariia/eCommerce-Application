@@ -1,7 +1,7 @@
 import { useCartStore } from '@/stores/cart'
 import { cartApiService, type CartApiServiceType } from './cartApiService'
 import { localStorageService } from './storageService'
-import type { LineItem } from '@commercetools/platform-sdk'
+import type { Cart, LineItem } from '@commercetools/platform-sdk'
 import type { ProductItem } from '@/interfaces/productData'
 const cartId = localStorageService.getData('cartId')
 const anonymousId = localStorageService.getData('anonymousId')
@@ -28,11 +28,11 @@ class CartService {
       })
   }
 
-  public createCartAndSaveState() {
-    return this.cartApiService.createCart().then(({ body }) => {
-      localStorageService.saveData('cartId', body.id)
-      useCartStore().setCart(body)
-    })
+  private async createCartAndSaveState() {
+    const { body } = await this.cartApiService.createCart()
+    localStorageService.saveData('cartId', body.id)
+    useCartStore().setCart(body)
+    return body
   }
 
   public isProductInCart(lineItems: LineItem[], productId: string) {
@@ -42,6 +42,18 @@ class CartService {
   public getLineIdByProduct(lineItems: LineItem[], productId: string, variantId: number) {
     return lineItems.find((item) => item.productId === productId && item.variant.id === variantId)
       ?.id
+  }
+
+  public async addProductToCart(productId: string, cart?: Cart) {
+    const cartId = localStorageService.getData('cartId')
+    if (!cartId) {
+      cart = await this.createCartAndSaveState()
+    }
+    if (cart?.id) {
+      return cartApiService
+        .addProductToCart({ id: cart.id, version: cart.version, productId })
+        .then(({ body }) => useCartStore().setCart(body))
+    }
   }
 
   public findItemByVariantIdAndProductId(

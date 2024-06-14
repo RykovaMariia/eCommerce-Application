@@ -9,7 +9,7 @@ import { productsService } from '@/services/productsService'
 import ProductCard from '@components/product-card/ProductCard.vue'
 import { computed, reactive, ref, watch, watchEffect, type Ref } from 'vue'
 import SelectInput from '@components/inputs/SelectInput.vue'
-import { SORTING_ITEMS } from '@/constants/constants'
+import { LOADING_TIMEOUT, SORTING_ITEMS } from '@/constants/constants'
 import { type SortBy } from '@/enums/sortingCommand'
 import { useRoute, useRouter } from 'vue-router'
 import { Facet } from '@/enums/facet'
@@ -17,7 +17,6 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categories'
 import Input from '@/components/inputs/Input.vue'
 import { useAlertStore } from '@/stores/alert'
-import { cartApiService } from '@/services/cartApiService'
 import { useCartStore } from '@/stores/cart'
 import { localStorageService } from '@/services/storageService'
 import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
@@ -32,8 +31,6 @@ const route = useRoute()
 const router = useRouter()
 const { categories } = storeToRefs(useCategoriesStore())
 const categoryId = ref()
-
-const timeLoading = 200
 
 watchEffect(() => {
   const category = route.params.categoryId
@@ -127,23 +124,17 @@ watch(
 
 async function addProductToCartById(productId: string) {
   loadingStates.value[productId] = true
-  const cartId = localStorageService.getData('cartId')
-  if (!cartId) {
-    await cartService.createCartAndSaveState()
-  }
-  if (cart.value?.id) {
-    cartApiService
-      .addProductToCart({ id: cart.value.id, version: cart.value.version, productId })
-      .then(({ body }) => {
-        setTimeout(() => {
-          loadingStates.value[productId] = false
-        }, timeLoading)
-        useCartStore().setCart(body)
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
-  }
+
+  await cartService
+    .addProductToCart(productId, cart.value)
+    .then(() => {
+      setTimeout(() => {
+        loadingStates.value[productId] = false
+      }, LOADING_TIMEOUT)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 
 async function addProductToFavoritesById(productId: string) {

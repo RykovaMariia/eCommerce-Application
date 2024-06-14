@@ -128,7 +128,7 @@ watch(
     </div>
     <v-col class="clear-cart"> <ClearCartDialog /></v-col>
   </div>
-  <div v-if="!cart?.totalLineItemQuantity" class="d-flex empty-cart">
+  <div v-else class="d-flex empty-cart">
     <IconHeart class="icon-heart" />
     <div class="title">The cart is empty</div>
     <div>

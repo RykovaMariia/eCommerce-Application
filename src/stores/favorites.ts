@@ -1,4 +1,4 @@
-import type { ShoppingList } from '@commercetools/platform-sdk'
+import type { ShoppingList, ShoppingListLineItem } from '@commercetools/platform-sdk'
 import { defineStore } from 'pinia'
 
 export const useFavoritesStore = defineStore('Favorites', {
@@ -11,9 +11,9 @@ export const useFavoritesStore = defineStore('Favorites', {
     },
   },
   getters: {
-    productInFavorites(state: { favorites: ShoppingList | undefined }) {
-      return state.favorites?.lineItems.map((lineItem) => {
-        return { [lineItem.id]: lineItem.variantId }
+    lineItemsInFavorites(state: { favorites: ShoppingList | undefined }) {
+      return state.favorites?.lineItems.map(({ productId, variantId }: ShoppingListLineItem) => {
+        return { productId, variantId }
       })
     },
   },

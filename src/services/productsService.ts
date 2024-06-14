@@ -40,6 +40,18 @@ export class ProductsService {
       .then(({ body: { results } }) => results[0].masterData)
   }
 
+  getProductById(id: string) {
+    return this.clientService
+      .getApiRoot()
+      .products()
+      .get({
+        queryArgs: {
+          where: `id="${id}"`,
+        },
+      })
+      .execute()
+  }
+
   getProducts({
     limit,
     offset,

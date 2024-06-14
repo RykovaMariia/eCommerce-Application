@@ -1,3 +1,180 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useFavoritesStore } from '@/stores/favorites'
+import ProductCard from '@/components/product-card/ProductCard.vue'
+import { storeToRefs } from 'pinia'
+import { ref, watchEffect, type Ref } from 'vue'
+import { productsService } from '@/services/productsService'
+import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
+import { cartService } from '@/services/cartService'
+import { useAlertStore } from '@/stores/alert'
+import { LOADING_TIMEOUT } from '@/constants/constants'
+import { useCartStore } from '@/stores/cart'
+import { favoritesApiService } from '@/services/favoritesApiService'
+import IconHeart from '@/components/icons/IconHeart.vue'
 
-<template><h1>Favorites</h1></template>
+interface FavoritesProducts {
+  name: string
+  description: string
+  price: number
+  discountedPrice: number
+  src: string
+  productSlug: string
+  productId: string
+}
+
+const { cart } = storeToRefs(useCartStore())
+const loadingStates: Ref<{ [key: string]: boolean }> = ref({})
+const alert = useAlertStore()
+const favoritesProducts: Ref<FavoritesProducts[]> = ref([])
+const { favorites } = storeToRefs(useFavoritesStore())
+
+async function fetchProducts() {
+  const lineItems = useFavoritesStore().lineItemsInFavorites
+  if (!lineItems) {
+    return
+  }
+  const lineItemsPromises = lineItems.map(async (lineItem) => {
+    const {
+      body: { results },
+    } = await productsService.getProductById(lineItem.productId)
+    const currentProduct = results[0].masterData.current
+    const currentVariant =
+      lineItem.variantId && lineItem.variantId !== 1
+        ? currentProduct.variants[lineItem.variantId]
+        : currentProduct.masterVariant
+    return {
+      name: currentProduct.name['en-GB'] ?? '',
+      description: currentProduct.description?.['en-GB'] ?? '',
+      price: getPriceAccordingToFractionDigits(currentVariant.prices?.[0].value),
+      discountedPrice: getPriceAccordingToFractionDigits(
+        currentVariant.prices?.[0].discounted?.value,
+      ),
+      src: currentVariant.images?.[0].url ?? '',
+      productSlug: currentProduct.slug['en-GB'],
+      productId: results[0].id,
+    }
+  })
+
+  favoritesProducts.value = await Promise.all(lineItemsPromises)
+}
+
+watchEffect(async () => {
+  fetchProducts()
+})
+
+async function addProductToCartById(productId: string) {
+  loadingStates.value[productId] = true
+
+  await cartService
+    .addProductToCart(productId, cart.value)
+    .then(() => {
+      setTimeout(() => {
+        loadingStates.value[productId] = false
+      }, LOADING_TIMEOUT)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
+}
+
+function getLoadingState(productId: string) {
+  return loadingStates.value[productId] || false
+}
+
+function isProductInCart(productId: string) {
+  if (!cart.value?.lineItems) {
+    return false
+  }
+  return cartService.isProductInCart(cart.value?.lineItems, productId)
+}
+
+async function deleteProductFromFavoritesById(lineItemId: string) {
+  if (favorites.value?.id) {
+    favoritesApiService
+      .removeLineItemFromFavorites({
+        id: favorites.value.id,
+        version: favorites.value.version,
+        lineItemId,
+      })
+      .then(({ body }) => {
+        useFavoritesStore().setFavorites(body)
+      })
+      .catch((error: Error) => {
+        alert.show(`Error: ${error.message}`, 'warning')
+      })
+  }
+}
+</script>
+
+<template>
+  <TransitionGroup v-if="favoritesProducts.length" tag="div" class="d-flex" name="fade">
+    <ProductCard
+      v-for="{
+        name,
+        description,
+        price,
+        discountedPrice,
+        src,
+        productSlug,
+        productId,
+      } in favoritesProducts"
+      :key="productId"
+      :src
+      :name
+      :description
+      :price
+      :discountedPrice
+      :productSlug
+      :productId
+      :loading="getLoadingState(productId)"
+      :isAddedInCart="isProductInCart(productId)"
+      :isAddedInFavorites="true"
+      @addProductToCart="addProductToCartById($event)"
+      @deleteProductFromFavorites="deleteProductFromFavoritesById($event)"
+    />
+  </TransitionGroup>
+  <div v-else class="d-flex empty-favorites">
+    <IconHeart class="icon-heart" />
+    <div class="text-favorites">
+      The products you liked will be here. Just click on the heart on the product card
+      <RouterLink class="catalog-link" to="/catalog">Go to catalog</RouterLink>
+    </div>
+  </div>
+</template>
+<style lang="scss" scoped>
+.d-flex {
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.fade-leave-to {
+  transform: scaleY(0.01) translate(30px, 0);
+  opacity: 0;
+}
+
+.empty-favorites {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.icon-heart {
+  margin-bottom: 1.4rem;
+}
+
+.text-favorites {
+  max-width: 18rem;
+  text-align: center;
+}
+
+.catalog-link {
+  text-decoration: underline;
+}
+</style>
