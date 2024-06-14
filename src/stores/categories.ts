@@ -32,7 +32,7 @@ export const useCategoriesStore = defineStore('Categories', {
             parent: {
               name: category.parent.key ?? '',
               href: { name: 'category', params: { categoryId: category.parent.key } },
-              description: (category.parent.description?.['en-GB'] as unknown as string) ?? '',
+              description: category.parent.description?.['en-GB'] ?? '',
             },
             children: category.children.map((subCategory) => {
               return {
