@@ -229,7 +229,7 @@ const advantages = [
   .carousel {
     &__title-greeting,
     &__carousel-text {
-      font-size: 2rem;
+      font-size: 1.5rem;
     }
 
     &__carousel-item-wrapper {
@@ -275,7 +275,7 @@ const advantages = [
   .carousel {
     &__title-greeting,
     &__carousel-text {
-      font-size: 3rem;
+      font-size: 2rem;
     }
 
     &__link {
