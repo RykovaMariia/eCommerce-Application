@@ -16,22 +16,22 @@ const props = defineProps<{
 @use '@/styles/constants.scss';
 
 .advantages {
-&__container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  &__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-  width: 15rem;
-  padding: 1.5rem;
+    width: 15rem;
+    padding: 1.5rem;
 
-  border: 1px solid constants.$color-primary;
-  border-radius: 10px;
-}
+    border: 1px solid constants.$color-primary;
+    border-radius: 10px;
+  }
 
-&__image {
-  width: 3rem;
-  height: 3rem;
-}
+  &__image {
+    width: 3rem;
+    height: 3rem;
+  }
 }
 </style>

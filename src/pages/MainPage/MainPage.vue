@@ -24,9 +24,9 @@ const carouselImages = [
 const titleGreeting = ['Welcome', 'Sustainability and style', 'Discover organic products'] as const
 
 const advantages = [
-  { 
-    iconSrc: iconLeaf, 
-    text: 'Eco friendly goods' 
+  {
+    iconSrc: iconLeaf,
+    text: 'Eco friendly goods',
   },
   {
     iconSrc: iconGift,
@@ -35,7 +35,7 @@ const advantages = [
   {
     iconSrc: iconRocket,
     text: 'Fast delivery',
-  }, 
+  },
   {
     iconSrc: iconLicense,
     text: 'Certificated products',
@@ -70,7 +70,7 @@ const categories = computed(() => categoriesLinks.value.slice(1))
   </div>
 
   <div class="advantages-wrapper">
-    <div v-for="({iconSrc, text}) in advantages" :key="iconSrc">
+    <div v-for="{ iconSrc, text } in advantages" :key="iconSrc">
       <AdvantageCard :iconSrc="iconSrc" :text="text" />
     </div>
   </div>
