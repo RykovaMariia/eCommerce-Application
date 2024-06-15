@@ -16,9 +16,9 @@ const { categoriesLinks } = storeToRefs(useCategoriesStore())
 const INTERVAL_DURATION_CAROUSEL = 6000
 
 const carouselImages = [
-  './src/assets/images/main/main-carousel1.jpg',
+  'https://zerowastestore.com/cdn/shop/files/zero-waste-products-hero.jpg?v=1673063098&width=2000',
   'https://cdn.shopify.com/s/files/1/2806/9936/t/71/assets/feb2023_banner_beddingandbath_websize-1677783445347.jpg?v=1677783446',
-  'https://cdn.shopify.com/s/files/1/2806/9936/t/71/assets/zws_banner_collection_oralhygiene-1673304608529.jpg?v=1673304632',
+  'https://cdn.shopify.com/s/files/1/2806/9936/t/71/assets/pf-96b79d63--bannerdishbrush.png?v=1632257175',
 ] as const
 
 const titleGreeting = ['Welcome', 'Sustainability and style', 'Discover organic products'] as const
@@ -47,8 +47,8 @@ const categories = computed(() => categoriesLinks.value.slice(1))
 
 <template>
   <div class="title">
-    <div class="title_upper-line">Green city style</div>
-    <div class="title_bottom-line">Eco goods store</div>
+    <span class="title_upper-line">Green city style</span>
+    <span class="title_bottom-line">Eco goods store</span>
   </div>
   <div class="wrapper">
     <v-carousel
@@ -76,28 +76,28 @@ const categories = computed(() => categoriesLinks.value.slice(1))
   </div>
 
   <div class="wrapper">
-    <h2 class="categories__title">Categories</h2>
-    <div class="categories__container">
-      <div v-for="link in categories" :key="link.parent.name">
-        <RouterLink :to="link.parent.href">
-          <CategoryCard :categoryTitle="link.parent.name" :imageSource="link.parent.description" />
-        </RouterLink>
+    <div class="promocodes">
+      <div class="promocodes__text d-flex flex-column justify-center">
+        <div>Get your promo code:</div>
+        <div class="promocodes__container">
+          <div class="promocodes__icon">
+            <IconLogo :isLight="true" />
+          </div>
+          <div class="promocodes__names">
+            <div>UTIANELOX - 10%</div>
+            <div>THE-BEST-MENTOR-YAUHENI - 80.1%</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="promocodes">
-    <div class="promocodes__text d-flex flex-column justify-center">
-      <div>Get your promo code:</div>
-      <div class="promocodes__container">
-        <div class="promocodes__icon">
-          <IconLogo :isLight="true" />
-        </div>
-        <div class="promocodes__names">
-          <div>UTIANELOX - 10%</div>
-          <div>THE-BEST-MENTOR-YAUHENI - 80.1%</div>
-        </div>
-      </div>
+  <h2 class="categories__title">Categories</h2>
+  <div class="categories__container">
+    <div v-for="link in categories" :key="link.parent.name">
+      <RouterLink :to="link.parent.href">
+        <CategoryCard :categoryTitle="link.parent.name" :imageSource="link.parent.description" />
+      </RouterLink>
     </div>
   </div>
 </template>
@@ -125,7 +125,7 @@ const categories = computed(() => categoriesLinks.value.slice(1))
 }
 
 .wrapper {
-  padding: 3rem 0;
+  padding: 2.5rem 0;
 }
 
 .carousel {
@@ -143,7 +143,7 @@ const categories = computed(() => categoriesLinks.value.slice(1))
     height: 100%;
     padding: 5rem;
 
-    background: linear-gradient(90deg, constants.$color-secondary 30%, transparent);
+    background: linear-gradient(90deg, constants.$color-background-opacity 10%, transparent);
   }
 
   &__title-greeting {
@@ -230,11 +230,111 @@ const categories = computed(() => categoriesLinks.value.slice(1))
   }
 }
 
-@include mixins.media-mobile {
+@include mixins.media-tablet {
+  .title {
+    font-size: 3rem;
+  }
+
+  .categories {
+    &__title {
+      font-size: 1.9rem;
+    }
+
+    &__container {
+      gap: 0.5rem; 
+    }
+  }
+
+  .promocodes {
+    padding: 1.9rem;
+
+    &__text {
+      font-size: 2.7rem;
+    }
+
+    &__names {
+      font-size: 2.4rem;
+    }
+
+    &__container {
+      display: flex;
+      gap: 1.6rem;
+      align-items: center;
+      justify-content: end;
+    }
+
+    &__icon svg {
+      width: 4rem;
+      height: 4rem;
+    }
+  }
+}
+
+@include mixins.media-middle {
+  .title {
+    font-size: 2.8rem;
+
+    &_bottom-line {
+      text-align: left;
+    }
+  }
+
+  .advantages-wrapper {
+    justify-content: center;
+  }
+
+  .categories {
+    &__container {
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
   .carousel {
-    &__title-greeting,
     &__carousel-text {
-      font-size: 1.5rem;
+      font-size: 2.8rem;
+    }
+
+    &__link {
+      font-size: 1rem;
+    }
+
+    &__carousel-item-wrapper {
+      width: 100%;
+      padding: 3rem;
+      background-color: transparent;
+    }
+  }
+
+  .promocodes {
+    padding: 1.2rem;
+
+    &__text {
+      font-size: 2rem;
+    }
+
+    &__names {
+      font-size: 1.6rem;
+    }
+
+    &__icon svg {
+      display: none;
+    }
+  }
+}
+
+@include mixins.media-mobile {
+  .title {
+    font-size: 2rem;
+  }
+
+  .wrapper {
+    padding: 2rem 0;
+  }
+
+  .carousel {
+    &__carousel-text {
+      font-size: 2.6rem;
     }
 
     &__carousel-item-wrapper {
@@ -245,51 +345,34 @@ const categories = computed(() => categoriesLinks.value.slice(1))
 
   .promocodes {
     &__text {
-      font-size: 2rem;
-    }
-
-    &__icon svg {
-      width: 3rem;
-      height: 3rem;
+      font-size: 1.4rem;
     }
 
     &__names {
-      font-size: 1.6rem;
+      font-size: 1.2rem;
     }
   }
 }
 
-@include mixins.media-tablet {
-  .categories {
-    &__container {
-      align-items: center;
-      justify-content: center;
-    }
-  }
-
-  .advantages-wrapper {
-    justify-content: center;
-  }
-}
-
-@include mixins.media-middle {
+@include mixins.media-mini-mobile {
   .title {
-    font-size: 3rem;
+    font-size: 1.8rem;
+  }
+
+  .categories {
+    &__title {
+      font-size: 1.8rem;
+    }
   }
 
   .carousel {
-    &__title-greeting,
     &__carousel-text {
       font-size: 2rem;
     }
 
-    &__link {
-      font-size: 1rem;
-    }
-
     &__carousel-item-wrapper {
-      width: 50%;
-      padding: 4rem;
+      width: 100%;
+      padding: 1.3rem;
     }
   }
 }

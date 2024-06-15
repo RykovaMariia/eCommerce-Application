@@ -189,7 +189,9 @@ const setAction = computed(() => {
       </v-sheet>
     </v-col>
     <v-col>
-      <h1>{{ product.name }}</h1>
+      <div class="d-flex">
+        <h1>{{ product.name }}</h1>
+      </div>
       <div>{{ product.description }}</div>
 
       <div v-if="masterAttributeNames.length">
