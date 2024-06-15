@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ProductInCart from '@/components/productIn-cart/ProductInCart.vue'
+import ProductInCart from './components/ProductInCart.vue'
 import ClearCartDialog from './components/ClearCartDialog.vue'
 import Input from '@/components/inputs/Input.vue'
 import Button from '@/components/buttons/Button.vue'
@@ -128,7 +128,7 @@ watch(
     </div>
     <v-col class="clear-cart"> <ClearCartDialog /></v-col>
   </div>
-  <div v-if="!cart?.totalLineItemQuantity" class="d-flex empty-cart">
+  <div v-else class="d-flex empty-cart">
     <IconHeart class="icon-heart" />
     <div class="title">The cart is empty</div>
     <div>

@@ -1,10 +1,10 @@
 import type { CartData, LineItem } from '@/interfaces/cartData'
 import { ClientService, clientService } from '@/services/clientService'
 
-export class CartApiService {
+class CartApiService {
   constructor(private clientService: ClientService) {}
 
-  public create() {
+  public createCart() {
     return this.clientService
       .getApiRoot()
       .me()
@@ -120,3 +120,4 @@ export class CartApiService {
 }
 
 export const cartApiService = new CartApiService(clientService)
+export type CartApiServiceType = typeof cartApiService

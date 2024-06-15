@@ -1,23 +1,23 @@
 import { useCartStore } from '@/stores/cart'
-import { cartApiService, type CartApiService } from './cartApiService'
+import { cartApiService, type CartApiServiceType } from './cartApiService'
 import { localStorageService } from './storageService'
-import type { LineItem } from '@commercetools/platform-sdk'
+import type { Cart, LineItem } from '@commercetools/platform-sdk'
 import type { ProductItem } from '@/interfaces/productData'
 const cartId = localStorageService.getData('cartId')
 const anonymousId = localStorageService.getData('anonymousId')
 
-export class CartService {
-  constructor(private cartApiService: CartApiService) {}
+class CartService {
+  constructor(private cartApiService: CartApiServiceType) {}
 
   public setAnonymousSession() {
     if (!cartId) {
       return
     }
-    cartApiService
+    this.cartApiService
       .getCartById(cartId)
       .then(({ body }) => {
         if (anonymousId && body.createdBy?.anonymousId !== anonymousId) {
-          return cartApiService
+          return this.cartApiService
             .updateAnonymousId({ id: cartId, version: body.version, anonymousId })
             .then(({ body }) => body)
         }
@@ -28,11 +28,23 @@ export class CartService {
       })
   }
 
-  public createCart() {
-    return cartApiService.create().then(({ body }) => {
-      localStorageService.saveData('cartId', body.id)
-      useCartStore().setCart(body)
-    })
+  public async createCartAndSaveState() {
+    const { body } = await this.cartApiService.createCart()
+    localStorageService.saveData('cartId', body.id)
+    useCartStore().setCart(body)
+    return body
+  }
+
+  public async addProductToCart(productId: string, cart?: Cart) {
+    const cartId = localStorageService.getData('cartId')
+    if (!cartId) {
+      cart = await this.createCartAndSaveState()
+    }
+    if (cart?.id) {
+      return cartApiService
+        .addProductToCart({ id: cart.id, version: cart.version, productId })
+        .then(({ body }) => useCartStore().setCart(body))
+    }
   }
 
   public isProductInCart(lineItems: LineItem[], productId: string) {
@@ -59,4 +71,5 @@ export class CartService {
     )
   }
 }
+
 export const cartService = new CartService(cartApiService)

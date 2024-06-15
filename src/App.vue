@@ -10,6 +10,7 @@ import { userAuth } from './stores/userAuth'
 import router from './router'
 import { cartService } from './services/cartService'
 import { localStorageService } from './services/storageService'
+import { favoritesService } from './services/favoritesService'
 const { isOpenAlert } = storeToRefs(useAlertStore())
 
 const alert = useAlertStore()
@@ -27,6 +28,7 @@ if (refreshToken) {
 }
 
 cartService.setAnonymousSession()
+favoritesService.setAnonymousSession()
 </script>
 
 <template>

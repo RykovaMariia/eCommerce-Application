@@ -37,7 +37,7 @@ export class ProductsService {
         },
       })
       .execute()
-      .then(({ body: { results } }) => results[0].masterData)
+      .then(({ body: { results } }) => results[0])
   }
 
   getProducts({

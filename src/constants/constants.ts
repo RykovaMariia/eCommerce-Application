@@ -8,6 +8,8 @@ export const FULL_PERCENTAGE = 100
 
 export const YEAR_TO_SHOW = 2000
 
+export const LOADING_TIMEOUT = 200
+
 export const OUR_INFO = [
   {
     name: 'Maria',

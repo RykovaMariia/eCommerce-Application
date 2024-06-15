@@ -3,7 +3,7 @@ import { computed, reactive, type Ref } from 'vue'
 import Button from '@/components/buttons/Button.vue'
 import { type ProductData, type ProductItem } from '@/interfaces/productData'
 import { ref } from 'vue'
-import type { ProductCatalogData, ProductVariant } from '@commercetools/platform-sdk'
+import type { Product, ProductVariant } from '@commercetools/platform-sdk'
 import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
@@ -47,19 +47,14 @@ const selectedVariants: Ref<string[]> = ref([])
 if (productId !== null) {
   productsService
     .getProduct(productId)
-    .then((masterData: ProductCatalogData) => {
-      product.description = masterData.current.description?.['en-GB'] ?? ''
-      product.name = masterData.current.name?.['en-GB']
-      product.images = masterData.current.masterVariant.images?.map(({ url }) => url) ?? []
-      masterAttributeNames =
-        masterData.current.masterVariant.attributes?.map(({ name }) => name) ?? []
-      const variantAttributes = masterData.current.variants
-        ?.map((variant) => variant.attributes)
-        .flat()
-      const attributesList = [
-        masterData.current.masterVariant.attributes,
-        ...variantAttributes,
-      ].flat()
+    .then(({ masterData }: Product) => {
+      const { description, name, masterVariant, variants } = masterData.current
+      product.description = description?.['en-GB'] ?? ''
+      product.name = name?.['en-GB']
+      product.images = masterVariant.images?.map(({ url }) => url) ?? []
+      masterAttributeNames = masterVariant.attributes?.map(({ name }) => name) ?? []
+      const variantAttributes = variants?.map((variant) => variant.attributes).flat()
+      const attributesList = [masterVariant.attributes, ...variantAttributes].flat()
       attributeValues = masterAttributeNames.map((attributeName) => {
         const keys: string[] = attributesList
           .map((attribute) => {
@@ -100,7 +95,7 @@ async function addProductToCart() {
   const cartId = localStorageService.getData('cartId')
   const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
   if (!cartId) {
-    await cartService.createCart()
+    await cartService.createCartAndSaveState()
   }
   if (cart.value?.id && productId) {
     cartApiService
@@ -235,7 +230,7 @@ const setAction = computed(() => {
 
       <div class="price-wrapper">
         <Button :textContent :color @click="setAction" />
-        <div class="price-wrapper">
+        <div v-if="isProductDataLoaded" class="price-wrapper">
           <Price
             :isWithDiscount="!!price.discountPrice"
             :price="price.price"
