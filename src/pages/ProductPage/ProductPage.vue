@@ -15,8 +15,12 @@ import { cartService } from '@/services/cartService'
 import { cartApiService } from '@/services/cartApiService'
 import { useAlertStore } from '@/stores/alert'
 import Price from '@/components/price/Price.vue'
+import { favoritesService } from '@/services/favoritesService'
+import { useFavoritesStore } from '@/stores/favorites'
+import { favoritesApiService } from '@/services/favoritesApiService'
 
 const alert = useAlertStore()
+const { favorites } = storeToRefs(useFavoritesStore())
 
 const imageIndex = ref(0)
 const isMainAttribute = ref(true)
@@ -155,11 +159,66 @@ const setAction = computed(() => {
   return !isInCart.value ? () => addProductToCart() : () => removeProductFromCart()
 })
 
-// function addProductToFavorites() {}
+const isInFavorites = computed(() => {
+  if (!favorites.value?.lineItems) {
+    return
+  }
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId || !productId) {
+    return
+  }
+  return favoritesService.getLineIdByProduct(favorites.value?.lineItems, productId, variantId)
+})
 
-// const handleFavoriteChange = computed(() => {
-//   return
-// })
+async function addProductToFavorites() {
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId) {
+    return
+  }
+  if (!productId) {
+    return
+  }
+  console.warn(variantId)
+    await favoritesService
+    .addProductToFavoritesList(productId, favorites.value, variantId)
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
+}
+
+function deleteProductFromFavoritesById() {
+  if (!favorites.value?.lineItems || !productId) {
+    return
+  }
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId) {
+    return
+  }
+  const lineItemId = favoritesService.getLineIdByProduct(favorites.value?.lineItems, productId, variantId)
+  if (!lineItemId) {
+    return
+  }
+    favoritesApiService
+      .removeLineItemFromFavorites({
+        id: favorites.value.id,
+        version: favorites.value.version,
+        lineItemId,
+      })
+      .then(({ body }) => {
+        useFavoritesStore().setFavorites(body)
+      })
+      .catch((error: Error) => {
+        alert.show(`Error: ${error.message}`, 'warning')
+      })
+}
+
+const handleFavoriteChange = computed(() => {
+  return !isInFavorites.value ? () => addProductToFavorites() : () => deleteProductFromFavoritesById()
+})
+
+const setIconFavorites = computed(() => {
+  return !isInFavorites.value ? 'mdi-heart-outline' : 'mdi-heart'
+})
 </script>
 
 <template>
@@ -199,7 +258,7 @@ const setAction = computed(() => {
     <v-col>
       <div class="d-flex align-center justify-space-between">
         <h1>{{ product.name }}</h1>
-        <v-btn icon><v-icon>mdi-heart-outline</v-icon></v-btn>
+        <v-btn icon @click="handleFavoriteChange"><v-icon :icon="setIconFavorites"></v-icon></v-btn>
       </div>
       <div class="description">{{ product.description }}</div>
 
@@ -270,6 +329,7 @@ const setAction = computed(() => {
   }
 }
 
+.mdi-heart,
 .mdi-heart-outline {
   color: constants.$color-sale;
 }
