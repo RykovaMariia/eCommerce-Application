@@ -76,7 +76,7 @@ const addToCart = computed(() => {
       :disabled="loading"
       :loading="loading"
       elevation="0"
-      max-width="290"
+      max-width="270"
       variant="text"
       class="product-card"
       @click="toProduct"
@@ -170,7 +170,7 @@ const addToCart = computed(() => {
 
 .discount {
   position: absolute;
-  top: 1px;
+  top: 0;
   left: 20px;
 
   display: flex;

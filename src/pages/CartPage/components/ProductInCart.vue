@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import NumberInput from '@components/inputs/NumberInput.vue'
 import { localStorageService } from '@/services/storageService'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cart'
-import type { Attribute } from '@commercetools/platform-sdk'
+import type { Attribute, ShoppingListLineItem } from '@commercetools/platform-sdk'
 import IconNoImg from '@components/icons/IconNoImg.vue'
 import { cartApiService } from '@/services/cartApiService'
 import Price from '@components/price/Price.vue'
+import { favoritesService } from '@/services/favoritesService'
+import { useFavoritesStore } from '@/stores/favorites'
+import { favoritesApiService } from '@/services/favoritesApiService'
+import { useAlertStore } from '@/stores/alert'
 
 const props = defineProps<{
   srcImg: string
@@ -19,9 +23,20 @@ const props = defineProps<{
   quantity: number
   lineItemId: string
   attributes?: Attribute[]
+  variantId: number
 }>()
 
+const alert = useAlertStore()
+const { favorites } = storeToRefs(useFavoritesStore())
 const quantity = ref(props.quantity)
+const isAddedInFavorites = ref(isProductInFavorites())
+
+function isProductInFavorites() {
+  if (!favorites.value?.lineItems) {
+    return false
+  }
+  return favoritesService.isProductInFavorites(favorites.value?.lineItems, props.productId)
+}
 
 const href = { name: 'productId', params: { productId: props.productSlug } }
 
@@ -55,6 +70,42 @@ function removeLineItem() {
       .then(({ body }) => useCartStore().setCart(body))
   }
 }
+
+const heartIcon = computed(() => {
+  return isAddedInFavorites.value ? 'mdi-heart' : 'mdi-heart-outline'
+})
+
+function clickHeart() {
+  if (!isAddedInFavorites.value) {
+    isAddedInFavorites.value = true
+    favoritesService
+      .addProductToFavoritesList(props.productId, favorites.value)
+      .catch((error: Error) => {
+        alert.show(`Error: ${error.message}`, 'warning')
+      })
+  } else {
+    isAddedInFavorites.value = false
+    const favoritesLineItemId = favoritesService.getLineIdByProduct(
+      useFavoritesStore().favorites?.lineItems as ShoppingListLineItem[],
+      props.productId,
+      props.variantId,
+    )
+    if (favorites.value?.id) {
+      favoritesApiService
+        .removeLineItemFromFavorites({
+          id: favorites.value.id,
+          version: favorites.value.version,
+          lineItemId: favoritesLineItemId ?? '',
+        })
+        .then(({ body }) => {
+          useFavoritesStore().setFavorites(body)
+        })
+        .catch((error: Error) => {
+          alert.show(`Error: ${error.message}`, 'warning')
+        })
+    }
+  }
+}
 </script>
 <template>
   <v-card elevation="0" variant="text" class="d-flex product-in-cart">
@@ -68,8 +119,8 @@ function removeLineItem() {
         <v-card-title>{{ name }}</v-card-title>
         <div class="d-flex icons">
           <v-card-actions
-            ><v-btn icon>
-              <v-icon color="primary">mdi-heart-outline</v-icon>
+            ><v-btn icon @click="clickHeart">
+              <v-icon color="primary">{{ heartIcon }}</v-icon>
             </v-btn>
           </v-card-actions>
           <v-card-actions
@@ -200,12 +251,6 @@ function removeLineItem() {
   font-size: 1.7rem;
   color: constants.$color-primary;
   white-space: normal;
-}
-
-.v-btn--icon .v-icon {
-  @include mixins.media-tablet {
-    --v-icon-size-multiplier: 0.8;
-  }
 }
 
 .v-card-actions {

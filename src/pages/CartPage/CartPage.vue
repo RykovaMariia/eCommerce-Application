@@ -70,6 +70,7 @@ watch(
           quantity,
           lineItemId: id,
           attributes: variant.attributes,
+          variantId: variant.id,
         }
       })
     }
@@ -91,8 +92,9 @@ watch(
         quantity,
         lineItemId,
         attributes,
+        variantId,
       } in cartLineItem"
-      :key="productId"
+      :key="lineItemId"
       :srcImg
       :name
       :price
@@ -102,8 +104,8 @@ watch(
       :quantity
       :lineItemId
       :attributes
+      :variantId
     />
-
     <div class="d-flex cart-total">
       <v-form @submit.prevent="applyPromoCode">
         <div class="d-flex promo-code">
@@ -121,7 +123,7 @@ watch(
         Total:
         <Price
           :isWithDiscount="totalPriceWithoutDiscount !== totalPrice"
-          :price="totalPriceWithoutDiscount"
+          :price="parseFloat(totalPriceWithoutDiscount.toFixed(2))"
           :priceWithDiscount="totalPrice"
         />
       </div>
