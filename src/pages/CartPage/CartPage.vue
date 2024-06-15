@@ -3,7 +3,7 @@ import ProductInCart from './components/ProductInCart.vue'
 import ClearCartDialog from './components/ClearCartDialog.vue'
 import Input from '@/components/inputs/Input.vue'
 import Button from '@/components/buttons/Button.vue'
-import { computed, ref, watch, type Ref } from 'vue'
+import { ref, watchEffect, type Ref } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import { storeToRefs } from 'pinia'
 import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
@@ -13,7 +13,7 @@ import { useAlertStore } from '@/stores/alert'
 import Price from '@/components/price/Price.vue'
 import type { CartLineItem } from '@/interfaces/cartLineItem'
 
-const { cart } = storeToRefs(useCartStore())
+const { cart, totalPrice } = storeToRefs(useCartStore())
 
 const promoCode = ref('')
 
@@ -34,49 +34,43 @@ const cartLineItem: Ref<CartLineItem[] | undefined> = ref()
 
 const totalPriceWithoutDiscount = ref(0)
 
-const totalPrice = computed(() => getPriceAccordingToFractionDigits(cart.value?.totalPrice))
+watchEffect(() => {
+  if (cart.value?.totalLineItemQuantity) {
+    totalPriceWithoutDiscount.value = 0
+    cartLineItem.value = cart.value.lineItems.map((lineItem) => {
+      const {
+        name,
+        variant,
+        price,
+        discountedPricePerQuantity,
+        productSlug,
+        productId,
+        quantity,
+        id,
+      } = lineItem
 
-watch(
-  () => cart,
-  () => {
-    if (cart.value?.totalLineItemQuantity) {
-      totalPriceWithoutDiscount.value = 0
-      cartLineItem.value = cart.value.lineItems.map((lineItem) => {
-        const {
-          name,
-          variant,
-          price,
-          discountedPricePerQuantity,
-          productSlug,
-          productId,
+      totalPriceWithoutDiscount.value += getPriceAccordingToFractionDigits(price.value, quantity)
+
+      return {
+        name: name['en-GB'],
+        srcImg: variant.images?.length ? variant.images?.[0].url : '',
+        price: getPriceAccordingToFractionDigits(price.value, quantity),
+        discountedPrice: getPriceAccordingToFractionDigits(
+          discountedPricePerQuantity.length
+            ? discountedPricePerQuantity[0].discountedPrice.value
+            : price.discounted?.value,
           quantity,
-          id,
-        } = lineItem
-
-        totalPriceWithoutDiscount.value += getPriceAccordingToFractionDigits(price.value, quantity)
-
-        return {
-          name: name['en-GB'],
-          srcImg: variant.images?.length ? variant.images?.[0].url : '',
-          price: getPriceAccordingToFractionDigits(price.value, quantity),
-          discountedPrice: getPriceAccordingToFractionDigits(
-            discountedPricePerQuantity.length
-              ? discountedPricePerQuantity[0].discountedPrice.value
-              : price.discounted?.value,
-            quantity,
-          ),
-          productSlug: productSlug?.['en-GB'] ?? '',
-          productId,
-          quantity,
-          lineItemId: id,
-          attributes: variant.attributes,
-          variantId: variant.id,
-        }
-      })
-    }
-  },
-  { deep: true, immediate: true },
-)
+        ),
+        productSlug: productSlug?.['en-GB'] ?? '',
+        productId,
+        quantity,
+        lineItemId: id,
+        attributes: variant.attributes,
+        variantId: variant.id,
+      }
+    })
+  }
+})
 </script>
 
 <template>

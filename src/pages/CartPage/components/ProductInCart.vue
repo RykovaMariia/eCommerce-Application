@@ -27,6 +27,7 @@ const props = defineProps<{
 }>()
 
 const alert = useAlertStore()
+const cartStore = useCartStore()
 const { favorites } = storeToRefs(useFavoritesStore())
 const quantity = ref(props.quantity)
 const isAddedInFavorites = ref(isProductInFavorites())
@@ -44,7 +45,7 @@ const passProductId = () => {
   localStorageService.saveData('productId', props.productId)
 }
 
-const { cart } = storeToRefs(useCartStore())
+const { cart } = storeToRefs(cartStore)
 
 function updateQuantity() {
   if (cart.value) {
@@ -55,7 +56,7 @@ function updateQuantity() {
         lineItemId: props.lineItemId,
         quantity: quantity.value,
       })
-      .then(({ body }) => useCartStore().setCart(body))
+      .then(({ body }) => cartStore.setCart(body))
   }
 }
 
@@ -67,7 +68,7 @@ function removeLineItem() {
         version: cart.value.version,
         lineItemId: props.lineItemId,
       })
-      .then(({ body }) => useCartStore().setCart(body))
+      .then(({ body }) => cartStore.setCart(body))
   }
 }
 
@@ -111,7 +112,7 @@ function clickHeart() {
   <v-card elevation="0" variant="text" class="d-flex product-in-cart">
     <RouterLink :to="href" @click="passProductId">
       <v-img v-if="srcImg" :src="srcImg" cover></v-img>
-      <IconNoImg v-if="!srcImg" class="no-img" />
+      <IconNoImg v-else class="no-img" />
     </RouterLink>
 
     <v-col class="product-info">
