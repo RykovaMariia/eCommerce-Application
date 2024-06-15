@@ -241,7 +241,7 @@ const categories = computed(() => categoriesLinks.value.slice(1))
     }
 
     &__container {
-      gap: 0.5rem; 
+      gap: 0.5rem;
     }
   }
 

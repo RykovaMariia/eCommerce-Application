@@ -47,13 +47,19 @@ const selectedVariants: Ref<string[]> = ref([])
 if (productId !== null) {
   productsService
     .getProduct(productId)
-    .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
-      product.description = description?.['en-GB'] ?? ''
-      product.name = name?.['en-GB']
-      product.images = masterVariant.images?.map(({ url }) => url) ?? []
-      masterAttributeNames = masterVariant.attributes?.map(({ name }) => name) ?? []
-      const variantAttributes = variants?.map((variant) => variant.attributes).flat()
-      const attributesList = [masterVariant.attributes, ...variantAttributes].flat()
+    .then((masterData: ProductCatalogData) => {
+      product.description = masterData.current.description?.['en-GB'] ?? ''
+      product.name = masterData.current.name?.['en-GB']
+      product.images = masterData.current.masterVariant.images?.map(({ url }) => url) ?? []
+      masterAttributeNames =
+        masterData.current.masterVariant.attributes?.map(({ name }) => name) ?? []
+      const variantAttributes = masterData.current.variants
+        ?.map((variant) => variant.attributes)
+        .flat()
+      const attributesList = [
+        masterData.current.masterVariant.attributes,
+        ...variantAttributes,
+      ].flat()
       attributeValues = masterAttributeNames.map((attributeName) => {
         const keys: string[] = attributesList
           .map((attribute) => {
@@ -64,8 +70,8 @@ if (productId !== null) {
           .filter((value) => value)
         return getUniqueValues(keys)
       })
-      const mainVariant: ProductItem = retrieveVariantsData(masterVariant)
-      const allVariants = variants?.map(retrieveVariantsData)
+      const mainVariant: ProductItem = retrieveVariantsData(masterData.current.masterVariant)
+      const allVariants = masterData.current.variants?.map(retrieveVariantsData)
       product.variants = [mainVariant, ...allVariants]
       isProductDataLoaded.value = true
       selectedVariants.value = [...product.variants[0].attributes]
@@ -84,6 +90,7 @@ const definePrice = ({ price, discountPrice }: ProductItem) => {
 }
 const price = computed(() => {
   const variant = cartService.getVariantByAttribute(product.variants, selectedVariants.value)
+  console.warn(variant)
   return definePrice(variant ?? product.variants[0])
 })
 
@@ -152,6 +159,12 @@ const color = computed(() => {
 const setAction = computed(() => {
   return !isInCart.value ? () => addProductToCart() : () => removeProductFromCart()
 })
+
+// function addProductToFavorites() {}
+
+// const handleFavoriteChange = computed(() => {
+//   return
+// })
 </script>
 
 <template>
@@ -189,10 +202,11 @@ const setAction = computed(() => {
       </v-sheet>
     </v-col>
     <v-col>
-      <div class="d-flex">
+      <div class="d-flex align-center justify-space-between">
         <h1>{{ product.name }}</h1>
+        <v-btn icon><v-icon>mdi-heart-outline</v-icon></v-btn>
       </div>
-      <div>{{ product.description }}</div>
+      <div class="description">{{ product.description }}</div>
 
       <div v-if="masterAttributeNames.length">
         <div v-for="(attributesArray, n) in attributeValues" :key="n" class="value-wrapper">
@@ -259,6 +273,23 @@ const setAction = computed(() => {
     align-items: center;
     justify-content: center;
   }
+}
+
+.mdi-heart-outline {
+  color: constants.$color-sale;
+}
+
+.v-btn--variant-elevated {
+  background: none;
+  box-shadow: none;
+}
+
+v-btn:hover > .v-btn__overlay {
+  background: none;
+}
+
+.description {
+  text-align: justify;
 }
 
 .attribute {
