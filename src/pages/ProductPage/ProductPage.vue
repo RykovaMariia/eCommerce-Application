@@ -15,8 +15,12 @@ import { cartService } from '@/services/cartService'
 import { cartApiService } from '@/services/cartApiService'
 import { useAlertStore } from '@/stores/alert'
 import Price from '@/components/price/Price.vue'
+import { favoritesService } from '@/services/favoritesService'
+import { useFavoritesStore } from '@/stores/favorites'
+import { favoritesApiService } from '@/services/favoritesApiService'
 
 const alert = useAlertStore()
+const { favorites } = storeToRefs(useFavoritesStore())
 
 const imageIndex = ref(0)
 const isMainAttribute = ref(true)
@@ -65,8 +69,8 @@ if (productId !== null) {
           .filter((value) => value)
         return getUniqueValues(keys)
       })
-      const mainVariant: ProductItem = retrieveVariantsData(masterVariant)
-      const allVariants = variants?.map(retrieveVariantsData)
+      const mainVariant: ProductItem = retrieveVariantsData(masterData.current.masterVariant)
+      const allVariants = masterData.current.variants?.map(retrieveVariantsData)
       product.variants = [mainVariant, ...allVariants]
       isProductDataLoaded.value = true
       selectedVariants.value = [...product.variants[0].attributes]
@@ -153,6 +157,66 @@ const color = computed(() => {
 const setAction = computed(() => {
   return !isInCart.value ? () => addProductToCart() : () => removeProductFromCart()
 })
+
+const isInFavorites = computed(() => {
+  if (!favorites.value?.lineItems) {
+    return
+  }
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId || !productId) {
+    return
+  }
+  return favoritesService.getLineIdByProduct(favorites.value?.lineItems, productId, variantId)
+})
+
+async function addProductToFavorites() {
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId || !productId) {
+    return
+  }
+  await favoritesService
+    .addProductToFavoritesList(productId, variantId, favorites.value)
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
+}
+
+function deleteProductFromFavoritesById() {
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!favorites.value?.lineItems || !productId || !variantId) {
+    return
+  }
+  const lineItemId = favoritesService.getLineIdByProduct(
+    favorites.value?.lineItems,
+    productId,
+    variantId,
+  )
+  if (!lineItemId) {
+    return
+  }
+  favoritesApiService
+    .removeLineItemFromFavorites({
+      id: favorites.value.id,
+      version: favorites.value.version,
+      lineItemId,
+    })
+    .then(({ body }) => {
+      useFavoritesStore().setFavorites(body)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
+}
+
+const handleFavoriteChange = computed(() => {
+  return !isInFavorites.value
+    ? () => addProductToFavorites()
+    : () => deleteProductFromFavoritesById()
+})
+
+const setIconFavorites = computed(() => {
+  return !isInFavorites.value ? 'mdi-heart-outline' : 'mdi-heart'
+})
 </script>
 
 <template>
@@ -190,8 +254,10 @@ const setAction = computed(() => {
       </v-sheet>
     </v-col>
     <v-col>
-      <h1>{{ product.name }}</h1>
-      <div>{{ product.description }}</div>
+      <div class="d-flex align-center justify-space-between">
+        <h1 class="title">{{ product.name }}</h1>
+      </div>
+      <div class="description">{{ product.description }}</div>
 
       <div v-if="masterAttributeNames.length">
         <div v-for="(attributesArray, n) in attributeValues" :key="n" class="value-wrapper">
@@ -219,7 +285,12 @@ const setAction = computed(() => {
       </div>
 
       <div class="price-wrapper">
-        <Button :textContent :color @click="setAction" />
+        <div class="d-flex ga-4 align-center">
+          <Button :textContent :color @click="setAction" />
+          <v-btn icon @click="handleFavoriteChange"
+            ><v-icon :icon="setIconFavorites"></v-icon
+          ></v-btn>
+        </div>
         <div v-if="isProductDataLoaded" class="price-wrapper">
           <Price
             :isWithDiscount="!!price.discountPrice"
@@ -251,6 +322,11 @@ const setAction = computed(() => {
   justify-content: center;
 }
 
+.title {
+  margin-bottom: 1.5rem;
+  line-height: 100%;
+}
+
 @include mixins.media-middle {
   .product-container {
     display: flex;
@@ -258,6 +334,24 @@ const setAction = computed(() => {
     align-items: center;
     justify-content: center;
   }
+}
+
+.mdi-heart,
+.mdi-heart-outline {
+  color: constants.$color-sale;
+}
+
+.v-btn--variant-elevated {
+  background: none;
+  box-shadow: none;
+}
+
+v-btn:hover > .v-btn__overlay {
+  background: none;
+}
+
+.description {
+  text-align: justify;
 }
 
 .attribute {

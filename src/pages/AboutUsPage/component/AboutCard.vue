@@ -8,27 +8,30 @@ const props = defineProps<{
   imageSrc: string
   contributions: string
   githubLink: string
-  indexNumber: number
+  stylePreference: boolean
 }>()
 </script>
 
 <template>
-  <div class="d-flex flex-wrap card-wrapper" :class="{ card: props.indexNumber === 1 }">
-    <v-col class="d-flex image-container" :class="{ 'justify-md-end': props.indexNumber === 1 }"
+  <div class="d-flex flex-wrap card-wrapper" :class="{ card: props.stylePreference }">
+    <v-col class="d-flex image-container" :class="{ 'justify-md-end': props.stylePreference }"
       ><v-img :src="props.imageSrc" class="image" cover></v-img
     ></v-col>
     <v-col class="wrapper">
-      <div class="d-flex justify-space-between">
+      <div
+        class="d-flex justify-space-between"
+        :class="{ 'justify-md-end ga-4': props.stylePreference }"
+      >
         <h2 class="name">{{ props.name }}</h2>
         <a :href="props.githubLink" class="github-link d-flex align-center"><IconGithub /></a>
       </div>
       <div class="info-container">
         <v-divider></v-divider>
       </div>
-      <div class="flex-column">
+      <div class="flex-column" :class="{ 'text-left': props.stylePreference }">
         <div class="role">{{ props.role }}</div>
-        <div>Bio: {{ props.bio }}</div>
-        <div>Contributions: {{ props.contributions }}</div>
+        <div><span class="title_bold">Bio:</span> {{ props.bio }}</div>
+        <div><span class="title_bold">Contributions:</span> {{ props.contributions }}</div>
       </div>
     </v-col>
   </div>
@@ -47,6 +50,10 @@ const props = defineProps<{
   max-height: 300px;
   border: 1px solid constants.$color-primary;
   border-radius: 6px;
+}
+
+.title_bold {
+  font-weight: bold;
 }
 
 .info-container {

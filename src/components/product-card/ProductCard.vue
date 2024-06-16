@@ -111,7 +111,7 @@ const addToCart = () => {
         </v-btn>
       </v-card-actions>
     </v-card>
-    <Button :disabled="loading" :color :textContent :to @click="() => addToCart" />
+    <Button :disabled="loading" :color :textContent :to @click="addToCart" />
   </v-col>
 </template>
 
