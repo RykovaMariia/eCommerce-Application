@@ -236,7 +236,6 @@ const isOpenSearch = ref(false)
         :items="SORTING_ITEMS"
         v-model="selectedFilters.sorting"
         variant="underlined"
-        width="10rem"
         isHideDetails
         @update:modelValue="selectSorting"
       />
