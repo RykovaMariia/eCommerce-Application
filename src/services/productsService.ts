@@ -2,6 +2,7 @@ import { ClientService, clientService } from '@/services/clientService'
 import { Facet } from '@/enums/facet'
 import type { QueryParam } from '@commercetools/sdk-client-v2'
 import { SortingCommand, type SortBy } from '@/enums/sortingCommand'
+import { makeFilterString } from '@/utils/makeFilterString'
 
 interface QueryArgs {
   fuzzy?: boolean
@@ -67,14 +68,15 @@ export class ProductsService {
     if (categoryId) {
       filter.push(`${categoryId ? `categories.id:subtree("${categoryId}")` : ''}`)
     }
+
     if (colorFilter?.length) {
       filter.push(
-        `${Facet.color}: ${colorFilter instanceof Array ? colorFilter.map((el) => `"${el}"`).join(',') : `"${colorFilter}"`}`,
+        makeFilterString(Facet.color, colorFilter),
       )
     }
     if (quantityFilter?.length) {
       filter.push(
-        `${Facet.quantity}: ${quantityFilter instanceof Array ? quantityFilter.map((el) => `"${el}"`).join(',') : `"${quantityFilter}"`}`,
+         makeFilterString(Facet.quantity, quantityFilter),
       )
     }
 
