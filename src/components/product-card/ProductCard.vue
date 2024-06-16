@@ -106,7 +106,7 @@ const addToCart = () => {
         -{{ getDiscountPercentage(price, discountedPrice) }}%
       </div>
       <v-card-actions class="favorites">
-        <v-btn icon @click.stop="() => addToFavorites">
+        <v-btn icon @click.stop="addToFavorites">
           <v-icon color="primary">{{ heartIcon }}</v-icon>
         </v-btn>
       </v-card-actions>

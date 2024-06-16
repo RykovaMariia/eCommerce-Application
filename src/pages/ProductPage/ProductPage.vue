@@ -175,7 +175,7 @@ async function addProductToFavorites() {
     return
   }
   await favoritesService
-    .addProductToFavoritesList(productId, variantId, favorites.value)
+    .addProductToFavoritesList({ productId, variantId, favorites: favorites.value })
     .catch((error: Error) => {
       alert.show(`Error: ${error.message}`, 'warning')
     })
