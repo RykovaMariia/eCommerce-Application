@@ -47,7 +47,23 @@ watchEffect(() => {
   }
 })
 
-const limitProductsOnPage = 16
+const getLimitProductsOnPage = () => {
+  const maxDesktopWidth = 1764
+  const minDesktopWidth = 1445
+  const maxTableWidth = 805
+  const windowWidth = window.innerWidth
+
+  if (windowWidth <= maxDesktopWidth && windowWidth >= minDesktopWidth) {
+    return 16
+  } else if (windowWidth < minDesktopWidth && windowWidth > maxTableWidth) {
+    return 12
+  } else if (windowWidth <= maxTableWidth) {
+    return 8
+  }
+  return 15
+}
+
+let limitProductsOnPage = getLimitProductsOnPage()
 const currentPage = ref(1)
 const totalPages = computed(() => Math.ceil(totalProductsCount.value / limitProductsOnPage))
 
@@ -68,6 +84,8 @@ const selectedFilters = reactive({
 })
 
 const fetchProducts = () => {
+  limitProductsOnPage = getLimitProductsOnPage()
+
   const offset = (currentPage.value - 1) * limitProductsOnPage
 
   productsService
@@ -136,9 +154,9 @@ async function addProductToCartById(productId: string) {
     })
 }
 
-async function addProductToFavoritesById(productId: string) {
+async function addProductToFavoritesById(productId: string, variantId: number) {
   await favoritesService
-    .addProductToFavoritesList(productId, favorites.value)
+    .addProductToFavoritesList(productId, variantId, favorites.value)
     .catch((error: Error) => {
       alert.show(`Error: ${error.message}`, 'warning')
     })
@@ -178,52 +196,71 @@ function isProductInFavorites(productId: string) {
 function getLoadingState(productId: string) {
   return loadingStates.value[productId] || false
 }
+
+const isOpenSearch = ref(false)
 </script>
 
 <template>
-  <SelectInput
-    label="Sort by"
-    :items="SORTING_ITEMS"
-    v-model="selectedFilters.sorting"
-    variant="underlined"
-    width="10rem"
-    @update:modelValue="selectSorting"
-  />
+  <div class="d-flex filters-all">
+    <div class="d-flex filters">
+      <SelectInput
+        class="filter"
+        label="Color"
+        :items="colorItems"
+        v-model="selectedFilters.color"
+        variant="underlined"
+        is-chips
+        is-clearable
+        is-multiple
+        :isHideDetails="true"
+        @update:modelValue="selectColor"
+      />
 
-  <Input
-    label="Search"
-    type="text"
-    placeholder="Search"
-    icon="mdi-magnify"
-    isHideDetails
-    isClearable
-    v-model="selectedFilters.search"
-    @update:modelValue="search"
-  />
+      <SelectInput
+        class="filter"
+        label="Quantity"
+        :items="quantityItems"
+        v-model="selectedFilters.quantity"
+        variant="underlined"
+        is-chips
+        is-clearable
+        is-multiple
+        :isHideDetails="true"
+        @update:modelValue="selectQuantity"
+      />
+    </div>
+    <div class="d-flex search-sort">
+      <SelectInput
+        class="sort"
+        label="Sort by"
+        :items="SORTING_ITEMS"
+        v-model="selectedFilters.sorting"
+        variant="underlined"
+        isHideDetails
+        @update:modelValue="selectSorting"
+      />
 
-  <SelectInput
-    label="Color"
-    :items="colorItems"
-    v-model="selectedFilters.color"
-    variant="underlined"
-    is-chips
-    is-clearable
-    is-multiple
-    @update:modelValue="selectColor"
-  />
+      <div class="d-flex search">
+        <v-icon color="primary" class="search-icon" @click="isOpenSearch = !isOpenSearch"
+          >mdi-magnify</v-icon
+        >
+        <Transition name="search-fade">
+          <Input
+            class="search-input"
+            v-if="isOpenSearch"
+            label="Search"
+            type="text"
+            placeholder="Search"
+            isHideDetails
+            isClearable
+            v-model="selectedFilters.search"
+            @update:modelValue="search"
+        /></Transition>
+      </div>
+    </div>
+  </div>
 
-  <SelectInput
-    label="Quantity"
-    :items="quantityItems"
-    v-model="selectedFilters.quantity"
-    variant="underlined"
-    is-chips
-    is-clearable
-    is-multiple
-    @update:modelValue="selectQuantity"
-  />
-
-  <div class="d-flex">
+  <div class="d-flex products">
     <ProductCard
       v-for="{ id, masterVariant, name, description, slug } in products"
       :key="id"
@@ -236,11 +273,12 @@ function getLoadingState(productId: string) {
       "
       :productSlug="slug['en-GB']"
       :productId="id"
+      :variantId="1"
       :isAddedInCart="isProductInCart(id)"
       :isAddedInFavorites="isProductInFavorites(id)"
       :loading="getLoadingState(id)"
       @addProductToCart="addProductToCartById($event)"
-      @addProductToFavorites="addProductToFavoritesById($event)"
+      @addProductToFavorites="addProductToFavoritesById($event, $event)"
       @deleteProductFromFavorites="deleteProductFromFavoritesById($event)"
     />
   </div>
@@ -255,14 +293,68 @@ function getLoadingState(productId: string) {
 </template>
 
 <style lang="scss" scoped>
-.d-flex {
+.products {
   flex-wrap: wrap;
-  gap: 2.5rem;
+  gap: 1.6rem;
   justify-content: center;
-  margin-top: 3rem;
+
+  width: 100%;
+  padding: 2rem;
 }
 
-.v-pagination {
-  margin-top: 2.5rem;
+.filters-all {
+  flex-wrap: wrap;
+  gap: 1.6rem;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 1rem;
+}
+
+.search-sort {
+  flex-wrap: wrap;
+  gap: 1.6rem;
+  align-items: center;
+  justify-content: end;
+}
+
+.search {
+  gap: 1rem;
+  align-items: center;
+  justify-content: end;
+}
+
+.search-input {
+  width: 17rem;
+  padding: 0;
+}
+
+.search-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.search-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.search-fade-enter-from,
+.search-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.filters {
+  flex-wrap: wrap;
+  gap: 1.6rem;
+  align-items: center;
+}
+
+.filter {
+  width: 17rem;
+}
+
+.sort {
+  width: 10rem;
+  max-width: 10rem;
 }
 </style>

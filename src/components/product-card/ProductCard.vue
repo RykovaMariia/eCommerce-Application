@@ -18,7 +18,7 @@ const props = defineProps<{
   discountedPrice: number
   productSlug: string
   productId: string
-  variantId?: number
+  variantId: number
   isAddedInCart?: boolean
   isAddedInFavorites?: boolean
 }>()
@@ -56,13 +56,13 @@ const heartIcon = computed(() => {
 
 const addToFavorites = computed(() => {
   return !props.isAddedInFavorites
-    ? emit('addProductToFavorites', props.productId)
+    ? emit('addProductToFavorites', props.productId, props.variantId)
     : emit(
         'deleteProductFromFavorites',
         favoritesService.getLineIdByProduct(
           useFavoritesStore().favorites?.lineItems as ShoppingListLineItem[],
           props.productId,
-          props.variantId ?? 1,
+          props.variantId,
         ),
       )
 })
@@ -76,7 +76,7 @@ const addToCart = () =>
       :disabled="loading"
       :loading="loading"
       elevation="0"
-      max-width="290"
+      max-width="270"
       variant="text"
       class="product-card"
       @click="toProduct"
@@ -170,7 +170,7 @@ const addToCart = () =>
 
 .discount {
   position: absolute;
-  top: 1px;
+  top: 0;
   left: 20px;
 
   display: flex;

@@ -17,6 +17,7 @@ const props = defineProps<{
   type?: string
   isChips?: boolean
   isClearable?: boolean
+  isHideDetails?: boolean | 'auto'
   isMultiple?: boolean
 }>()
 
@@ -32,8 +33,16 @@ const data = defineModel<string | string[]>()
     :rules="isValidation ? rules : [true]"
     :variant="props.variant ? props.variant : 'outlined'"
     v-model="data"
-    :chips="isChips"
+    :hide-details="isHideDetails"
     :clearable="isClearable"
     :multiple="isMultiple"
-  ></v-select>
+    ><template v-if="isChips" v-slot:selection="{ item, index }">
+      <v-chip v-if="index < 1">
+        <span>{{ item.title }}</span>
+      </v-chip>
+      <span v-if="index === 1 && data" class="text-grey text-caption align-self-center">
+        (+{{ data.length - 1 }} others)
+      </span>
+    </template></v-select
+  >
 </template>

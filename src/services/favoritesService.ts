@@ -36,8 +36,8 @@ class FavoritesService {
 
   public async addProductToFavoritesList(
     productId: string,
+    variantId: number,
     favorites?: ShoppingList,
-    variantId: number = 1,
   ) {
     const favoritesId = localStorageService.getData('favoritesListId')
     if (!favoritesId) {

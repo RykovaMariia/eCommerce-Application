@@ -20,7 +20,7 @@ interface FavoritesProducts {
   src: string
   productSlug: string
   productId: string
-  variantId?: number
+  variantId: number
 }
 
 const { cart } = storeToRefs(useCartStore())
@@ -38,8 +38,8 @@ async function fetchProducts() {
     const result = await productsService.getProduct(lineItem.productId)
     const currentProduct = result.masterData.current
     const currentVariant =
-      lineItem.variantId && lineItem.variantId !== 1
-        ? currentProduct.variants.find(({ id }) => id === lineItem.variantId)
+      lineItem.variantId !== 1
+        ? currentProduct.variants.find((variant) => variant.id === lineItem.variantId)
         : currentProduct.masterVariant
     return {
       name: currentProduct.name['en-GB'] ?? '',
@@ -51,7 +51,7 @@ async function fetchProducts() {
       src: currentVariant?.images?.[0].url ?? '',
       productSlug: currentProduct.slug['en-GB'],
       productId: result.id,
-      variantId: currentVariant?.id,
+      variantId: currentVariant?.id ?? 1,
     }
   })
 
@@ -127,7 +127,7 @@ async function deleteProductFromFavoritesById(lineItemId: string) {
       :discountedPrice
       :productSlug
       :productId
-      :variantId="variantId ?? 1"
+      :variantId
       :loading="getLoadingState(productId)"
       :isAddedInCart="isProductInCart(productId)"
       :isAddedInFavorites="true"

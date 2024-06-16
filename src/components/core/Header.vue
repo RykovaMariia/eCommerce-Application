@@ -15,6 +15,8 @@ const { isLoggedIn } = storeToRefs(userAuth())
 
 const { cart } = storeToRefs(useCartStore())
 
+const categoriesStore = useCategoriesStore()
+
 const countProduct = computed(() => {
   return cart.value?.totalLineItemQuantity ?? 0
 })
@@ -42,9 +44,9 @@ function openBurger() {
   store.toggleOpenState()
 }
 
-categoryService.getCategories().then((value) => useCategoriesStore().setCategories(value))
+categoryService.getCategories().then((value) => categoriesStore.setCategories(value))
 
-const { categoriesLinks } = storeToRefs(useCategoriesStore())
+const { categoriesLinks } = storeToRefs(categoriesStore)
 </script>
 
 <template>
