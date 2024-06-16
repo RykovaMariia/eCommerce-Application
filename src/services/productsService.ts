@@ -70,14 +70,10 @@ export class ProductsService {
     }
 
     if (colorFilter?.length) {
-      filter.push(
-        makeFilterString(Facet.color, colorFilter),
-      )
+      filter.push(makeFilterString(Facet.color, colorFilter))
     }
     if (quantityFilter?.length) {
-      filter.push(
-         makeFilterString(Facet.quantity, quantityFilter),
-      )
+      filter.push(makeFilterString(Facet.quantity, quantityFilter))
     }
 
     if (filter.length) {
