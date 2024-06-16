@@ -56,7 +56,7 @@ const heartIcon = computed(() => {
 
 const addToFavorites = computed(() => {
   return !props.isAddedInFavorites
-    ? emit('addProductToFavorites', props.productId, props.variantId)
+    ? emit('addProductToFavorites', { productId: props.productId, variantId: props.variantId })
     : emit(
         'deleteProductFromFavorites',
         favoritesService.getLineIdByProduct(
