@@ -39,7 +39,7 @@ async function fetchProducts() {
     const currentProduct = result.masterData.current
     const currentVariant =
       lineItem.variantId !== 1
-        ? currentProduct.variants.find((variant) => variant.id === lineItem.variantId)
+        ? currentProduct.variants.find(({ id }) => id === lineItem.variantId)
         : currentProduct.masterVariant
     return {
       name: currentProduct.name['en-GB'] ?? '',

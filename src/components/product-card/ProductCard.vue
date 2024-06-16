@@ -54,9 +54,9 @@ const heartIcon = computed(() => {
   return props.isAddedInFavorites ? 'mdi-heart' : 'mdi-heart-outline'
 })
 
-const addToFavorites = computed(() => {
-  return !props.isAddedInFavorites
-    ? emit('addProductToFavorites', props.productId, props.variantId)
+const addToFavorites = () => {
+  !props.isAddedInFavorites
+    ? emit('addProductToFavorites', { productId: props.productId, variantId: props.variantId })
     : emit(
         'deleteProductFromFavorites',
         favoritesService.getLineIdByProduct(
@@ -65,10 +65,13 @@ const addToFavorites = computed(() => {
           props.variantId,
         ),
       )
-})
+}
 
-const addToCart = () =>
-  !props.isAddedInCart ? emit('addProductToCart', props.productId) : undefined
+const addToCart = () => {
+  if (!props.isAddedInCart) {
+    emit('addProductToCart', props.productId)
+  }
+}
 </script>
 <template>
   <v-col>

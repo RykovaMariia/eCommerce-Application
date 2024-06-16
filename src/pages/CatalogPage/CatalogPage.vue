@@ -154,9 +154,15 @@ async function addProductToCartById(productId: string) {
     })
 }
 
-async function addProductToFavoritesById(productId: string, variantId: number) {
+async function addProductToFavorites({
+  productId,
+  variantId,
+}: {
+  productId: string
+  variantId: number
+}) {
   await favoritesService
-    .addProductToFavoritesList(productId, variantId, favorites.value)
+    .addProductToFavoritesList({ productId, variantId, favorites: favorites.value })
     .catch((error: Error) => {
       alert.show(`Error: ${error.message}`, 'warning')
     })
@@ -278,7 +284,7 @@ const isOpenSearch = ref(false)
       :isAddedInFavorites="isProductInFavorites(id)"
       :loading="getLoadingState(id)"
       @addProductToCart="addProductToCartById($event)"
-      @addProductToFavorites="addProductToFavoritesById($event, $event)"
+      @addProductToFavorites="addProductToFavorites($event)"
       @deleteProductFromFavorites="deleteProductFromFavoritesById($event)"
     />
   </div>

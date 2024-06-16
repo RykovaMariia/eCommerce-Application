@@ -80,7 +80,11 @@ function clickHeart() {
   if (!isAddedInFavorites.value) {
     isAddedInFavorites.value = true
     favoritesService
-      .addProductToFavoritesList(props.productId, props.variantId, favorites.value)
+      .addProductToFavoritesList({
+        productId: props.productId,
+        variantId: props.variantId,
+        favorites: favorites.value,
+      })
       .catch((error: Error) => {
         alert.show(`Error: ${error.message}`, 'warning')
       })
