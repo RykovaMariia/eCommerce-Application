@@ -116,13 +116,12 @@ export class ClientService {
       return this.getDefaultClient()
         .withRefreshTokenFlow(this.getRefreshAuthMiddlewareOptions(refreshToken))
         .build()
-    } else {
-      const anonymousId = generateRandomString()
-      localStorageService.saveData('anonymousId', anonymousId)
-      return this.getDefaultClient()
-        .withAnonymousSessionFlow(this.getAnonymousAuthMiddlewareOptions(anonymousId))
-        .build()
     }
+    const anonymousId = generateRandomString()
+    localStorageService.saveData('anonymousId', anonymousId)
+    return this.getDefaultClient()
+      .withAnonymousSessionFlow(this.getAnonymousAuthMiddlewareOptions(anonymousId))
+      .build()
   }
 
   public getRoot(client = this.getClient()) {

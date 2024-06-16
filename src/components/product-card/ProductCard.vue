@@ -18,6 +18,7 @@ const props = defineProps<{
   discountedPrice: number
   productSlug: string
   productId: string
+  variantId?: number
   isAddedInCart?: boolean
   isAddedInFavorites?: boolean
 }>()
@@ -61,7 +62,7 @@ const addToFavorites = computed(() => {
         favoritesService.getLineIdByProduct(
           useFavoritesStore().favorites?.lineItems as ShoppingListLineItem[],
           props.productId,
-          1,
+          props.variantId ?? 1,
         ),
       )
 })

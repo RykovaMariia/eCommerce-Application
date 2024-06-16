@@ -89,7 +89,6 @@ const definePrice = ({ price, discountPrice }: ProductItem) => {
 }
 const price = computed(() => {
   const variant = cartService.getVariantByAttribute(product.variants, selectedVariants.value)
-  console.warn(variant)
   return definePrice(variant ?? product.variants[0])
 })
 
@@ -178,8 +177,7 @@ async function addProductToFavorites() {
   if (!productId) {
     return
   }
-  console.warn(variantId)
-    await favoritesService
+  await favoritesService
     .addProductToFavoritesList(productId, favorites.value, variantId)
     .catch((error: Error) => {
       alert.show(`Error: ${error.message}`, 'warning')
@@ -194,26 +192,32 @@ function deleteProductFromFavoritesById() {
   if (!variantId) {
     return
   }
-  const lineItemId = favoritesService.getLineIdByProduct(favorites.value?.lineItems, productId, variantId)
+  const lineItemId = favoritesService.getLineIdByProduct(
+    favorites.value?.lineItems,
+    productId,
+    variantId,
+  )
   if (!lineItemId) {
     return
   }
-    favoritesApiService
-      .removeLineItemFromFavorites({
-        id: favorites.value.id,
-        version: favorites.value.version,
-        lineItemId,
-      })
-      .then(({ body }) => {
-        useFavoritesStore().setFavorites(body)
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
+  favoritesApiService
+    .removeLineItemFromFavorites({
+      id: favorites.value.id,
+      version: favorites.value.version,
+      lineItemId,
+    })
+    .then(({ body }) => {
+      useFavoritesStore().setFavorites(body)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 
 const handleFavoriteChange = computed(() => {
-  return !isInFavorites.value ? () => addProductToFavorites() : () => deleteProductFromFavoritesById()
+  return !isInFavorites.value
+    ? () => addProductToFavorites()
+    : () => deleteProductFromFavoritesById()
 })
 
 const setIconFavorites = computed(() => {

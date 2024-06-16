@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { addressService } from '@/services/addressService'
-import type { Address, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
+import type { Address, ClientResponse, Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
 import { useAlertStore } from '@/stores/alert'
 import { userAuth } from '@/stores/userAuth'
 
@@ -16,6 +16,13 @@ const actions: MyCustomerUpdateAction[] = []
 
 const emit = defineEmits(['editAddress', 'updateUserInfo'])
 
+function updateUserInfo({body}: ClientResponse<Customer>) {
+  if (body) {
+    userAuth().customerVersion = body.version
+    emit('updateUserInfo', body)
+  }
+}
+
 function removeAddress(address: Address) {
   if (!address) {
     return
@@ -25,10 +32,8 @@ function removeAddress(address: Address) {
     .remove(address)
     .then((result) => {
       alert.show('Address removed', 'success')
-      if (result?.body) {
-        userAuth().customerVersion = result.body.version
-        emit('updateUserInfo', result.body)
-      }
+      console.warn(result)
+      updateUserInfo(result)
     })
     .catch((error: Error) => {
       alert.show(`Error: ${error.message}`, 'warning')
@@ -47,10 +52,8 @@ function setAsDefault(address: Address) {
     .setDefault(actions)
     .then((result) => {
       alert.show('Address set as Default', 'success')
-      if (result?.body) {
-        userAuth().customerVersion = result.body.version
-        emit('updateUserInfo', result.body)
-      }
+      console.warn(result)
+      updateUserInfo(result)
     })
     .catch((error: Error) => {
       alert.show(`Error: ${error.message}`, 'warning')
