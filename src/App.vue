@@ -16,14 +16,16 @@ const { isOpenAlert } = storeToRefs(useAlertStore())
 const alert = useAlertStore()
 
 const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
+const TOKEN_ERROR_MESSAGE = 'The refresh token was not found'
 
 if (refreshToken) {
   customerService.user().catch((error: Error) => {
-    if (error.message.includes('The refresh token was not found')) {
-      alert.show(`Error: The token has expired. Please re-authorize`, 'warning')
-      userAuth().logout()
-      router.replace({ name: 'login' })
+    if (!error.message.includes(TOKEN_ERROR_MESSAGE)) {
+      return
     }
+    alert.show(`Error: The token has expired. Please re-authorize`, 'warning')
+    userAuth().logout()
+    router.replace({ name: 'login' })
   })
 }
 

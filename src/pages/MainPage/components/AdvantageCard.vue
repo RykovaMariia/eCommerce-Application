@@ -14,6 +14,7 @@ const props = defineProps<{
 
 <style lang="scss" scoped>
 @use '@/styles/constants.scss';
+@use '@styles/mixins.scss';
 
 .advantages {
   &__container {
@@ -32,6 +33,66 @@ const props = defineProps<{
   &__image {
     width: 3rem;
     height: 3rem;
+  }
+}
+
+@media screen and (1024px <= width <= 1300px) {
+  .advantages {
+    &__container {
+      width: 13rem;
+      padding: 1rem;
+      font-size: 0.8rem;
+    }
+
+    &__image {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+}
+
+@include mixins.media-tablet {
+  .advantages {
+    &__container {
+      width: 12rem;
+      padding: 0.7rem;
+      font-size: 0.8rem;
+    }
+
+    &__image {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
+}
+
+@include mixins.media-middle {
+  .advantages {
+    &__container {
+      width: 9.5rem;
+      padding: 0.8rem;
+      font-size: 0.8rem;
+    }
+
+    &__image {
+      width: 2.4rem;
+      height: 2.4rem;
+    }
+  }
+}
+
+@include mixins.media-mobile {
+  .advantages {
+    &__container {
+      width: 8.5rem;
+      padding: 0.6rem;
+      font-size: 0.6rem;
+    }
+
+    &__image {
+      width: 2rem;
+      height: 2rem;
+    }
   }
 }
 </style>

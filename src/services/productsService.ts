@@ -24,6 +24,10 @@ interface RequestParam {
   search?: string
 }
 
+function makeFilterString(facet: string, filter: string | string[]) {
+  return `${facet}: ${filter instanceof Array ? filter.map((el) => `"${el}"`).join(',') : `"${filter}"`}`
+}
+
 export class ProductsService {
   constructor(private clientService: ClientService) {}
 
@@ -67,15 +71,12 @@ export class ProductsService {
     if (categoryId) {
       filter.push(`${categoryId ? `categories.id:subtree("${categoryId}")` : ''}`)
     }
+
     if (colorFilter?.length) {
-      filter.push(
-        `${Facet.color}: ${colorFilter instanceof Array ? colorFilter.map((el) => `"${el}"`).join(',') : `"${colorFilter}"`}`,
-      )
+      filter.push(makeFilterString(Facet.color, colorFilter))
     }
     if (quantityFilter?.length) {
-      filter.push(
-        `${Facet.quantity}: ${quantityFilter instanceof Array ? quantityFilter.map((el) => `"${el}"`).join(',') : `"${quantityFilter}"`}`,
-      )
+      filter.push(makeFilterString(Facet.quantity, quantityFilter))
     }
 
     if (filter.length) {

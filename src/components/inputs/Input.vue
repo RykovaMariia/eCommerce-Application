@@ -3,28 +3,33 @@ import { computed, ref } from 'vue'
 import { chooseRules } from '@/utils/chooseRules'
 import { InputLabel } from '@/enums/inputLabel'
 
-const props = defineProps<{
-  label: string
-  type?: string
-  placeholder?: string
-  icon?: string
-  disabled?: boolean
-  variant?:
-    | 'outlined'
-    | 'underlined'
-    | 'filled'
-    | 'plain'
-    | 'solo'
-    | 'solo-inverted'
-    | 'solo-filled'
-  isValidation?: boolean
-  isHideDetails?: boolean | 'auto'
-  isClearable?: boolean
-}>()
+const props = withDefaults(
+  defineProps<{
+    label: string
+    type?: string
+    placeholder?: string
+    icon?: string
+    disabled?: boolean
+    variant?:
+      | 'outlined'
+      | 'underlined'
+      | 'filled'
+      | 'plain'
+      | 'solo'
+      | 'solo-inverted'
+      | 'solo-filled'
+    isValidation?: boolean
+    isHideDetails?: boolean | 'auto'
+    isClearable?: boolean
+  }>(),
+  {
+    type: 'text',
+  },
+)
 
 const data = defineModel()
 
-const rules = computed(() => chooseRules(props.type || 'text', props.label))
+const rules = computed(() => chooseRules(props.type, props.label))
 const marker = ref(true)
 function togglePassword() {
   marker.value = !marker.value
