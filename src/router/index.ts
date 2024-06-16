@@ -74,7 +74,7 @@ const router = createRouter({
     {
       path: '/favorites',
       name: 'favorites',
-      component: () => import('@pages/FavoritesPage.vue'),
+      component: () => import('@pages/FavoritesPage/FavoritesPage.vue'),
       meta: { breadcrumb: 'Favorites' },
     },
     {

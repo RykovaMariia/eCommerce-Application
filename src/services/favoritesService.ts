@@ -34,7 +34,11 @@ class FavoritesService {
     return body
   }
 
-  public async addProductToFavoritesList(productId: string, favorites?: ShoppingList) {
+  public async addProductToFavoritesList(
+    productId: string,
+    variantId: number,
+    favorites?: ShoppingList,
+  ) {
     const favoritesId = localStorageService.getData('favoritesListId')
     if (!favoritesId) {
       favorites = await this.createFavoritesListAndSaveState()
@@ -45,7 +49,7 @@ class FavoritesService {
           id: favorites.id,
           version: favorites.version,
           productId,
-          variantId: 1,
+          variantId,
         })
         .then(({ body }) => useFavoritesStore().setFavorites(body))
     }

@@ -44,4 +44,3 @@ class CategoriesService {
 }
 
 export const categoryService = new CategoriesService(clientService)
-export type CategoriesServiceType = typeof CategoriesService

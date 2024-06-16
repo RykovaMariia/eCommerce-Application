@@ -20,6 +20,7 @@ interface FavoritesProducts {
   src: string
   productSlug: string
   productId: string
+  variantId: number
 }
 
 const { cart } = storeToRefs(useCartStore())
@@ -37,19 +38,20 @@ async function fetchProducts() {
     const result = await productsService.getProduct(lineItem.productId)
     const currentProduct = result.masterData.current
     const currentVariant =
-      lineItem.variantId && lineItem.variantId !== 1
-        ? currentProduct.variants[lineItem.variantId]
+      lineItem.variantId !== 1
+        ? currentProduct.variants.find((variant) => variant.id === lineItem.variantId)
         : currentProduct.masterVariant
     return {
       name: currentProduct.name['en-GB'] ?? '',
       description: currentProduct.description?.['en-GB'] ?? '',
-      price: getPriceAccordingToFractionDigits(currentVariant.prices?.[0].value),
+      price: getPriceAccordingToFractionDigits(currentVariant?.prices?.[0].value),
       discountedPrice: getPriceAccordingToFractionDigits(
-        currentVariant.prices?.[0].discounted?.value,
+        currentVariant?.prices?.[0].discounted?.value,
       ),
-      src: currentVariant.images?.[0].url ?? '',
+      src: currentVariant?.images?.[0].url ?? '',
       productSlug: currentProduct.slug['en-GB'],
       productId: result.id,
+      variantId: currentVariant?.id ?? 1,
     }
   })
 
@@ -115,6 +117,7 @@ async function deleteProductFromFavoritesById(lineItemId: string) {
         src,
         productSlug,
         productId,
+        variantId,
       } in favoritesProducts"
       :key="productId"
       :src
@@ -124,6 +127,7 @@ async function deleteProductFromFavoritesById(lineItemId: string) {
       :discountedPrice
       :productSlug
       :productId
+      :variantId
       :loading="getLoadingState(productId)"
       :isAddedInCart="isProductInCart(productId)"
       :isAddedInFavorites="true"
