@@ -84,8 +84,8 @@ const categories = computed(() => categoriesLinks.value.slice(1))
             <IconLogo :isLight="true" />
           </div>
           <div class="promocodes__names">
-            <div>UTIANELOX - 10%</div>
-            <div>THE-BEST-MENTOR-YAUHENI - 80.1%</div>
+            <div>UTIANELOX - 10% for all</div>
+            <div>THE-BEST-MENTOR-YAUHENI - 80.1% for Bedding</div>
           </div>
         </div>
       </div>

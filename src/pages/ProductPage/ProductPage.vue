@@ -171,10 +171,7 @@ const isInFavorites = computed(() => {
 
 async function addProductToFavorites() {
   const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
-  if (!variantId) {
-    return
-  }
-  if (!productId) {
+  if (!variantId || !productId) {
     return
   }
   await favoritesService
@@ -185,11 +182,8 @@ async function addProductToFavorites() {
 }
 
 function deleteProductFromFavoritesById() {
-  if (!favorites.value?.lineItems || !productId) {
-    return
-  }
   const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
-  if (!variantId) {
+  if (!favorites.value?.lineItems || !productId || !variantId) {
     return
   }
   const lineItemId = favoritesService.getLineIdByProduct(
@@ -261,8 +255,7 @@ const setIconFavorites = computed(() => {
     </v-col>
     <v-col>
       <div class="d-flex align-center justify-space-between">
-        <h1>{{ product.name }}</h1>
-        <v-btn icon @click="handleFavoriteChange"><v-icon :icon="setIconFavorites"></v-icon></v-btn>
+        <h1 class="title">{{ product.name }}</h1>
       </div>
       <div class="description">{{ product.description }}</div>
 
@@ -292,7 +285,10 @@ const setIconFavorites = computed(() => {
       </div>
 
       <div class="price-wrapper">
+        <div class="d-flex ga-4 align-center">
         <Button :textContent :color @click="setAction" />
+        <v-btn icon @click="handleFavoriteChange"><v-icon :icon="setIconFavorites"></v-icon></v-btn>
+        </div>
         <div v-if="isProductDataLoaded" class="price-wrapper">
           <Price
             :isWithDiscount="!!price.discountPrice"
@@ -322,6 +318,11 @@ const setIconFavorites = computed(() => {
 .product-container {
   display: flex;
   justify-content: center;
+}
+
+.title {
+  line-height: 100%;
+  margin-bottom: 1.5rem;
 }
 
 @include mixins.media-middle {

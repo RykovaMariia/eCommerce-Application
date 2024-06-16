@@ -2,7 +2,6 @@ import { ClientService, clientService } from '@/services/clientService'
 import { Facet } from '@/enums/facet'
 import type { QueryParam } from '@commercetools/sdk-client-v2'
 import { SortingCommand, type SortBy } from '@/enums/sortingCommand'
-import { makeFilterString } from '@/utils/makeFilterString'
 
 interface QueryArgs {
   fuzzy?: boolean
@@ -23,6 +22,10 @@ interface RequestParam {
   colorFilter?: string[] | string
   quantityFilter?: string[] | string
   search?: string
+}
+
+function makeFilterString(facet: string, filter: string | string[]) {
+  return `${facet}: ${filter instanceof Array ? filter.map((el) => `"${el}"`).join(',') : `"${filter}"`}`
 }
 
 export class ProductsService {

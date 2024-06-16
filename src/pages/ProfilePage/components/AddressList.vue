@@ -37,7 +37,6 @@ function removeAddress(address: Address) {
     .remove(address)
     .then((result) => {
       alert.show('Address removed', 'success')
-      console.warn(result)
       updateUserInfo(result)
     })
     .catch((error: Error) => {
@@ -57,7 +56,6 @@ function setAsDefault(address: Address) {
     .setDefault(actions)
     .then((result) => {
       alert.show('Address set as Default', 'success')
-      console.warn(result)
       updateUserInfo(result)
     })
     .catch((error: Error) => {
