@@ -13,12 +13,15 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="d-flex flex-wrap card-wrapper" :class="{ 'card': props.stylePreference }">
+  <div class="d-flex flex-wrap card-wrapper" :class="{ card: props.stylePreference }">
     <v-col class="d-flex image-container" :class="{ 'justify-md-end': props.stylePreference }"
       ><v-img :src="props.imageSrc" class="image" cover></v-img
     ></v-col>
     <v-col class="wrapper">
-      <div class="d-flex justify-space-between" :class="{ 'justify-md-end ga-4': props.stylePreference }">
+      <div
+        class="d-flex justify-space-between"
+        :class="{ 'justify-md-end ga-4': props.stylePreference }"
+      >
         <h2 class="name">{{ props.name }}</h2>
         <a :href="props.githubLink" class="github-link d-flex align-center"><IconGithub /></a>
       </div>

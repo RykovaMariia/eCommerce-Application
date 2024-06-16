@@ -3,26 +3,29 @@ import { computed, ref } from 'vue'
 import { chooseRules } from '@/utils/chooseRules'
 import { InputLabel } from '@/enums/inputLabel'
 
-const props = withDefaults(defineProps<{
-  label: string
-  type?: string
-  placeholder?: string
-  icon?: string
-  disabled?: boolean
-  variant?:
-    | 'outlined'
-    | 'underlined'
-    | 'filled'
-    | 'plain'
-    | 'solo'
-    | 'solo-inverted'
-    | 'solo-filled'
-  isValidation?: boolean
-  isHideDetails?: boolean | 'auto'
-  isClearable?: boolean
-}>(), {
-  type: 'text'
-})
+const props = withDefaults(
+  defineProps<{
+    label: string
+    type?: string
+    placeholder?: string
+    icon?: string
+    disabled?: boolean
+    variant?:
+      | 'outlined'
+      | 'underlined'
+      | 'filled'
+      | 'plain'
+      | 'solo'
+      | 'solo-inverted'
+      | 'solo-filled'
+    isValidation?: boolean
+    isHideDetails?: boolean | 'auto'
+    isClearable?: boolean
+  }>(),
+  {
+    type: 'text',
+  },
+)
 
 const data = defineModel()
 

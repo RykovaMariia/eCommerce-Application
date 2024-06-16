@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { addressService } from '@/services/addressService'
-import type { Address, ClientResponse, Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
+import type {
+  Address,
+  ClientResponse,
+  Customer,
+  MyCustomerUpdateAction,
+} from '@commercetools/platform-sdk'
 import { useAlertStore } from '@/stores/alert'
 import { userAuth } from '@/stores/userAuth'
 
@@ -16,7 +21,7 @@ const actions: MyCustomerUpdateAction[] = []
 
 const emit = defineEmits(['editAddress', 'updateUserInfo'])
 
-function updateUserInfo({body}: ClientResponse<Customer>) {
+function updateUserInfo({ body }: ClientResponse<Customer>) {
   if (body) {
     userAuth().customerVersion = body.version
     emit('updateUserInfo', body)
