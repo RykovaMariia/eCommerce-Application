@@ -286,8 +286,10 @@ const setIconFavorites = computed(() => {
 
       <div class="price-wrapper">
         <div class="d-flex ga-4 align-center">
-        <Button :textContent :color @click="setAction" />
-        <v-btn icon @click="handleFavoriteChange"><v-icon :icon="setIconFavorites"></v-icon></v-btn>
+          <Button :textContent :color @click="setAction" />
+          <v-btn icon @click="handleFavoriteChange"
+            ><v-icon :icon="setIconFavorites"></v-icon
+          ></v-btn>
         </div>
         <div v-if="isProductDataLoaded" class="price-wrapper">
           <Price
@@ -321,8 +323,8 @@ const setIconFavorites = computed(() => {
 }
 
 .title {
-  line-height: 100%;
   margin-bottom: 1.5rem;
+  line-height: 100%;
 }
 
 @include mixins.media-middle {
