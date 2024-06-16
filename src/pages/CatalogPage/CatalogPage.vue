@@ -47,7 +47,23 @@ watchEffect(() => {
   }
 })
 
-let limitProductsOnPage = 20
+const getLimitProductsOnPage = () => {
+  const maxDesktopWidth = 1764
+  const minDesktopWidth = 1445
+  const maxTableWidth = 805
+  const windowWidth = window.innerWidth
+
+  if (windowWidth <= maxDesktopWidth && windowWidth >= minDesktopWidth) {
+    return 16
+  } else if (windowWidth < minDesktopWidth && windowWidth > maxTableWidth) {
+    return 12
+  } else if (windowWidth <= maxTableWidth) {
+    return 8
+  }
+  return 15
+}
+
+let limitProductsOnPage = getLimitProductsOnPage()
 const currentPage = ref(1)
 const totalPages = computed(() => Math.ceil(totalProductsCount.value / limitProductsOnPage))
 
@@ -68,15 +84,8 @@ const selectedFilters = reactive({
 })
 
 const fetchProducts = () => {
-  const windowWidth = window.innerWidth
-  if (windowWidth <= 1764 && windowWidth >= 1445) {
-    console.warn('object')
-    limitProductsOnPage = 16
-  } else if (windowWidth < 1445 && windowWidth > 700) {
-    limitProductsOnPage = 12
-  } else if (windowWidth <= 700) {
-    limitProductsOnPage = 8
-  }
+  limitProductsOnPage = getLimitProductsOnPage()
+
   const offset = (currentPage.value - 1) * limitProductsOnPage
 
   productsService
@@ -145,9 +154,9 @@ async function addProductToCartById(productId: string) {
     })
 }
 
-async function addProductToFavoritesById(productId: string) {
+async function addProductToFavoritesById(productId: string, variantId: number) {
   await favoritesService
-    .addProductToFavoritesList(productId, favorites.value)
+    .addProductToFavoritesList(productId, variantId, favorites.value)
     .catch((error: Error) => {
       alert.show(`Error: ${error.message}`, 'warning')
     })
@@ -265,11 +274,12 @@ const isOpenSearch = ref(false)
       "
       :productSlug="slug['en-GB']"
       :productId="id"
+      :variantId="1"
       :isAddedInCart="isProductInCart(id)"
       :isAddedInFavorites="isProductInFavorites(id)"
       :loading="getLoadingState(id)"
       @addProductToCart="addProductToCartById($event)"
-      @addProductToFavorites="addProductToFavoritesById($event)"
+      @addProductToFavorites="addProductToFavoritesById($event, $event)"
       @deleteProductFromFavorites="deleteProductFromFavoritesById($event)"
     />
   </div>
