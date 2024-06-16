@@ -28,7 +28,7 @@ const props = defineProps<{
       <div class="info-container">
         <v-divider></v-divider>
       </div>
-      <div class="flex-column">
+      <div class="flex-column" :class="{ 'text-left': props.stylePreference }">
         <div class="role">{{ props.role }}</div>
         <div><span class="title_bold">Bio:</span> {{ props.bio }}</div>
         <div><span class="title_bold">Contributions:</span> {{ props.contributions }}</div>

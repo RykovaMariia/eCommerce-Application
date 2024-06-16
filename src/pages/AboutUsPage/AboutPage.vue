@@ -13,7 +13,7 @@ const stylePreference = (index: number) => index % 2 !== 0
       Hello! You are on the website of our e-commerce application. We were able to manage this
       interesting and exciting challenge thanks to the coordination of team members and a clear
       division of responsibilities. Daily meetings and code reviews help us detect bugs early on and
-      optimize a code. It has been a wonderful journey full of new knowledge. We would like to
+      optimize the code. It has been a wonderful journey full of new knowledge. We would like to
       express our gratitude to
       <a href="https://github.com/teleuzi"
         >Yauheni (aka Teleuzi aka 801 aka TheBestMentorEver aka Expert)</a

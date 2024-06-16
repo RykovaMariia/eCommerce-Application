@@ -67,9 +67,8 @@ const addToFavorites = computed(() => {
       )
 })
 
-const addToCart = computed(() => {
-  return !props.isAddedInCart ? emit('addProductToCart', props.productId) : undefined
-})
+const addToCart = () =>
+  !props.isAddedInCart ? emit('addProductToCart', props.productId) : undefined
 </script>
 <template>
   <v-col>
@@ -109,7 +108,7 @@ const addToCart = computed(() => {
         </v-btn>
       </v-card-actions>
     </v-card>
-    <Button :disabled="loading" :color :textContent :to @click="() => addToCart" />
+    <Button :disabled="loading" :color :textContent :to @click="addToCart" />
   </v-col>
 </template>
 
