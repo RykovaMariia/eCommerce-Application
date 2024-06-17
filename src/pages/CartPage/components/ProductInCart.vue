@@ -45,7 +45,7 @@ function isProductInFavorites() {
     return false
   }
   return favoritesService.isProductInFavorites({
-    lineItems: favorites.value?.lineItems,
+    lineItems: favorites.value.lineItems,
     productId: props.productId,
     variantId: props.variantId,
   })
