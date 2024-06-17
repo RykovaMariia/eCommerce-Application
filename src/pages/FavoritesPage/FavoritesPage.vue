@@ -157,7 +157,6 @@ async function deleteProductFromFavorites(lineItemId: string) {
   flex-wrap: wrap;
   gap: 2.5rem;
   justify-content: center;
-  margin-top: 3rem;
 }
 
 .fade-leave-active {

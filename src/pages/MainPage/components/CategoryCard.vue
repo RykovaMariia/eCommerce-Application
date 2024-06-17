@@ -6,79 +6,44 @@ const props = defineProps<{
 </script>
 
 <template>
-  <v-img class="category__card" :src="props.imageSource" cover aspect-ratio="1.2">
-    <div class="category__title">{{ props.categoryTitle }}</div>
+  <v-card elevation="0">
+  <v-img class="category-card" :src="props.imageSource" cover aspect-ratio="1.2">
+    <div class="category-title">{{ props.categoryTitle }}</div>
   </v-img>
+  </v-card>
 </template>
 
 <style lang="scss" scoped>
 @use '@/styles/constants.scss';
 @use '@styles/mixins.scss';
 
-.category {
-  &__card {
-    display: flex;
-    align-items: end;
+.category-card {
+  display: flex;
+  align-items: end;
 
-    width: 20rem;
+  min-width: 13rem;
+  height: 100%;
 
-    border: 1px solid constants.$color-primary;
-    border-radius: 10px;
-  }
-
-  &__title {
-    max-width: 50%;
-    padding: 0.3rem;
-
-    font-size: 1rem;
-    color: constants.$color-text-light;
-    text-align: center;
-    text-transform: capitalize;
-
-    background-color: constants.$color-primary;
-    border-top-right-radius: 10px;
-  }
+  border: 1px solid constants.$color-primary;
+  border-radius: 10px;
 }
 
-@include mixins.media-desktop {
-  .category {
-    &__card {
-      max-width: 26svw;
-    }
+.category-title {
+  @include mixins.media-middle {
+    padding: 0.2rem;
+    font-size: 0.7rem;
   }
-}
+  
+  max-width: 50%;
+  height: 10%;
+  padding: 0.3rem;
 
-@include mixins.media-tablet {
-  .category {
-    &__card {
-      max-width: 15rem;
-    }
-  }
-}
+  font-size: 1rem;
+  color: constants.$color-text-light;
+  text-align: center;
+  text-transform: capitalize;
 
-@include mixins.media-middle {
-  .category {
-    &__card {
-      width: 13rem;
-    }
-
-    &__title {
-      padding: 0.2rem;
-      font-size: 0.7rem;
-    }
-  }
-}
-
-@include mixins.media-mobile {
-  .category {
-    &__card {
-      width: 8.5rem;
-    }
-
-    &__title {
-      max-width: 100%;
-      border-radius: 0;
-    }
-  }
+  background-color: constants.$color-primary;
+  border-top-right-radius: 10px;
 }
 </style>
