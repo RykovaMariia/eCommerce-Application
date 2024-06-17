@@ -74,7 +74,7 @@ function applyPromoCode() {
 </script>
 
 <template>
-  <div v-if="cart?.totalLineItemQuantity">
+  <div v-if="cart?.totalLineItemQuantity" class="products">
     <ProductInCart
       v-for="{
         name,
@@ -136,6 +136,10 @@ function applyPromoCode() {
 <style scoped lang="scss">
 @use '@/styles/mixins.scss';
 
+.products {
+  margin-top: 1rem;
+}
+
 .cart-total {
   @include mixins.media-tablet {
     padding: 1rem 0;
@@ -193,6 +197,7 @@ function applyPromoCode() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  height: 100%;
 }
 
 .icon-heart {

@@ -40,9 +40,7 @@ favoritesService.setAnonymousSession()
     <Header />
     <v-main>
       <Breadcrumbs />
-      <div class="content-wrapper">
-        <RouterView />
-      </div>
+      <RouterView />
       <ScrollToTopButton />
     </v-main>
     <Footer />
@@ -70,13 +68,6 @@ header .wrapper {
     flex-wrap: wrap;
     place-items: flex-start;
   }
-}
-
-.content-wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
 }
 
 .logo {
