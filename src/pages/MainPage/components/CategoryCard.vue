@@ -7,9 +7,9 @@ const props = defineProps<{
 
 <template>
   <v-card elevation="0">
-  <v-img class="category-card" :src="props.imageSource" cover aspect-ratio="1.2">
-    <div class="category-title">{{ props.categoryTitle }}</div>
-  </v-img>
+    <v-img class="category-card" :src="props.imageSource" cover aspect-ratio="1.2">
+      <div class="category-title">{{ props.categoryTitle }}</div>
+    </v-img>
   </v-card>
 </template>
 
@@ -33,7 +33,7 @@ const props = defineProps<{
     padding: 0.2rem;
     font-size: 0.7rem;
   }
-  
+
   max-width: 50%;
   height: 10%;
   padding: 0.3rem;

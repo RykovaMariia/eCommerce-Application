@@ -39,7 +39,7 @@ favoritesService.setAnonymousSession()
     <v-main>
       <Breadcrumbs />
       <div class="content-wrapper">
-      <RouterView/>
+        <RouterView />
       </div>
     </v-main>
     <Footer />
@@ -71,9 +71,9 @@ header .wrapper {
 
 .content-wrapper {
   display: flex;
-  height: 100%;
   flex-direction: column;
   justify-content: center;
+  height: 100%;
 }
 
 .logo {
