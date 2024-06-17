@@ -51,6 +51,7 @@ main.v-main {
   @include mixins.media-mobile {
     padding: calc(100px + 2rem) 2rem 2rem;
   }
+
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;

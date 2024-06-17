@@ -114,7 +114,7 @@ async function deleteProductFromFavorites(lineItemId: string) {
 </script>
 
 <template>
-  <TransitionGroup v-if="favoritesProducts.length" tag="div" class="d-flex" name="fade">
+  <TransitionGroup v-if="favoritesProducts.length" tag="div" class="d-flex products" name="fade">
     <ProductCard
       v-for="{
         name,
@@ -159,6 +159,10 @@ async function deleteProductFromFavorites(lineItemId: string) {
   justify-content: center;
 }
 
+.products {
+  margin-top: 3rem;
+}
+
 .fade-leave-active {
   transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
 }
@@ -182,6 +186,8 @@ async function deleteProductFromFavorites(lineItemId: string) {
   gap: 0.5rem;
   align-items: center;
   justify-content: center;
+
+  height: 100%;
 }
 
 .icon-heart {

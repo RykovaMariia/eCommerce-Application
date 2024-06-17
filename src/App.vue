@@ -11,6 +11,8 @@ import router from './router'
 import { cartService } from './services/cartService'
 import { localStorageService } from './services/storageService'
 import { favoritesService } from './services/favoritesService'
+import ScrollToTopButton from './components/scroll-to-top-button/ScrollToTopButton.vue'
+
 const { isOpenAlert } = storeToRefs(useAlertStore())
 
 const alert = useAlertStore()
@@ -38,9 +40,8 @@ favoritesService.setAnonymousSession()
     <Header />
     <v-main>
       <Breadcrumbs />
-      <div class="content-wrapper">
-        <RouterView />
-      </div>
+      <RouterView />
+      <ScrollToTopButton />
     </v-main>
     <Footer />
     <AlertWindow v-if="isOpenAlert" />
@@ -67,13 +68,6 @@ header .wrapper {
     flex-wrap: wrap;
     place-items: flex-start;
   }
-}
-
-.content-wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
 }
 
 .logo {

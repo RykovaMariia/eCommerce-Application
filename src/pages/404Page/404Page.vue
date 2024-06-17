@@ -23,6 +23,7 @@ import IconZero from '@components/icons/IconZero.vue'
   align-items: center;
   justify-content: center;
 
+  height: 100%;
   padding: 4rem 0;
 
   text-align: center;

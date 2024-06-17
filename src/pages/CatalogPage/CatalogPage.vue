@@ -32,19 +32,16 @@ const { categories } = storeToRefs(useCategoriesStore())
 const categoryId = ref()
 
 const getLimitProductsOnPage = () => {
-  const maxDesktopWidth = 1764
-  const minDesktopWidth = 1445
-  const maxTableWidth = 805
+  const minDesktopWidth = 1440
+  const maxTableWidth = 1099
   const windowWidth = window.innerWidth
 
-  if (windowWidth <= maxDesktopWidth && windowWidth >= minDesktopWidth) {
-    return 16
-  } else if (windowWidth < minDesktopWidth && windowWidth > maxTableWidth) {
+  if (windowWidth < minDesktopWidth && windowWidth > maxTableWidth) {
     return 12
   } else if (windowWidth <= maxTableWidth) {
     return 8
   }
-  return 15
+  return 16
 }
 
 let limitProductsOnPage = getLimitProductsOnPage()
@@ -309,13 +306,15 @@ function getLoadingState(productId: string) {
 </template>
 
 <style lang="scss" scoped>
+@use '@styles/mixins.scss';
+
 .products {
   flex-wrap: wrap;
-  gap: 1.6rem;
+  gap: 2.8rem;
   justify-content: center;
 
   width: 100%;
-  padding: 2rem;
+  padding: 2rem 0;
 }
 
 .filters-all {
@@ -338,6 +337,7 @@ function getLoadingState(productId: string) {
   gap: 1rem;
   align-items: center;
   justify-content: end;
+  margin-top: 1rem;
 }
 
 .search-input {
@@ -372,5 +372,9 @@ function getLoadingState(productId: string) {
 .sort {
   width: 10rem;
   max-width: 10rem;
+}
+
+.v-pagination {
+  padding: 1rem 0 2rem;
 }
 </style>

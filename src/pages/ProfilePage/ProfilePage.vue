@@ -111,6 +111,10 @@ customerService
 @use '@/styles/constants.scss';
 @use '@/styles/mixins.scss';
 
+.container {
+  margin-top: 3rem;
+}
+
 .main-content {
   @include mixins.media-mobile {
     flex-direction: column;
