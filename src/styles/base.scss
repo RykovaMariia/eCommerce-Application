@@ -51,6 +51,7 @@ main.v-main {
   @include mixins.media-mobile {
     padding: calc(100px + 2rem) 2rem 2rem;
   }
+  position: relative;
   padding: calc(100px + 3rem) 4rem 3rem;
 }
 

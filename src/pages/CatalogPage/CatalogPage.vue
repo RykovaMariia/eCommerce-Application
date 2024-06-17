@@ -309,7 +309,12 @@ function getLoadingState(productId: string) {
 </template>
 
 <style lang="scss" scoped>
+@use '@styles/mixins.scss';
+
 .products {
+  @include mixins.media-mini-mobile {
+    padding: 2rem 0;
+  }
   flex-wrap: wrap;
   gap: 1.6rem;
   justify-content: center;
