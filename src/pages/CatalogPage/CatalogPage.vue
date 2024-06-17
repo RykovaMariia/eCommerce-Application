@@ -337,6 +337,7 @@ function getLoadingState(productId: string) {
   gap: 1rem;
   align-items: center;
   justify-content: end;
+  margin-top: 1rem;
 }
 
 .search-input {
