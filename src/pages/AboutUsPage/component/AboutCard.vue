@@ -20,7 +20,7 @@ const props = defineProps<{
     <v-col class="wrapper">
       <div
         class="d-flex justify-space-between"
-        :class="{ 'justify-md-end ga-4': props.stylePreference }"
+        :class="{ 'flex-md-row-reverse': props.stylePreference }"
       >
         <h2 class="name">{{ props.name }}</h2>
         <a :href="props.githubLink" class="github-link d-flex align-center"><IconGithub /></a>

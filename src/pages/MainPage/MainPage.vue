@@ -114,6 +114,7 @@ const categories = computed(() => categoriesLinks.value.slice(1))
   font-size: 4rem;
   color: constants.$color-primary;
   text-transform: uppercase;
+  line-height: 100%;
 
   &_upper-line {
     text-align: left;
@@ -211,6 +212,7 @@ const categories = computed(() => categoriesLinks.value.slice(1))
     font-size: 3.6rem;
     color: constants.$color-text-light;
     text-transform: uppercase;
+    line-height: 110%;
   }
 
   &__names {
