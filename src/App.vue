@@ -38,7 +38,9 @@ favoritesService.setAnonymousSession()
     <Header />
     <v-main>
       <Breadcrumbs />
-      <RouterView />
+      <div class="content-wrapper">
+        <RouterView />
+      </div>
     </v-main>
     <Footer />
     <AlertWindow v-if="isOpenAlert" />
@@ -65,6 +67,13 @@ header .wrapper {
     flex-wrap: wrap;
     place-items: flex-start;
   }
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
 }
 
 .logo {
