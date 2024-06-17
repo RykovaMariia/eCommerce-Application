@@ -5,7 +5,7 @@ import { tokenData } from '@/services/tokenService'
 
 const refreshToken = localStorageService.getData('token')?.refreshToken
 
-export const userAuth = defineStore('user', {
+export const useUserAuthStore = defineStore('user', {
   state: () => ({
     isLoggedIn: !!refreshToken,
     customerVersion: 0,
@@ -24,4 +24,4 @@ export const userAuth = defineStore('user', {
   },
 })
 
-export type UserAuth = typeof userAuth
+export type UserAuth = typeof useUserAuthStore

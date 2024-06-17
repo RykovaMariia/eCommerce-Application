@@ -25,27 +25,11 @@ import { favoritesApiService } from '@/services/favoritesApiService'
 import { favoritesService } from '@/services/favoritesService'
 
 const alert = useAlertStore()
-
-const route = useRoute()
 const router = useRouter()
+const route = useRoute()
+
 const { categories } = storeToRefs(useCategoriesStore())
 const categoryId = ref()
-
-watchEffect(() => {
-  const category = route.params.categoryId
-  const subCategory = route.params.subCategoryId
-
-  if (!categories.value.length) {
-    return
-  }
-  const currentCategory = categories.value.find((el) => el.parent.key === category)
-  if (subCategory) {
-    categoryId.value =
-      currentCategory?.children.find((subEl) => subEl.key === subCategory)?.id ?? ''
-  } else {
-    categoryId.value = currentCategory?.parent.id ?? ''
-  }
-})
 
 const getLimitProductsOnPage = () => {
   const maxDesktopWidth = 1764
@@ -71,6 +55,7 @@ const products: Ref<ProductProjection[]> = ref([])
 const totalProductsCount = ref(0)
 const colorItems: Ref<string[]> = ref([])
 const quantityItems: Ref<string[]> = ref([])
+const isOpenSearch = ref(false)
 
 const { cart } = storeToRefs(useCartStore())
 const { favorites } = storeToRefs(useFavoritesStore())
@@ -83,7 +68,47 @@ const selectedFilters = reactive({
   search: route.query.search as string,
 })
 
-const fetchProducts = () => {
+watchEffect(() => {
+  const category = route.params.categoryId
+  const subCategory = route.params.subCategoryId
+
+  if (!categories.value.length) {
+    return
+  }
+  const currentCategory = categories.value.find((el) => el.parent.key === category)
+  if (subCategory) {
+    categoryId.value =
+      currentCategory?.children.find((subEl) => subEl.key === subCategory)?.id ?? ''
+  } else {
+    categoryId.value = currentCategory?.parent.id ?? ''
+  }
+})
+
+watch(
+  () => route,
+  () => {
+    selectedFilters.sorting = route.query.sorting as SortBy
+    selectedFilters.color = route.query.color as string[]
+    selectedFilters.quantity = route.query.quantity as string[]
+    fetchProducts()
+  },
+  { deep: true, immediate: true },
+)
+
+const update =
+  <T extends keyof typeof selectedFilters>(field: T) =>
+  (value: (typeof selectedFilters)[T]) => {
+    router.replace({ query: { ...route.query, [field]: value } })
+    selectedFilters[field] = value
+    fetchProducts()
+  }
+
+const search = update('search')
+const selectSorting = update('sorting')
+const selectColor = update('color')
+const selectQuantity = update('quantity')
+
+function fetchProducts() {
   limitProductsOnPage = getLimitProductsOnPage()
 
   const offset = (currentPage.value - 1) * limitProductsOnPage
@@ -115,35 +140,17 @@ const fetchProducts = () => {
     })
 }
 
-const update =
-  <T extends keyof typeof selectedFilters>(field: T) =>
-  (value: (typeof selectedFilters)[T]) => {
-    router.replace({ query: { ...route.query, [field]: value } })
-    selectedFilters[field] = value
-    fetchProducts()
-  }
-
-const search = update('search')
-const selectSorting = update('sorting')
-const selectColor = update('color')
-const selectQuantity = update('quantity')
-
-watch(
-  () => route,
-  () => {
-    selectedFilters.sorting = route.query.sorting as SortBy
-    selectedFilters.color = route.query.color as string[]
-    selectedFilters.quantity = route.query.quantity as string[]
-    fetchProducts()
-  },
-  { deep: true, immediate: true },
-)
-
-async function addProductToCartById(productId: string) {
+async function addProductToCartById({
+  productId,
+  variantId,
+}: {
+  productId: string
+  variantId: number
+}) {
   loadingStates.value[productId] = true
 
   await cartService
-    .addProductToCart(productId, cart.value)
+    .addProductToCart({ productId, variantId, cart: cart.value })
     .then(() => {
       setTimeout(() => {
         loadingStates.value[productId] = false
@@ -169,41 +176,44 @@ async function addProductToFavorites({
 }
 
 async function deleteProductFromFavoritesById(lineItemId: string) {
-  if (favorites.value?.id) {
-    favoritesApiService
-      .removeLineItemFromFavorites({
-        id: favorites.value.id,
-        version: favorites.value.version,
-        lineItemId,
-      })
-      .then(({ body }) => {
-        useFavoritesStore().setFavorites(body)
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
+  if (!favorites.value?.id) {
+    return
   }
+  favoritesApiService
+    .removeLineItemFromFavorites({
+      id: favorites.value.id,
+      version: favorites.value.version,
+      lineItemId,
+    })
+    .then(({ body }) => {
+      useFavoritesStore().setFavorites(body)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 
-function isProductInCart(productId: string) {
+function isProductInCart(productId: string, variantId: number) {
   if (!cart.value?.lineItems) {
     return false
   }
-  return cartService.isProductInCart(cart.value?.lineItems, productId)
+  return cartService.isProductInCart({ lineItems: cart.value?.lineItems, productId, variantId })
 }
 
-function isProductInFavorites(productId: string) {
+function isProductInFavorites(productId: string, variantId: number) {
   if (!favorites.value?.lineItems) {
     return false
   }
-  return favoritesService.isProductInFavorites(favorites.value?.lineItems, productId)
+  return favoritesService.isProductInFavorites({
+    lineItems: favorites.value?.lineItems,
+    productId,
+    variantId,
+  })
 }
 
 function getLoadingState(productId: string) {
   return loadingStates.value[productId] || false
 }
-
-const isOpenSearch = ref(false)
 </script>
 
 <template>
@@ -280,8 +290,8 @@ const isOpenSearch = ref(false)
       :productSlug="slug['en-GB']"
       :productId="id"
       :variantId="1"
-      :isAddedInCart="isProductInCart(id)"
-      :isAddedInFavorites="isProductInFavorites(id)"
+      :isAddedInCart="isProductInCart(id, 1)"
+      :isAddedInFavorites="isProductInFavorites(id, 1)"
       :loading="getLoadingState(id)"
       @addProductToCart="addProductToCartById($event)"
       @addProductToFavorites="addProductToFavorites($event)"

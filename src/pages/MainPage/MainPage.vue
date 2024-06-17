@@ -11,9 +11,7 @@ import CategoryCard from '@pages/MainPage/components/CategoryCard.vue'
 import { RouterLink } from 'vue-router'
 import { computed } from 'vue'
 
-const { categoriesLinks } = storeToRefs(useCategoriesStore())
-
-const INTERVAL_DURATION_CAROUSEL = 6000
+const intervalDurationCarousel = 6000
 
 const carouselImages = [
   'https://zerowastestore.com/cdn/shop/files/zero-waste-products-hero.jpg?v=1673063098&width=2000',
@@ -40,7 +38,9 @@ const advantages = [
     iconSrc: iconLicense,
     text: 'Certificated products',
   },
-]
+] as const
+
+const { categoriesLinks } = storeToRefs(useCategoriesStore())
 
 const categories = computed(() => categoriesLinks.value.slice(1))
 </script>
@@ -53,7 +53,7 @@ const categories = computed(() => categoriesLinks.value.slice(1))
   <div class="wrapper">
     <v-carousel
       cycle
-      :interval="INTERVAL_DURATION_CAROUSEL"
+      :interval="intervalDurationCarousel"
       class="carousel"
       :show-arrows="false"
       :touch="true"
@@ -112,6 +112,7 @@ const categories = computed(() => categoriesLinks.value.slice(1))
 
   font-family: constants.$font-heading;
   font-size: 4rem;
+  line-height: 100%;
   color: constants.$color-primary;
   text-transform: uppercase;
 
@@ -209,6 +210,7 @@ const categories = computed(() => categoriesLinks.value.slice(1))
   &__text {
     font-family: constants.$font-heading;
     font-size: 3.6rem;
+    line-height: 110%;
     color: constants.$color-text-light;
     text-transform: uppercase;
   }

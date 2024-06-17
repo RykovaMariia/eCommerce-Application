@@ -36,7 +36,7 @@ const props = defineProps<{
   }
 }
 
-@media screen and (1024px <= width <= 1300px) {
+@include mixins.media-desktop {
   .advantages {
     &__container {
       width: 13rem;

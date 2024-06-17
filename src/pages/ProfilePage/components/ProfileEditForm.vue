@@ -9,13 +9,12 @@ import { formateDate } from '@/utils/dateUtils'
 import type { SubmitEventPromise } from 'vuetify'
 import { customerService } from '@/services/customerService'
 import { useAlertStore } from '@/stores/alert'
-import { userAuth } from '@/stores/userAuth'
+import { useUserAuthStore } from '@/stores/userAuth'
 import type { ICustomer } from '@/types/writable'
 
 const alert = useAlertStore()
 
 const emit = defineEmits(['updateUser'])
-
 const currentUser = defineModel<ICustomer>('currentUser')
 
 const dateOfBirth = ref(new Date(formateDate(currentUser.value?.dateOfBirth || '')))
@@ -37,7 +36,7 @@ function update() {
     .update(currentUser.value)
     .then((result) => {
       alert.show('Data updated successfully', 'success')
-      userAuth().customerVersion = result.body.version
+      useUserAuthStore().customerVersion = result.body.version
       emit('updateUser', result.body)
     })
     .catch((error: Error) => {

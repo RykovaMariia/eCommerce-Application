@@ -28,12 +28,14 @@ const props = withDefaults(
 )
 
 const data = defineModel()
-
-const rules = computed(() => chooseRules(props.type, props.label))
 const marker = ref(true)
+
 function togglePassword() {
   marker.value = !marker.value
 }
+
+const rules = computed(() => chooseRules(props.type, props.label))
+
 const fieldType = computed(() =>
   props.label === InputLabel.Password ||
   InputLabel.CurrentPassword ||
@@ -44,6 +46,7 @@ const fieldType = computed(() =>
       : 'text'
     : props.type,
 )
+
 const innerIcon = computed(() =>
   props.label === InputLabel.Password ||
   InputLabel.CurrentPassword ||

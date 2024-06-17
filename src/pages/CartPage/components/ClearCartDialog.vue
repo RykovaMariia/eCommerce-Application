@@ -6,9 +6,8 @@ import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { cartApiService } from '@/services/cartApiService'
 
-const dialog = ref(false)
-
 const { cart } = storeToRefs(useCartStore())
+const dialog = ref(false)
 
 function deleteCart() {
   dialog.value = false

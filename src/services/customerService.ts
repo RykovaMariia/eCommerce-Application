@@ -1,6 +1,6 @@
 import { ClientService, clientService } from '@/services/clientService'
 import type { UserLoginData, UserPasswordsData } from '@/interfaces/userData'
-import { userAuth } from '@/stores/userAuth'
+import { useUserAuthStore } from '@/stores/userAuth'
 import type { ICustomer } from '@/types/writable'
 import { authService } from './authService'
 
@@ -17,7 +17,7 @@ export class CustomerService {
       .me()
       .post({
         body: {
-          version: userAuth().customerVersion,
+          version: useUserAuthStore().customerVersion,
           actions: [
             {
               action: 'setFirstName',
@@ -48,14 +48,14 @@ export class CustomerService {
       .password()
       .post({
         body: {
-          version: userAuth().customerVersion,
+          version: useUserAuthStore().customerVersion,
           currentPassword,
           newPassword,
         },
       })
       .execute()
     userPasswordData.then(() => {
-      userAuth().logout()
+      useUserAuthStore().logout()
       const userData: UserLoginData = {
         email,
         password: newPassword,

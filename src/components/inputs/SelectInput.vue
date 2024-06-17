@@ -21,9 +21,9 @@ const props = defineProps<{
   isMultiple?: boolean
 }>()
 
-const rules = computed(() => chooseRules(props.type ?? '', props.label))
-
 const data = defineModel<string | string[]>()
+
+const rules = computed(() => chooseRules(props.type ?? '', props.label))
 </script>
 
 <template>

@@ -6,7 +6,7 @@ import { useAlertStore } from '@/stores/alert'
 import { storeToRefs } from 'pinia'
 import AlertWindow from '@components/alertWindow/AlertWindow.vue'
 import { customerService } from './services/customerService'
-import { userAuth } from './stores/userAuth'
+import { useUserAuthStore } from './stores/userAuth'
 import router from './router'
 import { cartService } from './services/cartService'
 import { localStorageService } from './services/storageService'
@@ -24,7 +24,7 @@ if (refreshToken) {
       return
     }
     alert.show(`Error: The token has expired. Please re-authorize`, 'warning')
-    userAuth().logout()
+    useUserAuthStore().logout()
     router.replace({ name: 'login' })
   })
 }

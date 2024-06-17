@@ -29,15 +29,6 @@ const emit = defineEmits([
   'deleteProductFromFavorites',
 ])
 
-function getDiscountPercentage(price: number, discountedPrice: number) {
-  return FULL_PERCENTAGE - Math.ceil((discountedPrice * FULL_PERCENTAGE) / price)
-}
-
-const toProduct = () => {
-  localStorageService.saveData('productId', props.productId)
-  router.push({ name: 'productId', params: { productId: props.productSlug } })
-}
-
 const color = computed(() => {
   return !props.isAddedInCart ? 'secondary' : 'primary'
 })
@@ -54,22 +45,31 @@ const heartIcon = computed(() => {
   return props.isAddedInFavorites ? 'mdi-heart' : 'mdi-heart-outline'
 })
 
+function getDiscountPercentage(price: number, discountedPrice: number) {
+  return FULL_PERCENTAGE - Math.ceil((discountedPrice * FULL_PERCENTAGE) / price)
+}
+
+const toProduct = () => {
+  localStorageService.saveData('productId', props.productId)
+  router.push({ name: 'productId', params: { productId: props.productSlug } })
+}
+
 const addToFavorites = () => {
   !props.isAddedInFavorites
     ? emit('addProductToFavorites', { productId: props.productId, variantId: props.variantId })
     : emit(
         'deleteProductFromFavorites',
-        favoritesService.getLineIdByProduct(
-          useFavoritesStore().favorites?.lineItems as ShoppingListLineItem[],
-          props.productId,
-          props.variantId,
-        ),
+        favoritesService.getLineIdByProduct({
+          lineItems: useFavoritesStore().favorites?.lineItems as ShoppingListLineItem[],
+          productId: props.productId,
+          variantId: props.variantId,
+        }),
       )
 }
 
 const addToCart = () => {
   if (!props.isAddedInCart) {
-    emit('addProductToCart', props.productId)
+    emit('addProductToCart', { productId: props.productId, variantId: props.variantId })
   }
 }
 </script>

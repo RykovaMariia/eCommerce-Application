@@ -2,13 +2,13 @@
 import type { CategoryLink, Link, LinkByName } from '@/interfaces/link'
 import { ref } from 'vue'
 
-const isOpenMenu = ref([])
-
 const { menuTriggerText, items } = defineProps<{
   menuTriggerText: string
   items?: Link[] | LinkByName[]
   itemsWithSubItems?: CategoryLink[]
 }>()
+
+const isOpenMenu = ref([])
 </script>
 
 <template>

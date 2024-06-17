@@ -16,9 +16,13 @@ import type {
 import type { SubmitEventPromise } from 'vuetify'
 import { addressService } from '@/services/addressService'
 import { useAlertStore } from '@/stores/alert'
-import { userAuth } from '@/stores/userAuth'
+import { useUserAuthStore } from '@/stores/userAuth'
 import { reactive } from 'vue'
 import { TypeAction } from '@/enums/typeAction'
+
+const actions: MyCustomerUpdateAction[] = []
+
+const alert = useAlertStore()
 
 const props = defineProps<{
   address: Address
@@ -30,15 +34,14 @@ const props = defineProps<{
   addressesShipping: Address[]
 }>()
 
+const emit = defineEmits(['updateUserInfo', 'cancel'])
+
 const address = reactive({ ...props.address })
 
 const addressForm: Ref<HTMLFormElement | undefined> = ref()
-
-const alert = useAlertStore()
-
 const isTheSame = ref(false)
-
-const actions: MyCustomerUpdateAction[] = []
+const defaultBilling = ref(false)
+const defaultShipping = ref(false)
 
 const titleCheckbox = computed(() => {
   const addressType = props.typeAddress === 'billing' ? 'shipping' : 'billing'
@@ -48,21 +51,6 @@ const titleCheckbox = computed(() => {
 const titleForm = computed(() => {
   return props.typeAction === TypeAction.Add ? 'Add New Address' : 'Edit Address'
 })
-
-const resetForm = () => {
-  if (addressForm.value) {
-    addressForm.value.reset()
-  }
-}
-
-function toggleState() {
-  isTheSame.value = !isTheSame.value
-}
-
-const emit = defineEmits(['updateUserInfo', 'cancel'])
-
-const defaultBilling = ref(false)
-const defaultShipping = ref(false)
 
 watchEffect(() => {
   defaultBilling.value = props.addressBillingDefault === props.address?.id
@@ -75,6 +63,16 @@ watchEffect(() => {
       props.addressesBilling.includes(props.address)
   }
 })
+
+const resetForm = () => {
+  if (addressForm.value) {
+    addressForm.value.reset()
+  }
+}
+
+function toggleState() {
+  isTheSame.value = !isTheSame.value
+}
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
@@ -135,7 +133,7 @@ function createAddress() {
       if (!result?.body) {
         return
       }
-      userAuth().customerVersion = result.body.version
+      useUserAuthStore().customerVersion = result.body.version
       emit('updateUserInfo', result.body)
       resetForm()
     })
@@ -203,7 +201,7 @@ function updateAddress(address: Address) {
       alert.show('Address updated', 'success')
 
       if (result?.body) {
-        userAuth().customerVersion = result.body.version
+        useUserAuthStore().customerVersion = result.body.version
         emit('updateUserInfo', result.body)
         resetForm()
       }

@@ -12,65 +12,65 @@ import { cartApiService } from '@/services/cartApiService'
 import { useAlertStore } from '@/stores/alert'
 import Price from '@/components/price/Price.vue'
 import type { CartLineItem } from '@/interfaces/cartLineItem'
+import type { LineItem } from '@commercetools/platform-sdk'
 
 const { cart, totalPrice } = storeToRefs(useCartStore())
-
+const cartLineItem: Ref<CartLineItem[] | undefined> = ref()
+const totalPriceWithoutDiscount = ref(0)
 const promoCode = ref('')
 
-function applyPromoCode() {
-  if (cart.value) {
-    cartApiService
-      .applyPromoCode(cart.value.id, cart.value.version, promoCode.value)
-      .then(({ body }) => {
-        useCartStore().setCart(body)
-      })
-      .catch((error: Error) => {
-        useAlertStore().show(error.message, 'warning')
-      })
-  }
-}
-
-const cartLineItem: Ref<CartLineItem[] | undefined> = ref()
-
-const totalPriceWithoutDiscount = ref(0)
-
 watchEffect(() => {
-  if (cart.value?.totalLineItemQuantity) {
-    totalPriceWithoutDiscount.value = 0
-    cartLineItem.value = cart.value.lineItems.map((lineItem) => {
-      const {
-        name,
-        variant,
-        price,
-        discountedPricePerQuantity,
-        productSlug,
-        productId,
-        quantity,
-        id,
-      } = lineItem
-
-      totalPriceWithoutDiscount.value += getPriceAccordingToFractionDigits(price.value, quantity)
-
-      return {
-        name: name['en-GB'],
-        srcImg: variant.images?.length ? variant.images?.[0].url : '',
-        price: getPriceAccordingToFractionDigits(price.value, quantity),
-        discountedPrice: getPriceAccordingToFractionDigits(
-          discountedPricePerQuantity.length
-            ? discountedPricePerQuantity[0].discountedPrice.value
-            : price.discounted?.value,
-          quantity,
-        ),
-        productSlug: productSlug?.['en-GB'] ?? '',
-        productId,
-        quantity,
-        lineItemId: id,
-        attributes: variant.attributes,
-        variantId: variant.id,
-      }
-    })
+  if (!cart.value?.totalLineItemQuantity) {
+    return
   }
+  totalPriceWithoutDiscount.value = 0
+  cartLineItem.value = cart.value.lineItems.map((lineItem: LineItem) => {
+    const {
+      name,
+      variant,
+      price,
+      discountedPricePerQuantity,
+      productSlug,
+      productId,
+      quantity,
+      id,
+    } = lineItem
+
+    totalPriceWithoutDiscount.value += getPriceAccordingToFractionDigits(price.value, quantity)
+
+    return {
+      name: name['en-GB'],
+      srcImg: variant.images?.length ? variant.images?.[0].url : '',
+      price: getPriceAccordingToFractionDigits(price.value, quantity),
+      discountedPrice: getPriceAccordingToFractionDigits(
+        discountedPricePerQuantity.length
+          ? discountedPricePerQuantity[0].discountedPrice.value
+          : price.discounted?.value,
+        quantity,
+      ),
+      productSlug: productSlug?.['en-GB'] ?? '',
+      productId,
+      quantity,
+      lineItemId: id,
+      attributes: variant.attributes,
+      variantId: variant.id,
+    }
+  })
 })
+
+function applyPromoCode() {
+  if (!cart.value) {
+    return
+  }
+  cartApiService
+    .applyPromoCode(cart.value.id, cart.value.version, promoCode.value)
+    .then(({ body }) => {
+      useCartStore().setCart(body)
+    })
+    .catch((error: Error) => {
+      useAlertStore().show(error.message, 'warning')
+    })
+}
 </script>
 
 <template>

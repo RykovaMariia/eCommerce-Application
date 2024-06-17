@@ -1,4 +1,4 @@
-import { userAuth } from '@/stores/userAuth'
+import { useUserAuthStore } from '@/stores/userAuth'
 import { createRouter, createWebHistory, type RouteLocationNormalizedLoaded } from 'vue-router'
 
 const router = createRouter({
@@ -94,19 +94,19 @@ const router = createRouter({
       name: 'logout',
       component: () => null,
     },
-    { path: '/:pathMatch(.*)*', component: () => import('@pages/404Page.vue') },
+    { path: '/:pathMatch(.*)*', component: () => import('@pages/404Page/404Page.vue') },
   ],
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.name === 'login' && userAuth().isLoggedIn) {
+  if (to.name === 'login' && useUserAuthStore().isLoggedIn) {
     next({ name: 'main', replace: true })
-  } else if (to.name === 'registration' && userAuth().isLoggedIn) {
+  } else if (to.name === 'registration' && useUserAuthStore().isLoggedIn) {
     next({ name: 'main', replace: true })
-  } else if (to.name === 'logout' && userAuth().isLoggedIn) {
-    userAuth().logout()
+  } else if (to.name === 'logout' && useUserAuthStore().isLoggedIn) {
+    useUserAuthStore().logout()
     next({ name: 'main' })
-  } else if (to.name === 'profile' && !userAuth().isLoggedIn) {
+  } else if (to.name === 'profile' && !useUserAuthStore().isLoggedIn) {
     next({ name: 'login', replace: true })
   } else {
     next()

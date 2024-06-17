@@ -3,23 +3,12 @@ import HoverMenu from '@components/hover-menu/HoverMenu.vue'
 import IconLogo from '@components/icons/IconLogo.vue'
 import BurgerMenu from '@components/core/BurgerMenu.vue'
 import { useBurgerStore } from '@/stores/burger'
-import { userAuth } from '@/stores/userAuth'
+import { useUserAuthStore } from '@/stores/userAuth'
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categories'
 import { categoryService } from '@/services/categoriesService'
 import { useCartStore } from '@/stores/cart'
-
-const store = useBurgerStore()
-const { isLoggedIn } = storeToRefs(userAuth())
-
-const { cart } = storeToRefs(useCartStore())
-
-const categoriesStore = useCategoriesStore()
-
-const countProduct = computed(() => {
-  return cart.value?.totalLineItemQuantity ?? 0
-})
 
 const userLinks = [
   { name: 'Profile', href: '/profile' },
@@ -29,7 +18,20 @@ const userLinks = [
 const authLinks = [
   { name: 'Login', href: '/login' },
   { name: 'Register', href: '/registration' },
-]
+] as const
+
+const infoLinks = [{ name: 'About us', href: '/about' }] as const
+
+const store = useBurgerStore()
+const categoriesStore = useCategoriesStore()
+
+const { isLoggedIn } = storeToRefs(useUserAuthStore())
+const { cart } = storeToRefs(useCartStore())
+const { categoriesLinks } = storeToRefs(categoriesStore)
+
+const countProduct = computed(() => {
+  return cart.value?.totalLineItemQuantity ?? 0
+})
 
 const accountMenu = computed(() => {
   if (isLoggedIn.value) {
@@ -38,15 +40,11 @@ const accountMenu = computed(() => {
   return authLinks
 })
 
-const infoLinks = [{ name: 'About us', href: '/about' }]
-
 function openBurger() {
   store.toggleOpenState()
 }
 
 categoryService.getCategories().then((value) => categoriesStore.setCategories(value))
-
-const { categoriesLinks } = storeToRefs(categoriesStore)
 </script>
 
 <template>

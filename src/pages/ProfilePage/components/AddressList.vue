@@ -7,8 +7,9 @@ import type {
   MyCustomerUpdateAction,
 } from '@commercetools/platform-sdk'
 import { useAlertStore } from '@/stores/alert'
-import { userAuth } from '@/stores/userAuth'
+import { useUserAuthStore } from '@/stores/userAuth'
 
+const actions: MyCustomerUpdateAction[] = []
 const alert = useAlertStore()
 
 defineProps<{
@@ -17,13 +18,11 @@ defineProps<{
 }>()
 
 const typeAddress = defineModel<string>('typeAddress')
-const actions: MyCustomerUpdateAction[] = []
-
 const emit = defineEmits(['editAddress', 'updateUserInfo'])
 
 function updateUserInfo({ body }: ClientResponse<Customer>) {
   if (body) {
-    userAuth().customerVersion = body.version
+    useUserAuthStore().customerVersion = body.version
     emit('updateUserInfo', body)
   }
 }

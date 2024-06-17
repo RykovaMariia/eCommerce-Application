@@ -6,7 +6,7 @@ import { InputType } from '@/enums/inputType'
 import { reactive } from 'vue'
 import type { UserLoginData } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
-import { userAuth } from '@/stores/userAuth'
+import { useUserAuthStore } from '@/stores/userAuth'
 import { useAlertStore } from '@/stores/alert'
 import router from '@/router'
 import type { SubmitEventPromise } from 'vuetify'
@@ -29,7 +29,7 @@ function login() {
   authService
     .login(userData)
     .then(() => {
-      userAuth().login()
+      useUserAuthStore().login()
       router.replace({ name: 'main' })
     })
     .catch((error: Error) => {
