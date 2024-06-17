@@ -342,8 +342,8 @@ function handleFavoriteChange() {
   box-shadow: none;
 }
 
-v-btn:hover > .v-btn__overlay {
-  background: none;
+.v-btn:hover > .v-btn__overlay {
+  opacity: 0;
 }
 
 .description {
