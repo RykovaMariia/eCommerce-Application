@@ -22,13 +22,16 @@ interface FavoritesProducts {
   productId: string
   variantId: number
 }
-
-const { cart } = storeToRefs(useCartStore())
-const loadingStates: Ref<{ [key: string]: boolean }> = ref({})
 const alert = useAlertStore()
-const favoritesProducts: Ref<FavoritesProducts[]> = ref([])
 const favoritesStore = useFavoritesStore()
+
 const { favorites } = storeToRefs(favoritesStore)
+const { cart } = storeToRefs(useCartStore())
+
+const loadingStates: Ref<{ [key: string]: boolean }> = ref({})
+const favoritesProducts: Ref<FavoritesProducts[]> = ref([])
+
+watchEffect(fetchProducts)
 
 async function fetchProducts() {
   const lineItems = favoritesStore.lineItemsInFavorites
@@ -58,8 +61,6 @@ async function fetchProducts() {
 
   favoritesProducts.value = await Promise.all(lineItemsPromises)
 }
-
-watchEffect(fetchProducts)
 
 async function addProductToCartById({
   productId,

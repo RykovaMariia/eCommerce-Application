@@ -19,11 +19,19 @@ import { favoritesService } from '@/services/favoritesService'
 import { useFavoritesStore } from '@/stores/favorites'
 import { favoritesApiService } from '@/services/favoritesApiService'
 
+let attributeValues: string[][] = []
+let masterAttributeNames: string[] = []
+const productId = localStorageService.getData('productId') ?? ''
+
 const alert = useAlertStore()
+
 const { favorites } = storeToRefs(useFavoritesStore())
+const { cart } = storeToRefs(useCartStore())
 
 const imageIndex = ref(0)
 const isMainAttribute = ref(true)
+const isProductDataLoaded = ref(false)
+const selectedVariants: Ref<string[]> = ref([])
 
 const product: ProductData = reactive({
   description: '',
@@ -32,9 +40,48 @@ const product: ProductData = reactive({
   variants: [],
 })
 
-let attributeValues: string[][] = []
-let masterAttributeNames: string[] = []
-const isProductDataLoaded = ref(false)
+const price = computed(() => {
+  const variant = cartService.getVariantByAttribute(product.variants, selectedVariants.value)
+  return definePrice(variant ?? product.variants[0])
+})
+
+const isInCart = computed(() => {
+  if (!cart.value?.lineItems) {
+    return
+  }
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId || !productId) {
+    return
+  }
+  return cartService.isLineItemInCart({ lineItems: cart.value?.lineItems, productId, variantId })
+})
+
+const textContent = computed(() => {
+  return !isInCart.value ? 'Add to cart' : 'Remove from cart'
+})
+
+const color = computed(() => {
+  return !isInCart.value ? 'secondary' : 'primary'
+})
+
+const isInFavorites = computed(() => {
+  if (!favorites.value?.lineItems) {
+    return false
+  }
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId || !productId) {
+    return false
+  }
+  return favoritesService.isProductInFavorites({
+    lineItems: favorites.value?.lineItems,
+    productId,
+    variantId,
+  })
+})
+
+const setIconFavorites = computed(() => {
+  return !isInFavorites.value ? 'mdi-heart-outline' : 'mdi-heart'
+})
 
 function retrieveVariantsData({ id, attributes, prices }: ProductVariant) {
   return {
@@ -44,9 +91,6 @@ function retrieveVariantsData({ id, attributes, prices }: ProductVariant) {
     discountPrice: getPriceAccordingToFractionDigits(prices?.[0].discounted?.value),
   }
 }
-
-const productId = localStorageService.getData('productId') ?? ''
-const selectedVariants: Ref<string[]> = ref([])
 
 if (productId !== null) {
   productsService
@@ -87,12 +131,6 @@ const setVariant = (value: string, index: number) => {
 const definePrice = ({ price, discountPrice }: ProductItem) => {
   return discountPrice ? { price, discountPrice } : { price }
 }
-const price = computed(() => {
-  const variant = cartService.getVariantByAttribute(product.variants, selectedVariants.value)
-  return definePrice(variant ?? product.variants[0])
-})
-
-const { cart } = storeToRefs(useCartStore())
 
 async function addProductToCart() {
   const variantId =
@@ -129,43 +167,9 @@ function removeProductFromCart() {
     })
 }
 
-const isInCart = computed(() => {
-  if (!cart.value?.lineItems) {
-    return
-  }
-  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
-  if (!variantId || !productId) {
-    return
-  }
-  return cartService.isLineItemInCart({ lineItems: cart.value?.lineItems, productId, variantId })
-})
-
-const textContent = computed(() => {
-  return !isInCart.value ? 'Add to cart' : 'Remove from cart'
-})
-
-const color = computed(() => {
-  return !isInCart.value ? 'secondary' : 'primary'
-})
-
 function setAction() {
   !isInCart.value ? addProductToCart() : removeProductFromCart()
 }
-
-const isInFavorites = computed(() => {
-  if (!favorites.value?.lineItems) {
-    return false
-  }
-  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
-  if (!variantId || !productId) {
-    return false
-  }
-  return favoritesService.isProductInFavorites({
-    lineItems: favorites.value?.lineItems,
-    productId,
-    variantId,
-  })
-})
 
 async function addProductToFavorites() {
   const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
@@ -209,10 +213,6 @@ function deleteProductFromFavoritesById() {
 function handleFavoriteChange() {
   return !isInFavorites.value ? addProductToFavorites() : deleteProductFromFavoritesById()
 }
-
-const setIconFavorites = computed(() => {
-  return !isInFavorites.value ? 'mdi-heart-outline' : 'mdi-heart'
-})
 </script>
 
 <template>

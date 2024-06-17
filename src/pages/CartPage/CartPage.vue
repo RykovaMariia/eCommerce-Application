@@ -15,23 +15,9 @@ import type { CartLineItem } from '@/interfaces/cartLineItem'
 import type { LineItem } from '@commercetools/platform-sdk'
 
 const { cart, totalPrice } = storeToRefs(useCartStore())
-const promoCode = ref('')
 const cartLineItem: Ref<CartLineItem[] | undefined> = ref()
 const totalPriceWithoutDiscount = ref(0)
-
-function applyPromoCode() {
-  if (!cart.value) {
-    return
-  }
-  cartApiService
-    .applyPromoCode(cart.value.id, cart.value.version, promoCode.value)
-    .then(({ body }) => {
-      useCartStore().setCart(body)
-    })
-    .catch((error: Error) => {
-      useAlertStore().show(error.message, 'warning')
-    })
-}
+const promoCode = ref('')
 
 watchEffect(() => {
   if (!cart.value?.totalLineItemQuantity) {
@@ -71,6 +57,20 @@ watchEffect(() => {
     }
   })
 })
+
+function applyPromoCode() {
+  if (!cart.value) {
+    return
+  }
+  cartApiService
+    .applyPromoCode(cart.value.id, cart.value.version, promoCode.value)
+    .then(({ body }) => {
+      useCartStore().setCart(body)
+    })
+    .catch((error: Error) => {
+      useAlertStore().show(error.message, 'warning')
+    })
+}
 </script>
 
 <template>

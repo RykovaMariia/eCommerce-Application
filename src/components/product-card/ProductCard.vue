@@ -29,15 +29,6 @@ const emit = defineEmits([
   'deleteProductFromFavorites',
 ])
 
-function getDiscountPercentage(price: number, discountedPrice: number) {
-  return FULL_PERCENTAGE - Math.ceil((discountedPrice * FULL_PERCENTAGE) / price)
-}
-
-const toProduct = () => {
-  localStorageService.saveData('productId', props.productId)
-  router.push({ name: 'productId', params: { productId: props.productSlug } })
-}
-
 const color = computed(() => {
   return !props.isAddedInCart ? 'secondary' : 'primary'
 })
@@ -53,6 +44,15 @@ const to = computed(() => {
 const heartIcon = computed(() => {
   return props.isAddedInFavorites ? 'mdi-heart' : 'mdi-heart-outline'
 })
+
+function getDiscountPercentage(price: number, discountedPrice: number) {
+  return FULL_PERCENTAGE - Math.ceil((discountedPrice * FULL_PERCENTAGE) / price)
+}
+
+const toProduct = () => {
+  localStorageService.saveData('productId', props.productId)
+  router.push({ name: 'productId', params: { productId: props.productSlug } })
+}
 
 const addToFavorites = () => {
   !props.isAddedInFavorites

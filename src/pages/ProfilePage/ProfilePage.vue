@@ -7,19 +7,19 @@ import PasswordEditForm from '@/pages/ProfilePage/components/PasswordEditForm.vu
 import { ref, type Ref } from 'vue'
 import { customerService } from '@/services/customerService'
 import type { Customer } from '@commercetools/platform-sdk'
-import { userAuth } from '@/stores/userAuth'
+import { useUserAuthStore } from '@/stores/userAuth'
 import type { UserData } from '@/interfaces/userData'
 import { useAlertStore } from '@/stores/alert'
 
 const alert = useAlertStore()
+
+const tab = ref('address')
 
 const userInfo: Ref<UserData> = ref({
   firstName: '',
   lastName: '',
   dateOfBirth: '',
 })
-
-const tab = ref('address')
 
 const customer: Ref<Customer> = ref({
   id: '',
@@ -47,23 +47,23 @@ const customer: Ref<Customer> = ref({
   authenticationMode: '',
 })
 
-customerService
-  .user()
-  .then((response) => {
-    customer.value = { ...response.body }
-    userInfo.value = { ...response.body }
-    userAuth().customerVersion = customer.value.version
-  })
-  .catch((error: Error) => {
-    alert.show(`Error: ${error.message}`, 'warning')
-  })
-
 function updateUserInfo(user: UserData) {
   if (!user) {
     return
   }
   userInfo.value = user
 }
+
+customerService
+  .user()
+  .then((response) => {
+    customer.value = { ...response.body }
+    userInfo.value = { ...response.body }
+    useUserAuthStore().customerVersion = customer.value.version
+  })
+  .catch((error: Error) => {
+    alert.show(`Error: ${error.message}`, 'warning')
+  })
 </script>
 
 <template>

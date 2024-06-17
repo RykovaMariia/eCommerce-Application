@@ -12,10 +12,10 @@ const menuLinks = [
     name: 'About Us',
     href: '/about',
   },
-]
-const { categoriesLinks } = storeToRefs(useCategoriesStore())
-
+] as const
 const creationYear = '2024'
+
+const { categoriesLinks } = storeToRefs(useCategoriesStore())
 </script>
 <template>
   <footer>

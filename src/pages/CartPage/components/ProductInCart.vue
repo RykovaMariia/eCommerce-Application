@@ -26,11 +26,19 @@ const props = defineProps<{
   variantId: number
 }>()
 
+const href = { name: 'productId', params: { productId: props.productSlug } }
+
 const alert = useAlertStore()
 const cartStore = useCartStore()
-const { favorites } = storeToRefs(useFavoritesStore())
+const favoritesStore = useFavoritesStore()
+const { favorites } = storeToRefs(favoritesStore)
+const { cart } = storeToRefs(cartStore)
 const quantity = ref(props.quantity)
 const isAddedInFavorites = ref(isProductInFavorites())
+
+const heartIcon = computed(() => {
+  return isAddedInFavorites.value ? 'mdi-heart' : 'mdi-heart-outline'
+})
 
 function isProductInFavorites() {
   if (!favorites.value?.lineItems) {
@@ -43,13 +51,9 @@ function isProductInFavorites() {
   })
 }
 
-const href = { name: 'productId', params: { productId: props.productSlug } }
-
 const passProductId = () => {
   localStorageService.saveData('productId', props.productId)
 }
-
-const { cart } = storeToRefs(cartStore)
 
 function updateQuantity() {
   if (!cart.value) {
@@ -78,10 +82,6 @@ function removeLineItem() {
     .then(({ body }) => cartStore.setCart(body))
 }
 
-const heartIcon = computed(() => {
-  return isAddedInFavorites.value ? 'mdi-heart' : 'mdi-heart-outline'
-})
-
 function clickHeart() {
   if (!isAddedInFavorites.value) {
     isAddedInFavorites.value = true
@@ -97,11 +97,11 @@ function clickHeart() {
     return
   }
   isAddedInFavorites.value = false
-  const favoritesLineItemId = favoritesService.getLineIdByProduct(
-    useFavoritesStore().favorites?.lineItems as ShoppingListLineItem[],
-    props.productId,
-    props.variantId,
-  )
+  const favoritesLineItemId = favoritesService.getLineIdByProduct({
+    lineItems: favoritesStore.favorites?.lineItems as ShoppingListLineItem[],
+    productId: props.productId,
+    variantId: props.variantId,
+  })
   if (!favorites.value?.id) {
     return
   }

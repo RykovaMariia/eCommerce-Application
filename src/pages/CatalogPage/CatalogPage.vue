@@ -25,27 +25,11 @@ import { favoritesApiService } from '@/services/favoritesApiService'
 import { favoritesService } from '@/services/favoritesService'
 
 const alert = useAlertStore()
-
-const route = useRoute()
 const router = useRouter()
+const route = useRoute()
+
 const { categories } = storeToRefs(useCategoriesStore())
 const categoryId = ref()
-
-watchEffect(() => {
-  const category = route.params.categoryId
-  const subCategory = route.params.subCategoryId
-
-  if (!categories.value.length) {
-    return
-  }
-  const currentCategory = categories.value.find((el) => el.parent.key === category)
-  if (subCategory) {
-    categoryId.value =
-      currentCategory?.children.find((subEl) => subEl.key === subCategory)?.id ?? ''
-  } else {
-    categoryId.value = currentCategory?.parent.id ?? ''
-  }
-})
 
 const getLimitProductsOnPage = () => {
   const maxDesktopWidth = 1764
@@ -71,6 +55,7 @@ const products: Ref<ProductProjection[]> = ref([])
 const totalProductsCount = ref(0)
 const colorItems: Ref<string[]> = ref([])
 const quantityItems: Ref<string[]> = ref([])
+const isOpenSearch = ref(false)
 
 const { cart } = storeToRefs(useCartStore())
 const { favorites } = storeToRefs(useFavoritesStore())
@@ -83,7 +68,47 @@ const selectedFilters = reactive({
   search: route.query.search as string,
 })
 
-const fetchProducts = () => {
+watchEffect(() => {
+  const category = route.params.categoryId
+  const subCategory = route.params.subCategoryId
+
+  if (!categories.value.length) {
+    return
+  }
+  const currentCategory = categories.value.find((el) => el.parent.key === category)
+  if (subCategory) {
+    categoryId.value =
+      currentCategory?.children.find((subEl) => subEl.key === subCategory)?.id ?? ''
+  } else {
+    categoryId.value = currentCategory?.parent.id ?? ''
+  }
+})
+
+watch(
+  () => route,
+  () => {
+    selectedFilters.sorting = route.query.sorting as SortBy
+    selectedFilters.color = route.query.color as string[]
+    selectedFilters.quantity = route.query.quantity as string[]
+    fetchProducts()
+  },
+  { deep: true, immediate: true },
+)
+
+const update =
+  <T extends keyof typeof selectedFilters>(field: T) =>
+  (value: (typeof selectedFilters)[T]) => {
+    router.replace({ query: { ...route.query, [field]: value } })
+    selectedFilters[field] = value
+    fetchProducts()
+  }
+
+const search = update('search')
+const selectSorting = update('sorting')
+const selectColor = update('color')
+const selectQuantity = update('quantity')
+
+function fetchProducts() {
   limitProductsOnPage = getLimitProductsOnPage()
 
   const offset = (currentPage.value - 1) * limitProductsOnPage
@@ -114,30 +139,6 @@ const fetchProducts = () => {
       useAlertStore().show(error.message, 'warning')
     })
 }
-
-const update =
-  <T extends keyof typeof selectedFilters>(field: T) =>
-  (value: (typeof selectedFilters)[T]) => {
-    router.replace({ query: { ...route.query, [field]: value } })
-    selectedFilters[field] = value
-    fetchProducts()
-  }
-
-const search = update('search')
-const selectSorting = update('sorting')
-const selectColor = update('color')
-const selectQuantity = update('quantity')
-
-watch(
-  () => route,
-  () => {
-    selectedFilters.sorting = route.query.sorting as SortBy
-    selectedFilters.color = route.query.color as string[]
-    selectedFilters.quantity = route.query.quantity as string[]
-    fetchProducts()
-  },
-  { deep: true, immediate: true },
-)
 
 async function addProductToCartById({
   productId,
@@ -213,8 +214,6 @@ function isProductInFavorites(productId: string, variantId: number) {
 function getLoadingState(productId: string) {
   return loadingStates.value[productId] || false
 }
-
-const isOpenSearch = ref(false)
 </script>
 
 <template>

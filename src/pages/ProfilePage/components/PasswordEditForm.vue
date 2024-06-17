@@ -5,18 +5,25 @@ import { InputType } from '@/enums/inputType'
 import { InputLabel } from '@/enums/inputLabel'
 import { customerService } from '@/services/customerService'
 import { useAlertStore } from '@/stores/alert'
-import { userAuth } from '@/stores/userAuth'
+import { useUserAuthStore } from '@/stores/userAuth'
 import type { SubmitEventPromise } from 'vuetify'
 import { ref, type Ref } from 'vue'
 import type { UserPasswordsData } from '@/interfaces/userData'
+
+const alert = useAlertStore()
 
 const props = defineProps<{
   email: string
 }>()
 
-const alert = useAlertStore()
-
 const passwordForm: Ref<HTMLFormElement | undefined> = ref()
+const userPasswords: Ref<UserPasswordsData> = ref({
+  email: props.email,
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+})
+const isError = ref(false)
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   const { valid } = await submitEventPromise
@@ -24,13 +31,6 @@ async function submit(submitEventPromise: SubmitEventPromise) {
     updatePassword()
   }
 }
-
-const userPasswords: Ref<UserPasswordsData> = ref({
-  email: props.email,
-  currentPassword: '',
-  newPassword: '',
-  confirmPassword: '',
-})
 
 const resetForm = () => {
   if (passwordForm.value) {
@@ -43,8 +43,8 @@ function updatePassword() {
     .updatePassword(userPasswords.value)
     .then((result) => {
       alert.show(`Password changed successfully`, 'success')
-      userAuth().customerVersion = result.body.version
-      userAuth().login()
+      useUserAuthStore().customerVersion = result.body.version
+      useUserAuthStore().login()
       resetForm()
     })
     .catch((error: Error) => {
@@ -55,8 +55,6 @@ function updatePassword() {
       }
     })
 }
-
-const isError = ref(false)
 
 function isShowMessage() {
   return isError.value
