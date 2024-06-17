@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 
+const scrollPositionThreshold = 200
+
 const showButton = ref(false)
 
 const scrollToTop = () => {
@@ -8,7 +10,7 @@ const scrollToTop = () => {
 }
 
 const handleScroll = () => {
-  showButton.value = window.scrollY > 200
+  showButton.value = window.scrollY > scrollPositionThreshold
 }
 
 onMounted(() => {
@@ -22,7 +24,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <VFab
+  <v-fab
     v-if="showButton"
     icon="mdi-chevron-up"
     @click="scrollToTop"
