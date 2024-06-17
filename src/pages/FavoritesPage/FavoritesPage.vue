@@ -27,10 +27,11 @@ const { cart } = storeToRefs(useCartStore())
 const loadingStates: Ref<{ [key: string]: boolean }> = ref({})
 const alert = useAlertStore()
 const favoritesProducts: Ref<FavoritesProducts[]> = ref([])
-const { favorites } = storeToRefs(useFavoritesStore())
+const favoritesStore = useFavoritesStore()
+const { favorites } = storeToRefs(favoritesStore)
 
 async function fetchProducts() {
-  const lineItems = useFavoritesStore().lineItemsInFavorites
+  const lineItems = favoritesStore.lineItemsInFavorites
   if (!lineItems) {
     return
   }
@@ -58,15 +59,19 @@ async function fetchProducts() {
   favoritesProducts.value = await Promise.all(lineItemsPromises)
 }
 
-watchEffect(async () => {
-  fetchProducts()
-})
+watchEffect(fetchProducts)
 
-async function addProductToCartById(productId: string) {
+async function addProductToCartById({
+  productId,
+  variantId,
+}: {
+  productId: string
+  variantId: number
+}) {
   loadingStates.value[productId] = true
 
   await cartService
-    .addProductToCart(productId, cart.value)
+    .addProductToCart({ productId, variantId, cart: cart.value })
     .then(() => {
       setTimeout(() => {
         loadingStates.value[productId] = false
@@ -81,28 +86,29 @@ function getLoadingState(productId: string) {
   return loadingStates.value[productId] || false
 }
 
-function isProductInCart(productId: string) {
+function isProductInCart(productId: string, variantId: number) {
   if (!cart.value?.lineItems) {
     return false
   }
-  return cartService.isProductInCart(cart.value?.lineItems, productId)
+  return cartService.isProductInCart({ lineItems: cart.value.lineItems, productId, variantId })
 }
 
-async function deleteProductFromFavoritesById(lineItemId: string) {
-  if (favorites.value?.id) {
-    favoritesApiService
-      .removeLineItemFromFavorites({
-        id: favorites.value.id,
-        version: favorites.value.version,
-        lineItemId,
-      })
-      .then(({ body }) => {
-        useFavoritesStore().setFavorites(body)
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
+async function deleteProductFromFavorites(lineItemId: string) {
+  if (!favorites.value?.id) {
+    return
   }
+  favoritesApiService
+    .removeLineItemFromFavorites({
+      id: favorites.value.id,
+      version: favorites.value.version,
+      lineItemId,
+    })
+    .then(({ body }) => {
+      favoritesStore.setFavorites(body)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 </script>
 
@@ -129,10 +135,10 @@ async function deleteProductFromFavoritesById(lineItemId: string) {
       :productId
       :variantId
       :loading="getLoadingState(productId)"
-      :isAddedInCart="isProductInCart(productId)"
+      :isAddedInCart="isProductInCart(productId, variantId)"
       :isAddedInFavorites="true"
       @addProductToCart="addProductToCartById($event)"
-      @deleteProductFromFavorites="deleteProductFromFavoritesById($event)"
+      @deleteProductFromFavorites="deleteProductFromFavorites($event)"
     />
   </TransitionGroup>
   <Transition name="empty-fade" class="d-flex empty-favorites">

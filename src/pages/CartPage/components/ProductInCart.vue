@@ -36,7 +36,11 @@ function isProductInFavorites() {
   if (!favorites.value?.lineItems) {
     return false
   }
-  return favoritesService.isProductInFavorites(favorites.value?.lineItems, props.productId)
+  return favoritesService.isProductInFavorites({
+    lineItems: favorites.value?.lineItems,
+    productId: props.productId,
+    variantId: props.variantId,
+  })
 }
 
 const href = { name: 'productId', params: { productId: props.productSlug } }
@@ -48,28 +52,30 @@ const passProductId = () => {
 const { cart } = storeToRefs(cartStore)
 
 function updateQuantity() {
-  if (cart.value) {
-    cartApiService
-      .changeProductQuantity({
-        id: cart.value.id,
-        version: cart.value.version,
-        lineItemId: props.lineItemId,
-        quantity: quantity.value,
-      })
-      .then(({ body }) => cartStore.setCart(body))
+  if (!cart.value) {
+    return
   }
+  cartApiService
+    .changeProductQuantity({
+      id: cart.value.id,
+      version: cart.value.version,
+      lineItemId: props.lineItemId,
+      quantity: quantity.value,
+    })
+    .then(({ body }) => cartStore.setCart(body))
 }
 
 function removeLineItem() {
-  if (cart.value) {
-    cartApiService
-      .removeLineItem({
-        id: cart.value.id,
-        version: cart.value.version,
-        lineItemId: props.lineItemId,
-      })
-      .then(({ body }) => cartStore.setCart(body))
+  if (!cart.value) {
+    return
   }
+  cartApiService
+    .removeLineItem({
+      id: cart.value.id,
+      version: cart.value.version,
+      lineItemId: props.lineItemId,
+    })
+    .then(({ body }) => cartStore.setCart(body))
 }
 
 const heartIcon = computed(() => {
@@ -88,28 +94,29 @@ function clickHeart() {
       .catch((error: Error) => {
         alert.show(`Error: ${error.message}`, 'warning')
       })
-  } else {
-    isAddedInFavorites.value = false
-    const favoritesLineItemId = favoritesService.getLineIdByProduct(
-      useFavoritesStore().favorites?.lineItems as ShoppingListLineItem[],
-      props.productId,
-      props.variantId,
-    )
-    if (favorites.value?.id) {
-      favoritesApiService
-        .removeLineItemFromFavorites({
-          id: favorites.value.id,
-          version: favorites.value.version,
-          lineItemId: favoritesLineItemId ?? '',
-        })
-        .then(({ body }) => {
-          useFavoritesStore().setFavorites(body)
-        })
-        .catch((error: Error) => {
-          alert.show(`Error: ${error.message}`, 'warning')
-        })
-    }
+    return
   }
+  isAddedInFavorites.value = false
+  const favoritesLineItemId = favoritesService.getLineIdByProduct(
+    useFavoritesStore().favorites?.lineItems as ShoppingListLineItem[],
+    props.productId,
+    props.variantId,
+  )
+  if (!favorites.value?.id) {
+    return
+  }
+  favoritesApiService
+    .removeLineItemFromFavorites({
+      id: favorites.value.id,
+      version: favorites.value.version,
+      lineItemId: favoritesLineItemId ?? '',
+    })
+    .then(({ body }) => {
+      useFavoritesStore().setFavorites(body)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 </script>
 <template>

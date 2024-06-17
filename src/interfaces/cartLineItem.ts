@@ -7,7 +7,8 @@ export interface CartLineItem {
   productId: string
   quantity: number
   lineItemId: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  attributes: { readonly name: string; readonly value: any }[] | undefined
+  attributes:
+    | { readonly name: string; readonly value: { key: string; value: string } }[]
+    | undefined
   variantId: number
 }

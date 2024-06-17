@@ -40,7 +40,7 @@ const props = defineProps<{
   }
 }
 
-@media screen and (1024px <= width) {
+@include mixins.media-desktop {
   .category {
     &__card {
       max-width: 26svw;

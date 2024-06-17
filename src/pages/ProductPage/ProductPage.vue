@@ -45,7 +45,7 @@ function retrieveVariantsData({ id, attributes, prices }: ProductVariant) {
   }
 }
 
-const productId = localStorageService.getData('productId')
+const productId = localStorageService.getData('productId') ?? ''
 const selectedVariants: Ref<string[]> = ref([])
 
 if (productId !== null) {
@@ -95,21 +95,11 @@ const price = computed(() => {
 const { cart } = storeToRefs(useCartStore())
 
 async function addProductToCart() {
-  const cartId = localStorageService.getData('cartId')
-  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
-  if (!cartId) {
-    await cartService.createCartAndSaveState()
-  }
-  if (cart.value?.id && productId) {
-    cartApiService
-      .addProductToCart({ id: cart.value.id, version: cart.value.version, productId, variantId })
-      .then(({ body }) => {
-        useCartStore().setCart(body)
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
-  }
+  const variantId =
+    cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id ?? 1
+  cartService.addProductToCart({ productId, variantId, cart: cart.value }).catch((error: Error) => {
+    alert.show(`Error: ${error.message}`, 'warning')
+  })
 }
 
 function removeProductFromCart() {
@@ -120,7 +110,11 @@ function removeProductFromCart() {
   if (!variantId) {
     return
   }
-  const lineItemId = cartService.getLineIdByProduct(cart.value?.lineItems, productId, variantId)
+  const lineItemId = cartService.getLineIdByProduct({
+    lineItems: cart.value?.lineItems,
+    productId,
+    variantId,
+  })
   if (!lineItemId) {
     return
   }
@@ -143,7 +137,7 @@ const isInCart = computed(() => {
   if (!variantId || !productId) {
     return
   }
-  return cartService.findItemByVariantIdAndProductId(cart.value?.lineItems, productId, variantId)
+  return cartService.isLineItemInCart({ lineItems: cart.value?.lineItems, productId, variantId })
 })
 
 const textContent = computed(() => {
@@ -154,19 +148,23 @@ const color = computed(() => {
   return !isInCart.value ? 'secondary' : 'primary'
 })
 
-const setAction = computed(() => {
-  return !isInCart.value ? () => addProductToCart() : () => removeProductFromCart()
-})
+function setAction() {
+  !isInCart.value ? addProductToCart() : removeProductFromCart()
+}
 
 const isInFavorites = computed(() => {
   if (!favorites.value?.lineItems) {
-    return
+    return false
   }
   const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
   if (!variantId || !productId) {
-    return
+    return false
   }
-  return favoritesService.getLineIdByProduct(favorites.value?.lineItems, productId, variantId)
+  return favoritesService.isProductInFavorites({
+    lineItems: favorites.value?.lineItems,
+    productId,
+    variantId,
+  })
 })
 
 async function addProductToFavorites() {
@@ -186,11 +184,11 @@ function deleteProductFromFavoritesById() {
   if (!favorites.value?.lineItems || !productId || !variantId) {
     return
   }
-  const lineItemId = favoritesService.getLineIdByProduct(
-    favorites.value?.lineItems,
+  const lineItemId = favoritesService.getLineIdByProduct({
+    lineItems: favorites.value?.lineItems,
     productId,
     variantId,
-  )
+  })
   if (!lineItemId) {
     return
   }
@@ -208,11 +206,9 @@ function deleteProductFromFavoritesById() {
     })
 }
 
-const handleFavoriteChange = computed(() => {
-  return !isInFavorites.value
-    ? () => addProductToFavorites()
-    : () => deleteProductFromFavoritesById()
-})
+function handleFavoriteChange() {
+  return !isInFavorites.value ? addProductToFavorites() : deleteProductFromFavoritesById()
+}
 
 const setIconFavorites = computed(() => {
   return !isInFavorites.value ? 'mdi-heart-outline' : 'mdi-heart'

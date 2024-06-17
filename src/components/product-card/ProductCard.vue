@@ -59,17 +59,17 @@ const addToFavorites = () => {
     ? emit('addProductToFavorites', { productId: props.productId, variantId: props.variantId })
     : emit(
         'deleteProductFromFavorites',
-        favoritesService.getLineIdByProduct(
-          useFavoritesStore().favorites?.lineItems as ShoppingListLineItem[],
-          props.productId,
-          props.variantId,
-        ),
+        favoritesService.getLineIdByProduct({
+          lineItems: useFavoritesStore().favorites?.lineItems as ShoppingListLineItem[],
+          productId: props.productId,
+          variantId: props.variantId,
+        }),
       )
 }
 
 const addToCart = () => {
   if (!props.isAddedInCart) {
-    emit('addProductToCart', props.productId)
+    emit('addProductToCart', { productId: props.productId, variantId: props.variantId })
   }
 }
 </script>
