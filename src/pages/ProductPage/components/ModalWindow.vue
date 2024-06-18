@@ -14,7 +14,10 @@ const props = defineProps<{
   >
     <v-sheet>
       <v-card :width="$vuetify.display.smAndDown ? '70svw' : '50svw'">
-        <v-carousel :height="$vuetify.display.smAndDown ? '70svw' : '50svw'" :show-arrows="$vuetify.display.smAndDown ? false : true">
+        <v-carousel
+          :height="$vuetify.display.smAndDown ? '70svw' : '50svw'"
+          :show-arrows="$vuetify.display.smAndDown ? false : true"
+        >
           <v-carousel-item
             v-for="url in productImages"
             :key="url"

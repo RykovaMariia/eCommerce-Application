@@ -305,12 +305,14 @@ function handleFavoriteChange() {
 @use '@styles/mixins.scss';
 
 .slider-image {
+  cursor: pointer;
+
   max-width: 27rem;
-  box-shadow: none;
+  margin-bottom: 1rem;
+
   border: 1px solid constants.$color-primary;
   border-radius: 9px;
-  margin-bottom: 1rem;
-  cursor: pointer;
+  box-shadow: none;
 }
 
 .v-sheet {
@@ -318,9 +320,9 @@ function handleFavoriteChange() {
 }
 
 .v-card--variant-elevated {
-  box-shadow: none;
   border: 1px solid constants.$color-primary;
   border-radius: 9px;
+  box-shadow: none;
 }
 
 .slider-card {

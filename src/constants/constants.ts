@@ -35,7 +35,8 @@ export const OUR_INFO = [
       'https://lh3.googleusercontent.com/a/ACg8ocLWno28AHmrcPaNB_CsGCDlBifKR1jmQQBv2uKoyAGhGTgNz04CoSNTLTF09SPI2DUz9-2JqCqlwVAOVCY_ryc67fp9n6NS=s576-c-no',
     role: 'Frontend developer',
     bio: 'Reliable and conscientious team member who consistently delivers high-quality work on time',
-    contributions: 'Configuration project, main, login, registration, product and about us pages, adding product to favorites from product page',
+    contributions:
+      'Configuration project, main, login, registration, product and about us pages, adding product to favorites from product page',
     githubLink: 'https://github.com/chickenmcnuggetss',
   },
 ] as const
