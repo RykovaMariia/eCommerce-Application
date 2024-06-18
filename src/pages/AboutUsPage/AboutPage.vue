@@ -9,7 +9,7 @@ const stylePreference = (index: number) => index % 2 !== 0
 <template>
   <v-col>
     <h1>About us</h1>
-    <v-col class="container">
+    <v-col class="container pb-16">
       Hello! You are on the website of our e-commerce application. We were able to manage this
       interesting and exciting challenge thanks to the coordination of team members and a clear
       division of responsibilities. Daily meetings and code reviews help us detect bugs early on and
@@ -34,7 +34,7 @@ const stylePreference = (index: number) => index % 2 !== 0
         :stylePreference="stylePreference(index)"
       />
     </v-col>
-    <v-col class="container">
+    <v-col class="container pt-8 d-flex justify-end">
       <a href="https://rs.school"><IconRSSLogo /></a>
     </v-col>
   </v-col>

@@ -17,7 +17,7 @@ export const OUR_INFO = [
     role: 'Team lead / Frontend developer',
     bio: 'A meticulous perfectionist with a keen eye for detail',
     contributions:
-      'Configuring the repository and task board, header, catalog page, routing, cart page, products service',
+      'Configuring the repository and task board, header, catalog page, routing, cart, favorites page, products service, loader, scroll to top button',
     githubLink: 'https://github.com/rykovamariia',
   },
   {
@@ -35,7 +35,7 @@ export const OUR_INFO = [
       'https://lh3.googleusercontent.com/a/ACg8ocLWno28AHmrcPaNB_CsGCDlBifKR1jmQQBv2uKoyAGhGTgNz04CoSNTLTF09SPI2DUz9-2JqCqlwVAOVCY_ryc67fp9n6NS=s576-c-no',
     role: 'Frontend developer',
     bio: 'Reliable and conscientious team member who consistently delivers high-quality work on time',
-    contributions: 'Configuration project, main, login, registration, product and about us pages',
+    contributions: 'Configuration project, main, login, registration, product and about us pages, adding product to favorites from product page',
     githubLink: 'https://github.com/chickenmcnuggetss',
   },
 ] as const
