@@ -50,7 +50,7 @@ async function fetchProducts({
   }
 
   if (!totalLineItemQuantity) {
-    console.warn('warn')
+    totalLineItem.value = 0
     loadingStore.setLoading(false)
     return
   }

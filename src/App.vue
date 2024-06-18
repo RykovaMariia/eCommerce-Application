@@ -43,12 +43,14 @@ favoritesService.setAnonymousSession()
     <Header />
     <v-main>
       <Breadcrumbs />
-      <!-- <router-view v-slot="{ Component }">
+      <router-view v-slot="{ Component }">
         <transition name="fade">
-          <component :is="Component" />
+          <!-- eslint-disable-next-line vue/require-toggle-inside-transition -->
+          <div>
+            <component :is="Component" />
+          </div>
         </transition>
-      </router-view> -->
-      <RouterView />
+      </router-view>
       <ScrollToTopButton />
     </v-main>
     <Footer />
