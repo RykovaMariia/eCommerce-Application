@@ -23,13 +23,17 @@ import { cartService } from '@/services/cartService'
 import { useFavoritesStore } from '@/stores/favorites'
 import { favoritesApiService } from '@/services/favoritesApiService'
 import { favoritesService } from '@/services/favoritesService'
+import { useLoadingStore } from '@/stores/loading'
 
+const loadingStore = useLoadingStore()
 const alert = useAlertStore()
 const router = useRouter()
 const route = useRoute()
 
 const { categories } = storeToRefs(useCategoriesStore())
 const categoryId = ref()
+
+loadingStore.setLoading(true)
 
 const getLimitProductsOnPage = () => {
   const minDesktopWidth = 1440
@@ -131,6 +135,8 @@ function fetchProducts() {
       quantityItems.value = (
         response.body.facets[Facet.quantity] as TermFacetResult
       ).terms.map<string>((el) => el.term)
+
+      loadingStore.setLoading(false)
     })
     .catch((error: Error) => {
       useAlertStore().show(error.message, 'warning')
