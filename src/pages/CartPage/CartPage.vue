@@ -94,6 +94,7 @@ async function fetchProducts({
 fetchProducts({})
 
 function applyPromoCode() {
+  loadingStore.setLoading(true)
   if (!cart.value) {
     return
   }
@@ -116,8 +117,10 @@ function applyPromoCode() {
         }
       })
       promoCode.value = ''
+      loadingStore.setLoading(false)
     })
     .catch((error: Error) => {
+      loadingStore.setLoading(false)
       useAlertStore().show(error.message, 'warning')
     })
 }
