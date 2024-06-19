@@ -37,11 +37,14 @@ if (refreshToken) {
   })
 }
 
-Promise.all([cartService.setAnonymousSession(), favoritesService.setAnonymousSession()]).then(
-  () => {
+Promise.all([cartService.setAnonymousSession(), favoritesService.setAnonymousSession()])
+  .then(() => {
     loadingStore.setLoading(false)
-  },
-)
+  })
+  .catch((error: Error) => {
+    loadingStore.setLoading(false)
+    alert.show(`Error: ${error.message}`, 'warning')
+  })
 </script>
 
 <template>

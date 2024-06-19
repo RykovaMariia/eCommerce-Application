@@ -12,6 +12,7 @@ import { favoritesService } from '@/services/favoritesService'
 import { useFavoritesStore } from '@/stores/favorites'
 import { favoritesApiService } from '@/services/favoritesApiService'
 import { useAlertStore } from '@/stores/alert'
+import { useLoadingStore } from '@/stores/loading'
 
 const props = defineProps<{
   srcImg: string
@@ -34,6 +35,8 @@ const href = { name: 'productId', params: { productId: props.productSlug } }
 const alert = useAlertStore()
 const cartStore = useCartStore()
 const favoritesStore = useFavoritesStore()
+const loadingStore = useLoadingStore()
+
 const { favorites } = storeToRefs(favoritesStore)
 const { cart } = storeToRefs(cartStore)
 const quantity = ref(props.quantity)
@@ -108,6 +111,7 @@ function removeLineItem() {
 }
 
 function clickHeart() {
+  loadingStore.setLoading(true)
   if (!isAddedInFavorites.value) {
     isAddedInFavorites.value = true
     favoritesService
@@ -116,9 +120,12 @@ function clickHeart() {
         variantId: props.variantId,
         favorites: favorites.value,
       })
+      .then(() => loadingStore.setLoading(false))
       .catch((error: Error) => {
+        loadingStore.setLoading(false)
         alert.show(`Error: ${error.message}`, 'warning')
       })
+
     return
   }
   isAddedInFavorites.value = false
@@ -138,8 +145,10 @@ function clickHeart() {
     })
     .then(({ body }) => {
       useFavoritesStore().setFavorites(body)
+      loadingStore.setLoading(false)
     })
     .catch((error: Error) => {
+      loadingStore.setLoading(false)
       alert.show(`Error: ${error.message}`, 'warning')
     })
 }

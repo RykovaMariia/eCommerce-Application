@@ -159,14 +159,18 @@ function addProductToCartById({ productId, variantId }: { productId: string; var
 }
 
 function addProductToFavorites({ productId, variantId }: { productId: string; variantId: number }) {
+  loadingStore.setLoading(true)
   favoritesService
     .addProductToFavoritesList({ productId, variantId, favorites: favorites.value })
+    .then(() => loadingStore.setLoading(false))
     .catch((error: Error) => {
+      loadingStore.setLoading(false)
       alert.show(`Error: ${error.message}`, 'warning')
     })
 }
 
 async function deleteProductFromFavoritesById(lineItemId: string) {
+  loadingStore.setLoading(true)
   if (!favorites.value?.id) {
     return
   }
@@ -178,8 +182,10 @@ async function deleteProductFromFavoritesById(lineItemId: string) {
     })
     .then(({ body }) => {
       useFavoritesStore().setFavorites(body)
+      loadingStore.setLoading(false)
     })
     .catch((error: Error) => {
+      loadingStore.setLoading(false)
       alert.show(`Error: ${error.message}`, 'warning')
     })
 }
