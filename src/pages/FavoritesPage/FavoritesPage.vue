@@ -11,7 +11,6 @@ import { LOADING_TIMEOUT } from '@/constants/constants'
 import { useCartStore } from '@/stores/cart'
 import { favoritesApiService } from '@/services/favoritesApiService'
 import IconHeart from '@/components/icons/IconHeart.vue'
-// import IconZero from '@/components/icons/IconZero.vue'
 import { useLoadingStore } from '@/stores/loading'
 
 interface FavoritesProducts {
@@ -157,9 +156,6 @@ async function deleteProductFromFavorites(lineItemId: string) {
       </div>
     </div>
   </Transition>
-  <!-- <v-overlay v-model="isLoading" class="d-flex align-center justify-center">
-    <IconZero :is-loading="true" />
-  </v-overlay> -->
 </template>
 <style lang="scss" scoped>
 .d-flex {
