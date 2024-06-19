@@ -5,6 +5,7 @@ import { useCartStore } from '@/stores/cart'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { cartApiService } from '@/services/cartApiService'
+import { useAlertStore } from '@/stores/alert'
 
 const emit = defineEmits(['updateProduct'])
 
@@ -14,14 +15,19 @@ const dialog = ref(false)
 function deleteCart() {
   dialog.value = false
   if (cart.value) {
-    cartApiService.deleteCart({ id: cart.value.id, version: cart.value.version }).then(() => {
-      cart.value = undefined
-      localStorageService.removeData('cartId')
-      emit('updateProduct', {
-        lineItems: [],
-        totalLineItemQuantity: 0,
+    cartApiService
+      .deleteCart({ id: cart.value.id, version: cart.value.version })
+      .then(() => {
+        cart.value = undefined
+        localStorageService.removeData('cartId')
+        emit('updateProduct', {
+          lineItems: [],
+          totalLineItemQuantity: 0,
+        })
       })
-    })
+      .catch((error: Error) => {
+        useAlertStore().show(error.message, 'warning')
+      })
   }
 }
 </script>

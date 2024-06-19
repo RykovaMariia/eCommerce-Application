@@ -1,6 +1,7 @@
 export interface CartLineItem {
   name: string
   srcImg: string
+  individualPrice: number
   price: number
   discountedPrice: number
   productSlug: string

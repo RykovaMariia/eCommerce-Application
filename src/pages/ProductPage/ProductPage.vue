@@ -171,12 +171,12 @@ function setAction() {
   !isInCart.value ? addProductToCart() : removeProductFromCart()
 }
 
-async function addProductToFavorites() {
+function addProductToFavorites() {
   const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
   if (!variantId || !productId) {
     return
   }
-  await favoritesService
+  favoritesService
     .addProductToFavoritesList({ productId, variantId, favorites: favorites.value })
     .catch((error: Error) => {
       alert.show(`Error: ${error.message}`, 'warning')

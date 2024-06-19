@@ -105,6 +105,7 @@ router.beforeEach((to, from, next) => {
     next({ name: 'main', replace: true })
   } else if (to.name === 'logout' && useUserAuthStore().isLoggedIn) {
     useUserAuthStore().logout()
+
     next({ name: 'main' })
   } else if (to.name === 'profile' && !useUserAuthStore().isLoggedIn) {
     next({ name: 'login', replace: true })

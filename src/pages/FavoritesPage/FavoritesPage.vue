@@ -32,7 +32,7 @@ const { cart } = storeToRefs(useCartStore())
 const { isLoading } = storeToRefs(loadingStore)
 
 const loadingStates: Ref<{ [key: string]: boolean }> = ref({})
-const favoritesProducts: Ref<FavoritesProducts[]> = ref([])
+const favoritesProducts: Ref<FavoritesProducts[] | undefined> = ref(undefined)
 
 watchEffect(fetchProducts)
 
@@ -119,7 +119,12 @@ async function deleteProductFromFavorites(lineItemId: string) {
 </script>
 
 <template>
-  <TransitionGroup v-if="favoritesProducts.length" tag="div" class="d-flex products" name="fade">
+  <TransitionGroup
+    v-if="favoritesProducts?.length && !isLoading"
+    tag="div"
+    class="d-flex products"
+    name="fade"
+  >
     <ProductCard
       v-for="{
         name,
@@ -148,7 +153,7 @@ async function deleteProductFromFavorites(lineItemId: string) {
     />
   </TransitionGroup>
   <Transition name="empty-fade" class="d-flex empty-favorites">
-    <div v-if="!favoritesProducts.length && !isLoading">
+    <div v-if="favoritesProducts?.length === 0 && !isLoading">
       <IconHeart class="icon-heart" />
       <div class="text-favorites">
         The products you liked will be here. Just click on the heart on the product card

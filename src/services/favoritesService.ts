@@ -1,10 +1,10 @@
 import { localStorageService } from './storageService'
 import type { ShoppingList, ShoppingListLineItem } from '@commercetools/platform-sdk'
-import { type FavoritesServiceType, favoritesApiService } from './favoritesApiService'
+import { type FavoritesApiServiceType, favoritesApiService } from './favoritesApiService'
 import { useFavoritesStore } from '@/stores/favorites'
 
 class FavoritesService {
-  constructor(private favoritesService: FavoritesServiceType) {}
+  constructor(private favoritesApiService: FavoritesApiServiceType) {}
 
   public setAnonymousSession() {
     const favoritesListId = localStorageService.getData('favoritesListId')
@@ -12,11 +12,11 @@ class FavoritesService {
     if (!favoritesListId) {
       return
     }
-    this.favoritesService
+    this.favoritesApiService
       .getFavoritesListById(favoritesListId)
       .then(({ body }) => {
         if (anonymousId && body.createdBy?.anonymousId !== anonymousId) {
-          return this.favoritesService
+          return this.favoritesApiService
             .updateAnonymousId({ id: favoritesListId, version: body.version, anonymousId })
             .then(({ body }) => body)
         }
@@ -28,7 +28,7 @@ class FavoritesService {
   }
 
   private async createFavoritesListAndSaveState() {
-    const { body } = await this.favoritesService.createFavoritesList()
+    const { body } = await this.favoritesApiService.createFavoritesList()
     localStorageService.saveData('favoritesListId', body.id)
     useFavoritesStore().setFavorites(body)
     return body

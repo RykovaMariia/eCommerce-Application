@@ -7,7 +7,7 @@ import type {
 } from '@commercetools/platform-sdk'
 import { productsService } from '@/services/productsService'
 import ProductCard from '@components/product-card/ProductCard.vue'
-import { computed, reactive, ref, watch, watchEffect, type Ref } from 'vue'
+import { computed, reactive, ref, watch, type Ref } from 'vue'
 import SelectInput from '@components/inputs/SelectInput.vue'
 import { LOADING_TIMEOUT, SORTING_ITEMS } from '@/constants/constants'
 import { type SortBy } from '@/enums/sortingCommand'
@@ -69,25 +69,23 @@ const selectedFilters = reactive({
   search: route.query.search as string,
 })
 
-watchEffect(() => {
-  const category = route.params.categoryId
-  const subCategory = route.params.subCategoryId
+function updateCategoryId() {
+  const currentCategory = categories.value.find((el) => el.parent.key === route.params.categoryId)
 
-  if (!categories.value.length) {
-    return
-  }
-  const currentCategory = categories.value.find((el) => el.parent.key === category)
-  if (subCategory) {
+  if (route.params.subCategoryId) {
     categoryId.value =
-      currentCategory?.children.find((subEl) => subEl.key === subCategory)?.id ?? ''
+      currentCategory?.children.find((subEl) => subEl.key === route.params.subCategoryId)?.id ?? ''
   } else {
     categoryId.value = currentCategory?.parent.id ?? ''
   }
-})
+}
 
 watch(
-  () => route,
+  () => [route, categories],
   () => {
+    if (!categories.value.length) {
+      return
+    }
     selectedFilters.sorting = route.query.sorting as SortBy
     selectedFilters.color = route.query.color as string[]
     selectedFilters.quantity = route.query.quantity as string[]
@@ -111,6 +109,7 @@ const selectQuantity = update('quantity')
 
 function fetchProducts() {
   limitProductsOnPage = getLimitProductsOnPage()
+  updateCategoryId()
 
   const offset = (currentPage.value - 1) * limitProductsOnPage
 
@@ -143,35 +142,24 @@ function fetchProducts() {
     })
 }
 
-async function addProductToCartById({
-  productId,
-  variantId,
-}: {
-  productId: string
-  variantId: number
-}) {
-  loadingStates.value[productId] = true
+function addProductToCartById({ productId, variantId }: { productId: string; variantId: number }) {
+  loadingStore.setLoading(true)
 
-  await cartService
+  cartService
     .addProductToCart({ productId, variantId, cart: cart.value })
     .then(() => {
       setTimeout(() => {
-        loadingStates.value[productId] = false
+        loadingStore.setLoading(false)
       }, LOADING_TIMEOUT)
     })
     .catch((error: Error) => {
+      loadingStore.setLoading(false)
       alert.show(`Error: ${error.message}`, 'warning')
     })
 }
 
-async function addProductToFavorites({
-  productId,
-  variantId,
-}: {
-  productId: string
-  variantId: number
-}) {
-  await favoritesService
+function addProductToFavorites({ productId, variantId }: { productId: string; variantId: number }) {
+  favoritesService
     .addProductToFavoritesList({ productId, variantId, favorites: favorites.value })
     .catch((error: Error) => {
       alert.show(`Error: ${error.message}`, 'warning')
