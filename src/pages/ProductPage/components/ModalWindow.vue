@@ -13,8 +13,11 @@ const props = defineProps<{
     class="d-flex justify-center align-center mx-auto"
   >
     <v-sheet>
-      <v-card :width="$vuetify.display.smAndDown ? '90svw' : '60svw'">
-        <v-carousel :height="$vuetify.display.smAndDown ? '80svh' : '90svh'">
+      <v-card :width="$vuetify.display.smAndDown ? '70svw' : '50svw'">
+        <v-carousel
+          :height="$vuetify.display.smAndDown ? '70svw' : '50svw'"
+          :show-arrows="$vuetify.display.smAndDown ? false : true"
+        >
           <v-carousel-item
             v-for="url in productImages"
             :key="url"
@@ -30,10 +33,8 @@ const props = defineProps<{
 <style lang="scss" scoped>
 @use '@/styles/constants.scss';
 
-.v-carousel__controls {
-  height: 2rem;
-  color: constants.$color-primary;
-  background: transparent;
+::v-deep(.v-carousel__controls) {
+  background: none;
 }
 
 .v-btn--icon.v-btn--density-default {

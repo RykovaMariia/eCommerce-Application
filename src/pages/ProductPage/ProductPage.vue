@@ -216,14 +216,14 @@ function handleFavoriteChange() {
 </script>
 
 <template>
-  <div class="product-container">
+  <div class="d-flex justify-center product-container">
     <v-col>
-      <v-sheet max-width="28rem" class="mx-auto slider-image">
-        <v-sheet rounded="6px" class="slider-image">
-          <div class="d-flex align-center justify-center slider-image" id="activator">
+      <v-sheet max-width="27rem" class="mx-auto">
+        <div>
+          <div class="slider-image" id="activator">
             <v-img cover :src="product.images[imageIndex]" rounded="lg"></v-img>
           </div>
-        </v-sheet>
+        </div>
         <div>
           <div v-if="product.images.length > 1">
             <v-slide-group v-model="imageIndex">
@@ -233,7 +233,7 @@ function handleFavoriteChange() {
                 v-slot="{ select }"
               >
                 <v-card
-                  :class="['ma-4']"
+                  :class="['slider-card']"
                   height="100"
                   width="100"
                   @click="select"
@@ -305,12 +305,32 @@ function handleFavoriteChange() {
 @use '@styles/mixins.scss';
 
 .slider-image {
+  cursor: pointer;
+
   max-width: 27rem;
+  margin-bottom: 1rem;
+
+  border: 1px solid constants.$color-primary;
+  border-radius: 9px;
   box-shadow: none;
 }
 
 .v-sheet {
   background-color: transparent;
+}
+
+.v-card--variant-elevated {
+  border: 1px solid constants.$color-primary;
+  border-radius: 9px;
+  box-shadow: none;
+}
+
+.slider-card {
+  margin-right: 0.5rem;
+}
+
+::v-deep(.v-slide-group__content) {
+  justify-content: center;
 }
 
 .product-container {
