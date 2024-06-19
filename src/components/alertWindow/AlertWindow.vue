@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 
-const alert = alertStore()
+const alert = useAlertStore()
 
-const closeAlert = () => alert.setFalse()
+const closeAlert = () => alert.hide()
 </script>
 
 <template>
   <v-alert
     closable
-    :text="alert.message"
+    :text="alert.messageInfo?.message"
     position="fixed"
     class="alert-window"
     @click:close="closeAlert"
-    :type="alert.type"
+    :type="alert.messageInfo?.type"
   ></v-alert>
 </template>
 

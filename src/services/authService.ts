@@ -1,12 +1,14 @@
-import { ClientService } from '@/api/ClientService'
+import { ClientService, clientService } from '@/services/clientService'
 
 import {
   StorageService,
   localStorageService,
   type LocalStorageState,
 } from '@/services/storageService'
-import { tokenData } from '@/api/TokenInfo'
+import { tokenData } from '@/services/tokenService'
 import type { UserCustomerDraft, UserLoginData } from '@/interfaces/userData'
+
+const mergeWithExistingCustomerCart = 'MergeWithExistingCustomerCart'
 
 export class AuthService {
   constructor(
@@ -15,19 +17,32 @@ export class AuthService {
   ) {}
 
   login(userData: UserLoginData) {
-    const userClientData = this.clientService
-      .getApiRoot(this.clientService.getPasswordFlowClient(userData.email, userData.password))
+    const cartId = localStorageService.getData('cartId')
+    const anonymousId = localStorageService.getData('anonymousId')
+
+    if (cartId && anonymousId) {
+      userData.anonymousCartId = cartId
+      userData.anonymousId = anonymousId
+      userData.anonymousCartSignInMode = mergeWithExistingCustomerCart
+      userData.updateProductData = true
+    }
+
+    return this.clientService
+      .getRoot(this.clientService.getPasswordFlowClient(userData.email, userData.password))
       .me()
       .login()
       .post({ body: userData })
       .execute()
-    return userClientData.then(() => {
-      this.localStorageService.saveData('token', tokenData.get())
-    })
+
+      .then(() => {
+        this.localStorageService.saveData('token', tokenData.get())
+        localStorageService.removeData('anonymousId')
+        this.clientService.setApiRoot()
+      })
   }
 
   signup(userData: UserCustomerDraft) {
-    const userClientData = this.clientService
+    return this.clientService
       .getApiRoot()
       .me()
       .signup()
@@ -35,10 +50,10 @@ export class AuthService {
         body: userData,
       })
       .execute()
-    return userClientData.then(() => {
-      return this.login(userData)
-    })
+      .then(() => {
+        this.login(userData)
+      })
   }
 }
 
-export const authService = new AuthService(new ClientService(), localStorageService)
+export const authService = new AuthService(clientService, localStorageService)

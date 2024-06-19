@@ -7,182 +7,292 @@ import type {
 } from '@commercetools/platform-sdk'
 import { productsService } from '@/services/productsService'
 import ProductCard from '@components/product-card/ProductCard.vue'
-import { computed, reactive, ref, watch, watchEffect, type Ref } from 'vue'
+import { computed, reactive, ref, watch, type Ref } from 'vue'
 import SelectInput from '@components/inputs/SelectInput.vue'
-import { SORTING_ITEMS } from '@/constants/constants'
+import { LOADING_TIMEOUT, SORTING_ITEMS } from '@/constants/constants'
 import { type SortBy } from '@/enums/sortingCommand'
 import { useRoute, useRouter } from 'vue-router'
 import { Facet } from '@/enums/facet'
-import PriceForm from './components/PriceForm.vue'
 import { storeToRefs } from 'pinia'
-import { categoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/stores/categories'
 import Input from '@/components/inputs/Input.vue'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
+import { useCartStore } from '@/stores/cart'
+import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
+import { cartService } from '@/services/cartService'
+import { useFavoritesStore } from '@/stores/favorites'
+import { favoritesApiService } from '@/services/favoritesApiService'
+import { favoritesService } from '@/services/favoritesService'
+import { useLoadingStore } from '@/stores/loading'
 
-const route = useRoute()
+const loadingStore = useLoadingStore()
+const alert = useAlertStore()
 const router = useRouter()
-const { categories } = storeToRefs(categoriesStore())
+const route = useRoute()
+
+const { categories } = storeToRefs(useCategoriesStore())
 const categoryId = ref()
 
-watchEffect(() => {
-  const category = route.params.categoryId
-  const subCategory = route.params.subCategoryId
+const getLimitProductsOnPage = () => {
+  const minDesktopWidth = 1440
+  const maxTableWidth = 1099
+  const windowWidth = window.innerWidth
 
-  if (!categories.value.length) return
-  const currentCategory = categories.value.find((el) => el.parent.key === category)
-  if (subCategory) {
-    categoryId.value =
-      currentCategory?.children.find((subEl) => subEl.key === subCategory)?.id ?? ''
-  } else {
-    categoryId.value = currentCategory?.parent.id ?? ''
+  if (windowWidth < minDesktopWidth && windowWidth > maxTableWidth) {
+    return 12
+  } else if (windowWidth <= maxTableWidth) {
+    return 8
   }
-})
+  return 16
+}
 
-const limit = 20
+let limitProductsOnPage = getLimitProductsOnPage()
 const currentPage = ref(1)
-const totalPages = computed(() => Math.ceil(productsCount.value / limit))
+const totalPages = computed(() => Math.ceil(totalProductsCount.value / limitProductsOnPage))
 
 const products: Ref<ProductProjection[]> = ref([])
-const productsCount = ref(0)
+const totalProductsCount = ref(0)
 const colorItems: Ref<string[]> = ref([])
 const quantityItems: Ref<string[]> = ref([])
+const isOpenSearch = ref(false)
+
+const { cart } = storeToRefs(useCartStore())
+const { favorites } = storeToRefs(useFavoritesStore())
+const loadingStates: Ref<{ [key: string]: boolean }> = ref({})
 
 const selectedFilters = reactive({
   sorting: (route.query.sorting as SortBy) ?? 'default',
   color: route.query.color as string[] | string,
   quantity: route.query.quantity as string[],
-  price: route.query.price as [string, string],
   search: route.query.search as string,
 })
 
-const fetchProducts = () => {
-  const offset = (currentPage.value - 1) * limit
+function updateCategoryId() {
+  const currentCategory = categories.value.find((el) => el.parent.key === route.params.categoryId)
+
+  if (route.params.subCategoryId) {
+    categoryId.value =
+      currentCategory?.children.find((subEl) => subEl.key === route.params.subCategoryId)?.id ?? ''
+  } else {
+    categoryId.value = currentCategory?.parent.id ?? ''
+  }
+}
+
+watch(
+  () => [route, categories],
+  () => {
+    if (!categories.value.length) {
+      return
+    }
+    selectedFilters.sorting = route.query.sorting as SortBy
+    selectedFilters.color = route.query.color as string[]
+    selectedFilters.quantity = route.query.quantity as string[]
+    fetchProducts()
+  },
+  { deep: true, immediate: true },
+)
+
+const update =
+  <T extends keyof typeof selectedFilters>(field: T) =>
+  (value: (typeof selectedFilters)[T]) => {
+    router.replace({ query: { ...route.query, [field]: value } })
+    selectedFilters[field] = value
+    fetchProducts()
+  }
+
+const search = update('search')
+const selectSorting = update('sorting')
+const selectColor = update('color')
+const selectQuantity = update('quantity')
+
+function fetchProducts() {
+  loadingStore.setLoading(true)
+  limitProductsOnPage = getLimitProductsOnPage()
+  updateCategoryId()
+
+  const offset = (currentPage.value - 1) * limitProductsOnPage
 
   productsService
     .getProducts({
-      limit,
+      limit: limitProductsOnPage,
       offset,
       sorting: selectedFilters.sorting,
       categoryId: categoryId.value,
       colorFilter: selectedFilters.color,
       quantityFilter: selectedFilters.quantity,
-      priceFilter: selectedFilters.price,
       search: selectedFilters.search,
     })
     .then((response: ClientResponse<ProductProjectionPagedSearchResponse>) => {
       products.value = response.body.results || []
-      productsCount.value = response.body.total || 0
+      totalProductsCount.value = response.body.total || 0
 
-      colorItems.value = (response.body.facets[Facet.color] as TermFacetResult).terms.map(
+      colorItems.value = (response.body.facets[Facet.color] as TermFacetResult).terms.map<string>(
         (el) => el.term,
-      ) as string[]
+      )
 
-      quantityItems.value = (response.body.facets[Facet.quantity] as TermFacetResult).terms.map(
-        (el) => el.term,
-      ) as string[]
+      quantityItems.value = (
+        response.body.facets[Facet.quantity] as TermFacetResult
+      ).terms.map<string>((el) => el.term)
+
+      loadingStore.setLoading(false)
     })
     .catch((error: Error) => {
-      alertStore().show(error.message, 'warning')
+      loadingStore.setLoading(false)
+      useAlertStore().show(error.message, 'warning')
     })
 }
 
-const selectSorting = (value: SortBy) => {
-  router.replace({ query: { ...route.query, sorting: value } })
-  selectedFilters.sorting = value
-  fetchProducts()
+function addProductToCartById({ productId, variantId }: { productId: string; variantId: number }) {
+  loadingStore.setLoading(true)
+
+  cartService
+    .addProductToCart({ productId, variantId, cart: cart.value })
+    .then(() => {
+      setTimeout(() => {
+        loadingStore.setLoading(false)
+      }, LOADING_TIMEOUT)
+    })
+    .catch((error: Error) => {
+      loadingStore.setLoading(false)
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 
-const selectColor = (value: string[]) => {
-  router.replace({ query: { ...route.query, color: value } })
-  selectedFilters.color = value
-  fetchProducts()
+function addProductToFavorites({ productId, variantId }: { productId: string; variantId: number }) {
+  loadingStore.setLoading(true)
+  favoritesService
+    .addProductToFavoritesList({ productId, variantId, favorites: favorites.value })
+    .then(() => loadingStore.setLoading(false))
+    .catch((error: Error) => {
+      loadingStore.setLoading(false)
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 
-const selectQuantity = (value: string[]) => {
-  router.replace({ query: { ...route.query, quantity: value } })
-  selectedFilters.quantity = value
-  fetchProducts()
+async function deleteProductFromFavoritesById(lineItemId: string) {
+  loadingStore.setLoading(true)
+  if (!favorites.value?.id) {
+    return
+  }
+  favoritesApiService
+    .removeLineItemFromFavorites({
+      id: favorites.value.id,
+      version: favorites.value.version,
+      lineItemId,
+    })
+    .then(({ body }) => {
+      useFavoritesStore().setFavorites(body)
+      loadingStore.setLoading(false)
+    })
+    .catch((error: Error) => {
+      loadingStore.setLoading(false)
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 
-const selectPrice = (value: { from: string; to: string }) => {
-  router.replace({ query: { ...route.query, price: [value.from, value.to] } })
-  selectedFilters.price = [value.from, value.to]
-  fetchProducts()
+function isProductInCart(productId: string, variantId: number) {
+  if (!cart.value?.lineItems) {
+    return false
+  }
+  return cartService.isProductInCart({ lineItems: cart.value?.lineItems, productId, variantId })
 }
 
-const search = (value: string) => {
-  router.replace({ query: { ...route.query, search: value } })
-  selectedFilters.search = value
-  fetchProducts()
+function isProductInFavorites(productId: string, variantId: number) {
+  if (!favorites.value?.lineItems) {
+    return false
+  }
+  return favoritesService.isProductInFavorites({
+    lineItems: favorites.value?.lineItems,
+    productId,
+    variantId,
+  })
 }
 
-watch(
-  () => route,
-  () => {
-    selectedFilters.sorting = route.query.sorting as SortBy
-    selectedFilters.color = route.query.color as string[]
-    selectedFilters.quantity = route.query.quantity as string[]
-    selectedFilters.price = route.query.price as [string, string]
-    fetchProducts()
-  },
-  { deep: true, immediate: true },
-)
+function getLoadingState(productId: string) {
+  return loadingStates.value[productId] || false
+}
 </script>
 
 <template>
-  <SelectInput
-    label="Sort by"
-    :items="SORTING_ITEMS"
-    v-model="selectedFilters.sorting"
-    variant="underlined"
-    width="10rem"
-    @update:modelValue="selectSorting"
-  />
-  <SelectInput
-    label="Color"
-    :items="colorItems"
-    v-model="selectedFilters.color"
-    variant="underlined"
-    is-chips
-    is-clearable
-    is-multiple
-    @update:modelValue="selectColor"
-  />
+  <div class="d-flex filters-all">
+    <div class="d-flex filters">
+      <SelectInput
+        class="filter"
+        label="Color"
+        :items="colorItems"
+        v-model="selectedFilters.color"
+        variant="underlined"
+        is-chips
+        is-clearable
+        is-multiple
+        :isHideDetails="true"
+        @update:modelValue="selectColor"
+      />
 
-  <SelectInput
-    label="Quantity"
-    :items="quantityItems"
-    v-model="selectedFilters.quantity"
-    variant="underlined"
-    is-chips
-    is-clearable
-    is-multiple
-    @update:modelValue="selectQuantity"
-  />
-  <PriceForm @priceFilterUpdated="selectPrice" />
+      <SelectInput
+        class="filter"
+        label="Quantity"
+        :items="quantityItems"
+        v-model="selectedFilters.quantity"
+        variant="underlined"
+        is-chips
+        is-clearable
+        is-multiple
+        :isHideDetails="true"
+        @update:modelValue="selectQuantity"
+      />
+    </div>
+    <div class="d-flex search-sort">
+      <SelectInput
+        class="sort"
+        label="Sort by"
+        :items="SORTING_ITEMS"
+        v-model="selectedFilters.sorting"
+        variant="underlined"
+        isHideDetails
+        @update:modelValue="selectSorting"
+      />
 
-  <Input
-    label="Search"
-    type="text"
-    placeholder="Search"
-    icon="mdi-magnify"
-    isHideDetails
-    isClearable
-    v-model="selectedFilters.search"
-    @update:modelValue="search"
-  />
+      <div class="d-flex search">
+        <v-icon color="primary" class="search-icon" @click="isOpenSearch = !isOpenSearch"
+          >mdi-magnify</v-icon
+        >
+        <Transition name="search-fade">
+          <Input
+            class="search-input"
+            v-if="isOpenSearch"
+            label="Search"
+            type="text"
+            placeholder="Search"
+            isHideDetails
+            isClearable
+            v-model="selectedFilters.search"
+            @update:modelValue="search"
+        /></Transition>
+      </div>
+    </div>
+  </div>
 
-  <div class="d-flex">
+  <div class="d-flex products">
     <ProductCard
-      v-for="product in products"
-      :key="product.id"
-      :src="product.masterVariant.images?.[0]?.url"
-      :name="product.name['en-GB']"
-      :description="product.description?.['en-GB']"
-      :price="product.masterVariant.prices?.[0]?.value?.centAmount ?? 0"
-      :discountedPrice="product.masterVariant.prices?.[0]?.discounted?.value.centAmount ?? 0"
-      :productSlug="product.slug['en-GB']"
-      :productKey="product.key"
+      v-for="{ id, masterVariant, name, description, slug } in products"
+      :key="id"
+      :src="masterVariant.images?.[0]?.url"
+      :name="name['en-GB']"
+      :description="description?.['en-GB']"
+      :price="getPriceAccordingToFractionDigits(masterVariant.prices?.[0]?.value)"
+      :discountedPrice="
+        getPriceAccordingToFractionDigits(masterVariant.prices?.[0]?.discounted?.value)
+      "
+      :productSlug="slug['en-GB']"
+      :productId="id"
+      :variantId="1"
+      :isAddedInCart="isProductInCart(id, 1)"
+      :isAddedInFavorites="isProductInFavorites(id, 1)"
+      :loading="getLoadingState(id)"
+      @addProductToCart="addProductToCartById($event)"
+      @addProductToFavorites="addProductToFavorites($event)"
+      @deleteProductFromFavorites="deleteProductFromFavoritesById($event)"
     />
   </div>
   <v-pagination
@@ -191,14 +301,80 @@ watch(
     :length="totalPages"
     color="primary"
     density="comfortable"
+    rounded="circle"
   ></v-pagination>
 </template>
 
 <style lang="scss" scoped>
-.d-flex {
+@use '@styles/mixins.scss';
+
+.products {
   flex-wrap: wrap;
-  gap: 2.5rem;
+  gap: 2.8rem;
   justify-content: center;
-  margin-top: 3rem;
+
+  width: 100%;
+  padding: 2rem 0;
+}
+
+.filters-all {
+  flex-wrap: wrap;
+  gap: 1.6rem;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 1rem;
+}
+
+.search-sort {
+  flex-wrap: wrap;
+  gap: 1.6rem;
+  align-items: center;
+  justify-content: end;
+}
+
+.search {
+  gap: 1rem;
+  align-items: center;
+  justify-content: end;
+  margin-top: 1rem;
+}
+
+.search-input {
+  width: 17rem;
+  padding: 0;
+}
+
+.search-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.search-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.search-fade-enter-from,
+.search-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.filters {
+  flex-wrap: wrap;
+  gap: 1.6rem;
+  align-items: center;
+}
+
+.filter {
+  width: 17rem;
+}
+
+.sort {
+  width: 10rem;
+  max-width: 10rem;
+}
+
+.v-pagination {
+  padding: 1rem 0 2rem;
 }
 </style>

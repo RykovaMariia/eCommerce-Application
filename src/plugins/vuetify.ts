@@ -28,6 +28,7 @@ const vuetify = createVuetify({
           warning: '#ba6559',
           surface: '#f4e8da',
           'on-surface': '#27291b',
+          'on-primary': '#f4e8da',
         },
         variables: {
           'disabled-opacity': '0.8',

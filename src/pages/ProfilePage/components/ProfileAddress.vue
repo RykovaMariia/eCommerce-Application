@@ -10,20 +10,17 @@ import type { Address } from '@commercetools/platform-sdk'
 import { COUNTRY } from '@/constants/constants'
 import { TypeAction } from '@/enums/typeAction'
 
+const currentUser = defineModel<Customer>('currentUser')
+
 const typeAddress = ref('billing')
-
 const isOpenForm = ref(false)
-
 const typeAction = ref(TypeAction.Add)
-
 const address: Ref<Address> = ref({
   country: COUNTRY,
   city: '',
   streetName: '',
   postalCode: '',
 })
-
-const currentUser = defineModel<Customer>('currentUser')
 
 const addressBillingItems = computed(() => {
   return currentUser.value
@@ -54,7 +51,9 @@ function openFormForAddress(item?: Address) {
   if (item) {
     address.value = item
     typeAction.value = TypeAction.Edit
-  } else typeAction.value = TypeAction.Add
+  } else {
+    typeAction.value = TypeAction.Add
+  }
 }
 
 function updateUserInfo(user: Customer) {
@@ -109,7 +108,7 @@ function cancel() {
   <v-col v-if="!isOpenForm">
     <Button
       textContent="Add new"
-      classes="secondary"
+      color="secondary"
       buttonType="button"
       @click.prevent="openFormForAddress()"
     />

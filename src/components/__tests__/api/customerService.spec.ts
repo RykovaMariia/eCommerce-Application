@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach, vi, beforeEach } from 'vitest'
 import { CustomerService } from '@/services/customerService'
-import { ClientService } from '@/api/ClientService'
 import { createPinia, setActivePinia } from 'pinia'
+import type { ClientService } from '@/services/clientService'
 
 beforeEach(() => {
   setActivePinia(createPinia())

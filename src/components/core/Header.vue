@@ -2,16 +2,14 @@
 import HoverMenu from '@components/hover-menu/HoverMenu.vue'
 import IconLogo from '@components/icons/IconLogo.vue'
 import BurgerMenu from '@components/core/BurgerMenu.vue'
-import { openBurgerStore } from '@/stores/openBurgerStore'
-import { userAuth } from '@/stores/userAuth'
+import { useBurgerStore } from '@/stores/burger'
+import { useUserAuthStore } from '@/stores/userAuth'
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { ALL_PRODUCTS } from '@/constants/constants'
-import { getCategories } from '@/utils/getCategories'
-import { categoriesStore } from '@/stores/categoriesStore'
-
-const store = openBurgerStore()
-const { isLoggedIn } = storeToRefs(userAuth())
+import { useCategoriesStore } from '@/stores/categories'
+import { categoryService } from '@/services/categoriesService'
+import { useCartStore } from '@/stores/cart'
+import { useAlertStore } from '@/stores/alert'
 
 const userLinks = [
   { name: 'Profile', href: '/profile' },
@@ -21,7 +19,20 @@ const userLinks = [
 const authLinks = [
   { name: 'Login', href: '/login' },
   { name: 'Register', href: '/registration' },
-]
+] as const
+
+const infoLinks = [{ name: 'About us', href: '/about' }] as const
+
+const store = useBurgerStore()
+const categoriesStore = useCategoriesStore()
+
+const { isLoggedIn } = storeToRefs(useUserAuthStore())
+const { cart } = storeToRefs(useCartStore())
+const { categoriesLinks } = storeToRefs(categoriesStore)
+
+const countProduct = computed(() => {
+  return cart.value?.totalLineItemQuantity ?? 0
+})
 
 const accountMenu = computed(() => {
   if (isLoggedIn.value) {
@@ -30,18 +41,16 @@ const accountMenu = computed(() => {
   return authLinks
 })
 
-const infoLinks = [{ name: 'About us', href: '/about' }]
-
 function openBurger() {
   store.toggleOpenState()
 }
 
-getCategories()
-  .then((value) => categoriesStore().setCategories(value))
-  .then(() => categoriesStore().setCategoriesLink())
-
-const { categoriesLinks } = storeToRefs(categoriesStore())
-const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
+categoryService
+  .getCategories()
+  .then((value) => categoriesStore.setCategories(value))
+  .catch((error: Error) => {
+    useAlertStore().show(error.message, 'warning')
+  })
 </script>
 
 <template>
@@ -54,7 +63,7 @@ const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
     ></v-app-bar-nav-icon>
     <HoverMenu
       v-if="$vuetify.display.lgAndUp"
-      :menuItemsWithSubItems="allCategoriesLinks"
+      :menuItemsWithSubItems="categoriesLinks"
       menu-trigger-text="Catalog"
     />
     <v-list v-if="$vuetify.display.lgAndUp" class="nav-list">
@@ -65,7 +74,7 @@ const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
 
     <v-spacer></v-spacer>
 
-    <RouterLink to="/main"><IconLogo /></RouterLink>
+    <RouterLink to="/main"><IconLogo :isWithText="true" /></RouterLink>
 
     <v-spacer></v-spacer>
 
@@ -80,7 +89,17 @@ const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
     />
 
     <v-btn icon to="/cart">
-      <v-icon>mdi-basket-outline</v-icon>
+      <v-badge
+        v-if="countProduct > 0"
+        color="secondary"
+        :content="countProduct"
+        offset-x="1"
+        offset-y="-4"
+        max="99"
+      >
+        <v-icon>mdi-basket-outline</v-icon>
+      </v-badge>
+      <v-icon v-else>mdi-basket-outline</v-icon>
     </v-btn>
   </v-app-bar>
 
@@ -122,5 +141,9 @@ const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
   .v-list-item {
     padding: 0;
   }
+}
+
+::v-deep(.v-btn__overlay) {
+  display: none;
 }
 </style>

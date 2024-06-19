@@ -1,8 +1,8 @@
-import { ClientService, clientService } from '@/api/ClientService'
-import { userAuth } from '@/stores/userAuth'
+import { clientService, type ClientService } from '@/services/clientService'
+import { useUserAuthStore } from '@/stores/userAuth'
 import type { Address, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
 
-export class AddressService {
+class AddressService {
   constructor(private clientService: ClientService) {}
 
   create(address: Address) {
@@ -11,7 +11,7 @@ export class AddressService {
       .me()
       .post({
         body: {
-          version: userAuth().customerVersion,
+          version: useUserAuthStore().customerVersion,
           actions: [
             {
               action: 'addAddress',
@@ -42,7 +42,7 @@ export class AddressService {
       .me()
       .post({
         body: {
-          version: userAuth().customerVersion,
+          version: useUserAuthStore().customerVersion,
           actions: [
             {
               action: 'changeAddress',
@@ -61,7 +61,7 @@ export class AddressService {
       .me()
       .post({
         body: {
-          version: userAuth().customerVersion,
+          version: useUserAuthStore().customerVersion,
           actions: [
             {
               action: 'removeAddress',
@@ -79,7 +79,7 @@ export class AddressService {
       .me()
       .post({
         body: {
-          version: userAuth().customerVersion,
+          version: useUserAuthStore().customerVersion,
           actions,
         },
       })

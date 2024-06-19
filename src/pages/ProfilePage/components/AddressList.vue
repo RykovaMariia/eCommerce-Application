@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { addressService } from '@/services/addressService'
-import type { Address, Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
-import { alertStore } from '@/stores/alertStore'
-import { userAuth } from '@/stores/userAuth'
+import type {
+  Address,
+  ClientResponse,
+  Customer,
+  MyCustomerUpdateAction,
+} from '@commercetools/platform-sdk'
+import { useAlertStore } from '@/stores/alert'
+import { useUserAuthStore } from '@/stores/userAuth'
 
-const alert = alertStore()
+const actions: MyCustomerUpdateAction[] = []
+const alert = useAlertStore()
 
 defineProps<{
   items: Address[]
@@ -12,55 +18,48 @@ defineProps<{
 }>()
 
 const typeAddress = defineModel<string>('typeAddress')
-const actions: MyCustomerUpdateAction[] = []
+const emit = defineEmits(['editAddress', 'updateUserInfo'])
 
-const emit = defineEmits({
-  editAddress(item: Address) {
-    return item
-  },
-  updateUserInfo(currentUser: Customer) {
-    return currentUser
-  },
-})
-
-function removeAddress(address: Address) {
-  if (!address) return
-  else {
-    addressService
-      .remove(address)
-      .then((result) => {
-        alert.show('Address removed', 'success')
-        if (result?.body) {
-          userAuth().customerVersion = result?.body.version
-          emit('updateUserInfo', result?.body)
-        }
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
+function updateUserInfo({ body }: ClientResponse<Customer>) {
+  if (body) {
+    useUserAuthStore().customerVersion = body.version
+    emit('updateUserInfo', body)
   }
 }
 
-function setAsDefault(address: Address) {
-  if (!address) return
-  else {
-    const setTypeAction =
-      typeAddress?.value === 'billing' ? 'setDefaultBillingAddress' : 'setDefaultShippingAddress'
-    actions.push({ action: setTypeAction, addressId: address.id })
-
-    addressService
-      .setDefault(actions)
-      .then((result) => {
-        alert.show('Address set as Default', 'success')
-        if (result?.body) {
-          userAuth().customerVersion = result?.body.version
-          emit('updateUserInfo', result?.body)
-        }
-      })
-      .catch((error: Error) => {
-        alert.show(`Error: ${error.message}`, 'warning')
-      })
+function removeAddress(address: Address) {
+  if (!address) {
+    return
   }
+
+  addressService
+    .remove(address)
+    .then((result) => {
+      alert.show('Address removed', 'success')
+      updateUserInfo(result)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
+}
+
+function setAsDefault(address: Address) {
+  if (!address) {
+    return
+  }
+  const setTypeAction =
+    typeAddress?.value === 'billing' ? 'setDefaultBillingAddress' : 'setDefaultShippingAddress'
+  actions.push({ action: setTypeAction, addressId: address.id })
+
+  addressService
+    .setDefault(actions)
+    .then((result) => {
+      alert.show('Address set as Default', 'success')
+      updateUserInfo(result)
+    })
+    .catch((error: Error) => {
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 </script>
 

@@ -1,5 +1,4 @@
-import { ClientService, clientService } from '@/api/ClientService'
-import { FULL_PERCENTAGE } from '@/constants/constants'
+import { ClientService, clientService } from '@/services/clientService'
 import { Facet } from '@/enums/facet'
 import type { QueryParam } from '@commercetools/sdk-client-v2'
 import { SortingCommand, type SortBy } from '@/enums/sortingCommand'
@@ -22,36 +21,27 @@ interface RequestParam {
   categoryId?: string
   colorFilter?: string[] | string
   quantityFilter?: string[] | string
-  priceFilter?: [string, string]
   search?: string
+}
+
+function makeFilterString(facet: string, filter: string | string[]) {
+  return `${facet}: ${filter instanceof Array ? filter.map((el) => `"${el}"`).join(',') : `"${filter}"`}`
 }
 
 export class ProductsService {
   constructor(private clientService: ClientService) {}
 
-  getCategories() {
+  getProduct(id: string) {
     return this.clientService
       .getApiRoot()
-      .categories()
+      .products()
       .get({
         queryArgs: {
-          where: 'parent is not defined',
-          expand: [],
+          where: `id="${id}"`,
         },
       })
       .execute()
-  }
-
-  getSubCategories(parentCategoryId: string) {
-    return this.clientService
-      .getApiRoot()
-      .categories()
-      .get({
-        queryArgs: {
-          where: `parent(id="${parentCategoryId}")`,
-        },
-      })
-      .execute()
+      .then(({ body: { results } }) => results[0])
   }
 
   getProducts({
@@ -61,13 +51,12 @@ export class ProductsService {
     categoryId,
     colorFilter,
     quantityFilter,
-    priceFilter,
     search,
   }: RequestParam) {
     const sortingCommand = sorting ? SortingCommand[sorting] : SortingCommand.default
     const filter = []
 
-    let queryArgs: QueryArgs = {
+    const queryArgs: QueryArgs = {
       limit,
       offset,
       sort: sortingCommand,
@@ -75,47 +64,30 @@ export class ProductsService {
     }
 
     if (search) {
-      queryArgs = {
-        ...queryArgs,
-        'text.en-GB': `"${search}"`,
-        fuzzy: true,
-      }
+      queryArgs['text.en-GB'] = `"${search}"`
+      queryArgs.fuzzy = true
     }
 
     if (categoryId) {
       filter.push(`${categoryId ? `categories.id:subtree("${categoryId}")` : ''}`)
     }
-    if (colorFilter) {
-      if (typeof colorFilter === 'string') filter.push(`${Facet.color}: "${colorFilter}"`)
-      else {
-        filter.push(`${Facet.color}: ${colorFilter.map((el) => `"${el}"`).join(',')}`)
-      }
-    }
-    if (quantityFilter) {
-      if (typeof quantityFilter === 'string') filter.push(`${Facet.quantity}: "${quantityFilter}"`)
-      else {
-        filter.push(`${Facet.quantity}: ${quantityFilter.map((el) => `"${el}"`).join(',')}`)
-      }
-    }
 
-    if (priceFilter?.length) {
-      filter.push(
-        `${Facet.price}: range(${+priceFilter[0] * FULL_PERCENTAGE} to ${+priceFilter[1] * FULL_PERCENTAGE})`,
-      )
+    if (colorFilter?.length) {
+      filter.push(makeFilterString(Facet.color, colorFilter))
+    }
+    if (quantityFilter?.length) {
+      filter.push(makeFilterString(Facet.quantity, quantityFilter))
     }
 
     if (filter.length) {
-      queryArgs = {
-        ...queryArgs,
-        'filter.query': filter,
-      }
+      queryArgs['filter.query'] = filter
     }
 
     return this.clientService
       .getApiRoot()
       .productProjections()
       .search()
-      .get({ queryArgs: queryArgs })
+      .get({ queryArgs })
       .execute()
   }
 }

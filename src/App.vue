@@ -2,23 +2,49 @@
 import Header from '@components/core/Header.vue'
 import Footer from '@components/core/Footer.vue'
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 import { storeToRefs } from 'pinia'
 import AlertWindow from '@components/alertWindow/AlertWindow.vue'
 import { customerService } from './services/customerService'
-import { userAuth } from './stores/userAuth'
+import { useUserAuthStore } from './stores/userAuth'
 import router from './router'
-const { isOpenAlert } = storeToRefs(alertStore())
+import { cartService } from './services/cartService'
+import { localStorageService } from './services/storageService'
+import { favoritesService } from './services/favoritesService'
+import ScrollToTopButton from './components/scroll-to-top-button/ScrollToTopButton.vue'
+import { useLoadingStore } from './stores/loading'
+import IconZero from './components/icons/IconZero.vue'
 
-const alert = alertStore()
+const alert = useAlertStore()
+const loadingStore = useLoadingStore()
 
-customerService.user().catch((error: Error) => {
-  if (error.message.includes('The refresh token was not found')) {
+loadingStore.setLoading(true)
+
+const { isOpenAlert } = storeToRefs(useAlertStore())
+const { isLoading } = storeToRefs(useLoadingStore())
+
+const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
+const TOKEN_ERROR_MESSAGE = 'The refresh token was not found'
+
+if (refreshToken) {
+  customerService.user().catch((error: Error) => {
+    if (!error.message.includes(TOKEN_ERROR_MESSAGE)) {
+      return
+    }
     alert.show(`Error: The token has expired. Please re-authorize`, 'warning')
-    userAuth().logout()
+    useUserAuthStore().logout()
     router.replace({ name: 'login' })
-  }
-})
+  })
+}
+
+Promise.all([cartService.setAnonymousSession(), favoritesService.setAnonymousSession()])
+  .then(() => {
+    loadingStore.setLoading(false)
+  })
+  .catch((error: Error) => {
+    loadingStore.setLoading(false)
+    alert.show(`Error: ${error.message}`, 'warning')
+  })
 </script>
 
 <template>
@@ -26,10 +52,21 @@ customerService.user().catch((error: Error) => {
     <Header />
     <v-main>
       <Breadcrumbs />
-      <RouterView />
+      <router-view v-slot="{ Component }">
+        <transition name="fade">
+          <!-- eslint-disable-next-line vue/require-toggle-inside-transition -->
+          <div class="d-flex page-container">
+            <component :is="Component" />
+          </div>
+        </transition>
+      </router-view>
+      <ScrollToTopButton />
     </v-main>
     <Footer />
     <AlertWindow v-if="isOpenAlert" />
+    <v-overlay :persistent="true" v-model="isLoading" class="d-flex align-center justify-center">
+      <IconZero :is-loading="true" />
+    </v-overlay>
   </v-app>
 </template>
 
@@ -94,5 +131,10 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
+}
+
+.page-container {
+  flex-direction: column;
+  height: 100%;
 }
 </style>

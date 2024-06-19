@@ -1,19 +1,39 @@
 <script setup lang="ts">
-import { productService } from '@/services/productService'
 import { computed, reactive, type Ref } from 'vue'
 import Button from '@/components/buttons/Button.vue'
 import { type ProductData, type ProductItem } from '@/interfaces/productData'
 import { ref } from 'vue'
-import type { ProductCatalogData, ProductVariant } from '@commercetools/platform-sdk'
-import NumberInput from '@/components/inputs/NumberInput.vue'
+import type { Product, ProductVariant } from '@commercetools/platform-sdk'
 import { getUniqueValues } from '@/utils/getUniqueValues'
 import ModalWindow from './components/ModalWindow.vue'
 import { localStorageService } from '@/services/storageService'
+import { productsService } from '@/services/productsService'
+import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
+import { storeToRefs } from 'pinia'
+import { useCartStore } from '@/stores/cart'
+import { cartService } from '@/services/cartService'
+import { cartApiService } from '@/services/cartApiService'
+import { useAlertStore } from '@/stores/alert'
+import Price from '@/components/price/Price.vue'
+import { favoritesService } from '@/services/favoritesService'
+import { useFavoritesStore } from '@/stores/favorites'
+import { favoritesApiService } from '@/services/favoritesApiService'
+import { useLoadingStore } from '@/stores/loading'
+
+let attributeValues: string[][] = []
+let masterAttributeNames: string[] = []
+const productId = localStorageService.getData('productId') ?? ''
+
+const alert = useAlertStore()
+const loadingStore = useLoadingStore()
+
+const { favorites } = storeToRefs(useFavoritesStore())
+const { cart } = storeToRefs(useCartStore())
 
 const imageIndex = ref(0)
-const multiplier = ref(1)
-const discountIsActive = ref(false)
 const isMainAttribute = ref(true)
+const isProductDataLoaded = ref(false)
+const selectedVariants: Ref<string[]> = ref([])
 
 const product: ProductData = reactive({
   description: '',
@@ -22,25 +42,63 @@ const product: ProductData = reactive({
   variants: [],
 })
 
-let attributeValues: string[][]
-let masterAttributeNames: string[] = []
-const isProductDataLoaded = ref(false)
+const price = computed(() => {
+  const variant = cartService.getVariantByAttribute(product.variants, selectedVariants.value)
+  return definePrice(variant ?? product.variants[0])
+})
 
-function retrieveVariantsData({ attributes, prices }: ProductVariant) {
+const isInCart = computed(() => {
+  if (!cart.value?.lineItems) {
+    return
+  }
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId || !productId) {
+    return
+  }
+  return cartService.isLineItemInCart({ lineItems: cart.value?.lineItems, productId, variantId })
+})
+
+const textContent = computed(() => {
+  return !isInCart.value ? 'Add to cart' : 'Remove from cart'
+})
+
+const color = computed(() => {
+  return !isInCart.value ? 'secondary' : 'primary'
+})
+
+const isInFavorites = computed(() => {
+  if (!favorites.value?.lineItems) {
+    return false
+  }
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId || !productId) {
+    return false
+  }
+  return favoritesService.isProductInFavorites({
+    lineItems: favorites.value?.lineItems,
+    productId,
+    variantId,
+  })
+})
+
+const setIconFavorites = computed(() => {
+  return !isInFavorites.value ? 'mdi-heart-outline' : 'mdi-heart'
+})
+
+function retrieveVariantsData({ id, attributes, prices }: ProductVariant) {
   return {
+    id,
     attributes: attributes?.map((value) => value.value[0].key) ?? [],
-    price: prices?.[0].value.centAmount ?? 0,
-    discountPrice: prices?.[0].discounted?.value.centAmount ?? 0,
+    price: getPriceAccordingToFractionDigits(prices?.[0].value),
+    discountPrice: getPriceAccordingToFractionDigits(prices?.[0].discounted?.value),
   }
 }
 
-const productKey = localStorageService.getData('productKey')
-const selectedVariants: Ref<string[]> = ref([])
-
-if (productKey !== null) {
-  productService
-    .getProduct(productKey)
-    .then(({ current: { description, masterVariant, name, variants } }: ProductCatalogData) => {
+if (productId !== null) {
+  productsService
+    .getProduct(productId)
+    .then(({ masterData }: Product) => {
+      const { description, name, masterVariant, variants } = masterData.current
       product.description = description?.['en-GB'] ?? ''
       product.name = name?.['en-GB']
       product.images = masterVariant.images?.map(({ url }) => url) ?? []
@@ -57,11 +115,11 @@ if (productKey !== null) {
           .filter((value) => value)
         return getUniqueValues(keys)
       })
-      const mainVariant: ProductItem = retrieveVariantsData(masterVariant)
-      const allVariants = variants?.map(retrieveVariantsData)
+      const mainVariant: ProductItem = retrieveVariantsData(masterData.current.masterVariant)
+      const allVariants = masterData.current.variants?.map(retrieveVariantsData)
       product.variants = [mainVariant, ...allVariants]
       isProductDataLoaded.value = true
-      selectedVariants.value = product.variants[0].attributes.map((value) => value)
+      selectedVariants.value = [...product.variants[0].attributes]
     })
     .catch((error: Error) => {
       console.warn(`Error: ${error.message}`, 'warning')
@@ -72,72 +130,155 @@ const setVariant = (value: string, index: number) => {
   selectedVariants.value[index] = value
 }
 
-const formatPrice = (price: number) => {
-  return ((price / 100) * multiplier.value).toFixed(2)
+const definePrice = ({ price, discountPrice }: ProductItem) => {
+  return discountPrice ? { price, discountPrice } : { price }
 }
 
-const definePrice = ({ price, discountPrice }: ProductItem) => {
-  const formattedPrice = formatPrice(price)
-  const formattedDiscountPrice = formatPrice(discountPrice)
-  const resultFormattedPrice = discountPrice
-    ? { formattedPrice, formattedDiscountPrice }
-    : { formattedPrice }
-  discountPrice ? (discountIsActive.value = true) : (discountIsActive.value = false)
-  return resultFormattedPrice
+async function addProductToCart() {
+  loadingStore.setLoading(true)
+  const variantId =
+    cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id ?? 1
+  cartService
+    .addProductToCart({ productId, variantId, cart: cart.value })
+    .then(() => {
+      loadingStore.setLoading(false)
+    })
+    .catch((error: Error) => {
+      loadingStore.setLoading(true)
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
-const price = computed(() => {
-  const variant = product.variants.find(
-    ({ attributes }) =>
-      attributes[0] === selectedVariants.value[0] && attributes[1] === selectedVariants.value[1],
-  )
-  const resultPrice = variant ? definePrice(variant) : definePrice(product.variants[0])
-  return resultPrice
-})
+
+function removeProductFromCart() {
+  loadingStore.setLoading(true)
+  if (!cart.value?.lineItems || !productId) {
+    return
+  }
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId) {
+    return
+  }
+  const lineItemId = cartService.getLineIdByProduct({
+    lineItems: cart.value?.lineItems,
+    productId,
+    variantId,
+  })
+  if (!lineItemId) {
+    return
+  }
+  cartApiService
+    .removeLineItem({ id: cart.value.id, version: cart.value.version, lineItemId })
+    .then(({ body }) => {
+      alert.show('Product is removed', 'success')
+      useCartStore().setCart(body)
+      loadingStore.setLoading(false)
+    })
+    .catch((error: Error) => {
+      loadingStore.setLoading(false)
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
+}
+
+function setAction() {
+  !isInCart.value ? addProductToCart() : removeProductFromCart()
+}
+
+function addProductToFavorites() {
+  loadingStore.setLoading(true)
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!variantId || !productId) {
+    return
+  }
+  favoritesService
+    .addProductToFavoritesList({ productId, variantId, favorites: favorites.value })
+    .then(() => loadingStore.setLoading(false))
+    .catch((error: Error) => {
+      loadingStore.setLoading(false)
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
+}
+
+function deleteProductFromFavoritesById() {
+  loadingStore.setLoading(true)
+  const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
+  if (!favorites.value?.lineItems || !productId || !variantId) {
+    return
+  }
+  const lineItemId = favoritesService.getLineIdByProduct({
+    lineItems: favorites.value?.lineItems,
+    productId,
+    variantId,
+  })
+  if (!lineItemId) {
+    return
+  }
+  favoritesApiService
+    .removeLineItemFromFavorites({
+      id: favorites.value.id,
+      version: favorites.value.version,
+      lineItemId,
+    })
+    .then(({ body }) => {
+      useFavoritesStore().setFavorites(body)
+      loadingStore.setLoading(false)
+    })
+    .catch((error: Error) => {
+      loadingStore.setLoading(false)
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
+}
+
+function handleFavoriteChange() {
+  return !isInFavorites.value ? addProductToFavorites() : deleteProductFromFavoritesById()
+}
 </script>
 
 <template>
-  <div class="product-container">
+  <div class="d-flex justify-center product-container">
     <v-col>
-      <v-sheet max-width="28rem" class="mx-auto slider-image">
-        <v-sheet rounded="6px" class="slider-image">
-          <div class="d-flex align-center justify-center slider-image" id="activator">
-            <v-img
-              cover
-              :src="product.images[imageIndex] ?? product.images[imageIndex]"
-              rounded="lg"
-            ></v-img>
+      <v-sheet max-width="27rem" class="mx-auto">
+        <div>
+          <div class="slider-image" id="activator">
+            <v-img cover :src="product.images[imageIndex]" rounded="lg"></v-img>
           </div>
-        </v-sheet>
-        <div v-if="product.images.length > 1">
-          <v-slide-group v-model="imageIndex">
-            <v-slide-group-item
-              v-for="(n, index) in product.images"
-              :source="n"
-              :key="n"
-              v-slot="{ select }"
-            >
-              <v-card
-                :class="['ma-4']"
-                height="100"
-                width="100"
-                @click="select"
-                :image="product.images[index]"
+        </div>
+        <div>
+          <div v-if="product.images.length > 1">
+            <v-slide-group v-model="imageIndex">
+              <v-slide-group-item
+                v-for="(groupItem, i) in product.images"
+                :key="groupItem"
+                v-slot="{ select }"
               >
-              </v-card>
-            </v-slide-group-item>
-          </v-slide-group>
+                <v-card
+                  :class="['slider-card']"
+                  height="100"
+                  width="100"
+                  @click="select"
+                  :style="{
+                    'background-image': `url(${product.images[i]})`,
+                    'background-size': 'cover',
+                  }"
+                >
+                </v-card>
+              </v-slide-group-item>
+            </v-slide-group>
+          </div>
         </div>
       </v-sheet>
     </v-col>
     <v-col>
-      <h1>{{ product.name }}</h1>
-      <div>{{ product.description }}</div>
+      <div class="d-flex align-center justify-space-between">
+        <h1 class="title">{{ product.name }}</h1>
+      </div>
+      <div class="description">{{ product.description }}</div>
+
       <div v-if="masterAttributeNames.length">
         <div v-for="(attributesArray, n) in attributeValues" :key="n" class="value-wrapper">
           <div class="attribute-name">{{ masterAttributeNames[n] }}:</div>
           <v-item-group selected-class="selected-group" mandatory>
             <div class="value-container">
-              <div v-for="(attribute, i) in attributesArray" :key="i">
+              <div v-for="(attribute, i) in attributesArray" :key="attribute">
                 <v-item v-slot="{ selectedClass, toggle }">
                   <v-card
                     :class="[
@@ -156,18 +297,22 @@ const price = computed(() => {
           </v-item-group>
         </div>
       </div>
+
       <div class="price-wrapper">
-        <NumberInput v-model="multiplier" />
+        <div class="d-flex ga-4 align-center">
+          <Button :textContent :color @click="setAction" />
+          <v-btn icon @click="handleFavoriteChange"
+            ><v-icon :icon="setIconFavorites"></v-icon
+          ></v-btn>
+        </div>
         <div v-if="isProductDataLoaded" class="price-wrapper">
-          <div class="price_discount" v-if="price.formattedDiscountPrice">
-            € {{ price.formattedDiscountPrice }}
-          </div>
-          <div class="price" :class="{ 'price_line-through': discountIsActive }">
-            € {{ price.formattedPrice }}
-          </div>
+          <Price
+            :isWithDiscount="!!price.discountPrice"
+            :price="price.price"
+            :priceWithDiscount="price.discountPrice"
+          />
         </div>
       </div>
-      <Button textContent="Add to cart" />
     </v-col>
     <ModalWindow activator="#activator" :productImages="product.images" />
   </div>
@@ -178,7 +323,13 @@ const price = computed(() => {
 @use '@styles/mixins.scss';
 
 .slider-image {
+  cursor: pointer;
+
   max-width: 27rem;
+  margin-bottom: 1rem;
+
+  border: 1px solid constants.$color-primary;
+  border-radius: 9px;
   box-shadow: none;
 }
 
@@ -186,10 +337,28 @@ const price = computed(() => {
   background-color: transparent;
 }
 
+.v-card--variant-elevated {
+  border: 1px solid constants.$color-primary;
+  border-radius: 9px;
+  box-shadow: none;
+}
+
+.slider-card {
+  margin-right: 0.5rem;
+}
+
+::v-deep(.v-slide-group__content) {
+  justify-content: center;
+}
+
 .product-container {
   display: flex;
-  align-items: center;
   justify-content: center;
+}
+
+.title {
+  margin-bottom: 1.5rem;
+  line-height: 100%;
 }
 
 @include mixins.media-middle {
@@ -199,6 +368,24 @@ const price = computed(() => {
     align-items: center;
     justify-content: center;
   }
+}
+
+.mdi-heart,
+.mdi-heart-outline {
+  color: constants.$color-sale;
+}
+
+.v-btn--variant-elevated {
+  background: none;
+  box-shadow: none;
+}
+
+.v-btn:hover > .v-btn__overlay {
+  opacity: 0;
+}
+
+.description {
+  text-align: justify;
 }
 
 .attribute {
@@ -220,9 +407,12 @@ const price = computed(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  align-items: center;
   justify-content: space-between;
 
   padding: 1rem 0;
+
+  font-size: 1.5rem;
 }
 
 .value-wrapper {
@@ -233,20 +423,5 @@ const price = computed(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-}
-
-.price {
-  font-size: 1.5rem;
-  color: constants.$color-text-dark;
-  opacity: 0.7;
-
-  &_discount {
-    font-size: 1.5rem;
-    color: constants.$color-sale;
-  }
-
-  &_line-through {
-    text-decoration: line-through;
-  }
 }
 </style>

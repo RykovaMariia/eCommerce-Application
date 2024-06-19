@@ -5,21 +5,26 @@ import DateInput from '@/components/inputs/DateInput.vue'
 import { InputLabel } from '@/enums/inputLabel'
 import { InputType } from '@/enums/inputType'
 import { computed, reactive, ref } from 'vue'
-import Checkbox from '@/components/checkbox/Checkbox.vue'
-import { COUNTRY, yearToShow } from '@/constants/constants'
+import Checkbox from '@/components/inputs/Checkbox.vue'
+import { COUNTRY, YEAR_TO_SHOW } from '@/constants/constants'
 import type { UserCustomerDraft } from '@/interfaces/userData'
 import { authService } from '@/services/authService'
 import { formateDate } from '@/utils/dateUtils'
-import { alertStore } from '@/stores/alertStore'
+import { useAlertStore } from '@/stores/alert'
 import router from '@/router'
-import { userAuth } from '@/stores/userAuth'
+import { useUserAuthStore } from '@/stores/userAuth'
 import type { SubmitEventPromise } from 'vuetify'
 import SelectInput from '@components/inputs/SelectInput.vue'
 
-const alert = alertStore()
+const alert = useAlertStore()
 
+const currentDate = new Date()
+
+const dateOfBirth = ref(new Date(YEAR_TO_SHOW, currentDate.getMonth(), currentDate.getDate()))
 const defaultShipping = ref(false)
 const defaultBilling = ref(false)
+const form = ref(null)
+const isTheSame = ref(false)
 
 const addressShipping = reactive({
   country: COUNTRY,
@@ -34,18 +39,6 @@ const addressBilling = reactive({
   postalCode: '',
 })
 
-const form = ref(null)
-
-const isTheSame = ref(false)
-
-function toggleState() {
-  isTheSame.value = !isTheSame.value
-}
-
-const title = computed(() => {
-  return isTheSame.value ? 'Billing / shipping address' : 'Billing address'
-})
-
 const userData: UserCustomerDraft = reactive({
   firstName: '',
   lastName: '',
@@ -57,8 +50,13 @@ const userData: UserCustomerDraft = reactive({
   shippingAddresses: [],
 })
 
-const currentDate = new Date()
-const dateOfBirth = ref(new Date(yearToShow, currentDate.getMonth(), currentDate.getDate()))
+const title = computed(() => {
+  return isTheSame.value ? 'Billing / shipping address' : 'Billing address'
+})
+
+function toggleState() {
+  isTheSame.value = !isTheSame.value
+}
 
 async function submit(submitEventPromise: SubmitEventPromise) {
   if (isTheSame.value) {
@@ -67,7 +65,9 @@ async function submit(submitEventPromise: SubmitEventPromise) {
     addressShipping.postalCode = addressBilling.postalCode
   }
   const { valid } = await submitEventPromise
-  if (valid) signup()
+  if (valid) {
+    signup()
+  }
 }
 
 function signup() {
@@ -93,7 +93,7 @@ function signup() {
   authService
     .signup(userData)
     .then(() => {
-      userAuth().login()
+      useUserAuthStore().login()
       alert.show('User is registered', 'success')
       router.replace({ name: 'main' })
     })
@@ -229,7 +229,7 @@ function signup() {
       </v-col>
     </v-col>
     <v-col class="col-button-link">
-      <Button textContent="Sign Up" classes="secondary" buttonType="submit" size="large" />
+      <Button textContent="Sign Up" color="secondary" buttonType="submit" size="large" />
       <v-row>
         <span>Already have an account?</span>
         <RouterLink class="link_redirect" to="/login">Login</RouterLink>

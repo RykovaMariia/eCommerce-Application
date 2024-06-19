@@ -4,31 +4,33 @@ import Button from '@components/buttons/Button.vue'
 import { InputType } from '@/enums/inputType'
 import { InputLabel } from '@/enums/inputLabel'
 import { customerService } from '@/services/customerService'
-import { alertStore } from '@/stores/alertStore'
-import { userAuth } from '@/stores/userAuth'
+import { useAlertStore } from '@/stores/alert'
+import { useUserAuthStore } from '@/stores/userAuth'
 import type { SubmitEventPromise } from 'vuetify'
 import { ref, type Ref } from 'vue'
 import type { UserPasswordsData } from '@/interfaces/userData'
+
+const alert = useAlertStore()
 
 const props = defineProps<{
   email: string
 }>()
 
-const alert = alertStore()
-
 const passwordForm: Ref<HTMLFormElement | undefined> = ref()
-
-async function submit(submitEventPromise: SubmitEventPromise) {
-  const { valid } = await submitEventPromise
-  if (valid) updatePassword()
-}
-
 const userPasswords: Ref<UserPasswordsData> = ref({
   email: props.email,
   currentPassword: '',
   newPassword: '',
   confirmPassword: '',
 })
+const isError = ref(false)
+
+async function submit(submitEventPromise: SubmitEventPromise) {
+  const { valid } = await submitEventPromise
+  if (valid) {
+    updatePassword()
+  }
+}
 
 const resetForm = () => {
   if (passwordForm.value) {
@@ -41,18 +43,18 @@ function updatePassword() {
     .updatePassword(userPasswords.value)
     .then((result) => {
       alert.show(`Password changed successfully`, 'success')
-      userAuth().customerVersion = result.body.version
-      userAuth().login()
+      useUserAuthStore().customerVersion = result.body.version
+      useUserAuthStore().login()
       resetForm()
     })
     .catch((error: Error) => {
-      if (error.message === 'The given current password does not match.')
+      if (error.message === 'The given current password does not match.') {
         alert.show(`Error: Your current password is not correct`, 'warning')
-      else alert.show(`Error: ${error.message}`, 'warning')
+      } else {
+        alert.show(`Error: ${error.message}`, 'warning')
+      }
     })
 }
-
-const isError = ref(false)
 
 function isShowMessage() {
   return isError.value
@@ -65,8 +67,9 @@ function setButtonState() {
 }
 
 function provePassword() {
-  if (!userPasswords.value.confirmPassword || !userPasswords.value.newPassword) return
-  else {
+  if (!userPasswords.value.confirmPassword || !userPasswords.value.newPassword) {
+    return
+  } else {
     isError.value = userPasswords.value.newPassword !== userPasswords.value.confirmPassword
   }
 }
@@ -110,7 +113,7 @@ function provePassword() {
       <v-col class="col-button-link">
         <Button
           textContent="Save"
-          classes="secondary"
+          color="secondary"
           buttonType="submit"
           :class="setButtonState()"
         />

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const openBurgerStore = defineStore('openBurger', {
+export const useBurgerStore = defineStore('openBurger', {
   state: () => ({
     isOpenBurger: false,
   }),

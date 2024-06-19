@@ -2,52 +2,116 @@
 import { FULL_PERCENTAGE } from '@/constants/constants'
 import Button from '@components/buttons/Button.vue'
 import { localStorageService } from '@/services/storageService'
+import { computed } from 'vue'
+import Price from '@components/price/Price.vue'
+import router from '@/router'
+import { favoritesService } from '@/services/favoritesService'
+import { useFavoritesStore } from '@/stores/favorites'
+import type { ShoppingListLineItem } from '@commercetools/platform-sdk'
 
 const props = defineProps<{
+  loading: boolean
   src: string
   name: string
   description: string
   price: number
   discountedPrice: number
   productSlug: string
-  productKey: string
+  productId: string
+  variantId: number
+  isAddedInCart?: boolean
+  isAddedInFavorites?: boolean
 }>()
 
-const href = { name: 'productId', params: { productId: props.productSlug } }
+const emit = defineEmits([
+  'addProductToCart',
+  'addProductToFavorites',
+  'deleteProductFromFavorites',
+])
+
+const color = computed(() => {
+  return !props.isAddedInCart ? 'secondary' : 'primary'
+})
+
+const textContent = computed(() => {
+  return !props.isAddedInCart ? 'Add to cart' : 'Added to cart'
+})
+
+const to = computed(() => {
+  return props.isAddedInCart ? '/cart' : undefined
+})
+
+const heartIcon = computed(() => {
+  return props.isAddedInFavorites ? 'mdi-heart' : 'mdi-heart-outline'
+})
 
 function getDiscountPercentage(price: number, discountedPrice: number) {
   return FULL_PERCENTAGE - Math.ceil((discountedPrice * FULL_PERCENTAGE) / price)
 }
-const passProductKey = () => {
-  localStorageService.saveData('productKey', props.productKey)
+
+const toProduct = () => {
+  localStorageService.saveData('productId', props.productId)
+  router.push({ name: 'productId', params: { productId: props.productSlug } })
+}
+
+const addToFavorites = () => {
+  !props.isAddedInFavorites
+    ? emit('addProductToFavorites', { productId: props.productId, variantId: props.variantId })
+    : emit(
+        'deleteProductFromFavorites',
+        favoritesService.getLineIdByProduct({
+          lineItems: useFavoritesStore().favorites?.lineItems as ShoppingListLineItem[],
+          productId: props.productId,
+          variantId: props.variantId,
+        }),
+      )
+}
+
+const addToCart = () => {
+  if (!props.isAddedInCart) {
+    emit('addProductToCart', { productId: props.productId, variantId: props.variantId })
+  }
 }
 </script>
 <template>
   <v-col>
     <v-card
+      :disabled="loading"
+      :loading="loading"
       elevation="0"
-      max-width="290"
+      max-width="270"
       variant="text"
       class="product-card"
-      :to="href"
-      @click="passProductKey"
+      @click="toProduct"
     >
+      <template v-slot:loader="{ isActive }">
+        <v-progress-linear
+          :active="isActive"
+          color="secondary"
+          height="4"
+          indeterminate
+        ></v-progress-linear>
+      </template>
       <v-img height="340" :src="src" cover></v-img>
       <v-card-title>{{ name }}</v-card-title>
       <v-card-subtitle opacity="1">{{ description }} </v-card-subtitle>
       <v-card-text
-        ><span class="price_discount" v-if="discountedPrice"
-          >€{{ discountedPrice / FULL_PERCENTAGE }}&nbsp;</span
-        >
-        <span :class="discountedPrice ? 'line-through' : 'price'"
-          >€{{ price / FULL_PERCENTAGE }}</span
-        >
+        ><Price
+          :isWithDiscount="!!discountedPrice"
+          :price="price"
+          :priceWithDiscount="discountedPrice"
+        />
       </v-card-text>
       <div class="discount" v-if="discountedPrice">
         -{{ getDiscountPercentage(price, discountedPrice) }}%
       </div>
+      <v-card-actions class="favorites">
+        <v-btn icon @click.stop="addToFavorites">
+          <v-icon color="primary">{{ heartIcon }}</v-icon>
+        </v-btn>
+      </v-card-actions>
     </v-card>
-    <Button textContent="Add to card" />
+    <Button :disabled="loading" :color :textContent :to @click="addToCart" />
   </v-col>
 </template>
 
@@ -107,18 +171,9 @@ const passProductKey = () => {
   font-size: 1.15rem;
 }
 
-.price {
-  flex-grow: 0;
-  font-weight: 500;
-
-  &_discount {
-    color: constants.$color-sale;
-  }
-}
-
 .discount {
   position: absolute;
-  top: 1px;
+  top: 0;
   left: 20px;
 
   display: flex;
@@ -135,10 +190,16 @@ const passProductKey = () => {
   border-radius: 0 0 10px 10px;
 }
 
-.line-through {
-  color: constants.$color-text-dark;
-  text-decoration: line-through;
-  opacity: 0.8;
+.favorites {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+}
+
+.favorites .v-btn {
+  padding: 0;
+  background-color: constants.$color-text-light;
+  border-radius: 100%;
 }
 
 .v-btn {

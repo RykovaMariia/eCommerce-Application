@@ -1,7 +1,7 @@
 export interface ProductData {
   description: string
   name: string
-  images: string[] | string
+  images: string[]
   variants: ProductItem[]
 }
 
@@ -16,7 +16,8 @@ interface AttributeValue {
 }
 
 export interface ProductItem {
-  attributes: string[] | []
+  id: number
+  attributes: string[]
   price: number
   discountPrice: number
 }

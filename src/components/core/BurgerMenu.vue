@@ -1,20 +1,18 @@
 <script lang="ts" setup>
 import type { Link } from '@/interfaces/link'
 import CollapsibleMenu from '@components/collapsible-menu/CollapsibleMenu.vue'
-import { openBurgerStore } from '@/stores/openBurgerStore'
+import { useBurgerStore } from '@/stores/burger'
 import { storeToRefs } from 'pinia'
-import { categoriesStore } from '@/stores/categoriesStore'
-import { ALL_PRODUCTS } from '@/constants/constants'
+import { useCategoriesStore } from '@/stores/categories'
 
-const store = openBurgerStore()
+const store = useBurgerStore()
 
 const { infoLinks, accountMenu } = defineProps<{
   infoLinks: Link[]
   accountMenu: Link[]
 }>()
 
-const { categoriesLinks } = storeToRefs(categoriesStore())
-const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
+const { categoriesLinks } = storeToRefs(useCategoriesStore())
 </script>
 
 <template>
@@ -25,7 +23,7 @@ const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
       }}</v-list-item>
     </v-list>
 
-    <CollapsibleMenu menuTriggerText="Catalog" :itemsWithSubItems="allCategoriesLinks" />
+    <CollapsibleMenu menuTriggerText="Catalog" :itemsWithSubItems="categoriesLinks" />
 
     <v-list class="nav-list-login">
       <v-list-item v-for="item in accountMenu" :key="item.href" :to="item.href" variant="plain">{{

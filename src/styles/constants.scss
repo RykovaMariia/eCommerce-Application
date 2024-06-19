@@ -15,6 +15,7 @@ $color-secondary: #bb9758;
 $color-sale: #ba6559;
 $color-logo: #6d8e65;
 $color-border-opacity: #8282662b;
+$color-background-opacity: #bb975889;
 
 /* font */
 @font-face {
@@ -26,6 +27,7 @@ $font-base: poppins, sans-serif;
 $font-heading: newyork;
 
 /* width */
+$mini-mobile-width: 500px;
 $mobile-width: 600px;
 $middle-width: 960px;
 $tablet-width: 1024px;

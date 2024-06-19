@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia'
 import { localStorageService } from '@/services/storageService'
-import { tokenData } from '@/api/TokenInfo'
+import { clientService } from '@/services/clientService'
+import { tokenData } from '@/services/tokenService'
+import { useCartStore } from './cart'
 
 const refreshToken = localStorageService.getData('token')?.refreshToken
 
-export const userAuth = defineStore('user', {
+export const useUserAuthStore = defineStore('user', {
   state: () => ({
     isLoggedIn: !!refreshToken,
-    refreshToken: refreshToken ?? '',
     customerVersion: 0,
   }),
 
@@ -16,11 +17,16 @@ export const userAuth = defineStore('user', {
       this.isLoggedIn = true
     },
     logout() {
+      useCartStore().clearCart()
       this.isLoggedIn = false
       localStorageService.removeData('token')
+      localStorageService.removeData('cartId')
+      localStorageService.removeData('anonymousId')
+
       tokenData.clear()
+      clientService.setApiRoot()
     },
   },
 })
 
-export type UserAuth = typeof userAuth
+export type UserAuth = typeof useUserAuthStore

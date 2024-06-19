@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   activator: string
-  productImages: string | string[]
+  productImages: string[]
 }>()
 </script>
 
@@ -13,11 +13,14 @@ const props = defineProps<{
     class="d-flex justify-center align-center mx-auto"
   >
     <v-sheet>
-      <v-card :width="$vuetify.display.smAndDown ? '90svw' : '60svw'">
-        <v-carousel :height="$vuetify.display.smAndDown ? '80svh' : '90svh'">
+      <v-card :width="$vuetify.display.smAndDown ? '70svw' : '50svw'">
+        <v-carousel
+          :height="$vuetify.display.smAndDown ? '70svw' : '50svw'"
+          :show-arrows="$vuetify.display.smAndDown ? false : true"
+        >
           <v-carousel-item
-            v-for="(url, i) in productImages"
-            :key="i"
+            v-for="url in productImages"
+            :key="url"
             :src="url"
             cover
           ></v-carousel-item>
@@ -27,13 +30,11 @@ const props = defineProps<{
   </v-overlay>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '@/styles/constants.scss';
 
-.v-carousel__controls {
-  height: 2rem;
-  color: constants.$color-primary;
-  background: transparent;
+::v-deep(.v-carousel__controls) {
+  background: none;
 }
 
 .v-btn--icon.v-btn--density-default {

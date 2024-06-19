@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import IconLogo from '@components/icons/IconLogo.vue'
-import { ALL_PRODUCTS } from '@/constants/constants'
 import { storeToRefs } from 'pinia'
-import { categoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/stores/categories'
 
 const menuLinks = [
   {
@@ -13,18 +12,17 @@ const menuLinks = [
     name: 'About Us',
     href: '/about',
   },
-]
-const { categoriesLinks } = storeToRefs(categoriesStore())
-const allCategoriesLinks = [ALL_PRODUCTS, ...categoriesLinks.value]
-
+] as const
 const creationYear = '2024'
+
+const { categoriesLinks } = storeToRefs(useCategoriesStore())
 </script>
 <template>
   <footer>
     <v-container class="container">
       <v-row class="footer-wrapper" justify="center">
         <v-col class="v-col-md-3 v-col-sm-6 logo">
-          <IconLogo :isLight="true" />
+          <IconLogo :isLight="true" :isWithText="true" />
           <div class="v-col-md-10 logo-text">
             Eco-friendly place, where sustainability meets style!
           </div>
@@ -39,7 +37,7 @@ const creationYear = '2024'
 
         <v-col class="v-col-md-3 catalog">
           <div class="footer-wrapper-title">Catalog</div>
-          <div v-for="(link, index) in allCategoriesLinks" :key="index" class="category">
+          <div v-for="(link, index) in categoriesLinks" :key="index" class="category">
             <RouterLink :to="link.parent.href">{{ link.parent.name }}</RouterLink>
           </div>
         </v-col>

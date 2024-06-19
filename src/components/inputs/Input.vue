@@ -3,32 +3,39 @@ import { computed, ref } from 'vue'
 import { chooseRules } from '@/utils/chooseRules'
 import { InputLabel } from '@/enums/inputLabel'
 
-const props = defineProps<{
-  label: string
-  type: string
-  placeholder?: string
-  icon?: string
-  disabled?: boolean
-  variant?:
-    | 'outlined'
-    | 'underlined'
-    | 'filled'
-    | 'plain'
-    | 'solo'
-    | 'solo-inverted'
-    | 'solo-filled'
-  isValidation?: boolean
-  isHideDetails?: boolean | 'auto'
-  isClearable?: boolean
-}>()
+const props = withDefaults(
+  defineProps<{
+    label: string
+    type?: string
+    placeholder?: string
+    icon?: string
+    disabled?: boolean
+    variant?:
+      | 'outlined'
+      | 'underlined'
+      | 'filled'
+      | 'plain'
+      | 'solo'
+      | 'solo-inverted'
+      | 'solo-filled'
+    isValidation?: boolean
+    isHideDetails?: boolean | 'auto'
+    isClearable?: boolean
+  }>(),
+  {
+    type: 'text',
+  },
+)
 
 const data = defineModel()
-
-const rules = computed(() => chooseRules(props.type, props.label))
 const marker = ref(true)
+
 function togglePassword() {
   marker.value = !marker.value
 }
+
+const rules = computed(() => chooseRules(props.type, props.label))
+
 const fieldType = computed(() =>
   props.label === InputLabel.Password ||
   InputLabel.CurrentPassword ||
@@ -39,6 +46,7 @@ const fieldType = computed(() =>
       : 'text'
     : props.type,
 )
+
 const innerIcon = computed(() =>
   props.label === InputLabel.Password ||
   InputLabel.CurrentPassword ||
