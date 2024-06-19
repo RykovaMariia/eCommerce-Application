@@ -125,7 +125,7 @@ nav a:first-of-type {
 }
 
 .page-container {
-  height: 100%;
   flex-direction: column;
+  height: 100%;
 }
 </style>

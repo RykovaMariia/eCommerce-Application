@@ -196,8 +196,8 @@ async function deleteProductFromFavorites(lineItemId: string) {
   align-items: center;
   justify-content: center;
 
-  height: 100%;
   width: 100%;
+  height: 100%;
 }
 
 .icon-heart {
