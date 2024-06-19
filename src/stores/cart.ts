@@ -10,6 +10,9 @@ export const useCartStore = defineStore('Cart', {
     setCart(cart: Cart) {
       this.cart = cart
     },
+    clearCart() {
+      this.cart = undefined
+    },
   },
   getters: {
     totalPrice(state: { cart: Cart | undefined }) {

@@ -20,7 +20,7 @@ import { cartService } from '@/services/cartService'
 const loadingStore = useLoadingStore()
 
 const { cart, totalPrice } = storeToRefs(useCartStore())
-const cartLineItem: Ref<CartLineItem[] | undefined> = ref()
+const cartLineItems: Ref<CartLineItem[] | undefined> = ref()
 const totalPriceWithoutDiscount = ref(0)
 const totalLineItem = ref(0)
 const promoCode = ref('')
@@ -55,7 +55,7 @@ async function fetchProducts({
     return
   }
   totalLineItem.value = totalLineItemQuantity
-  cartLineItem.value = lineItems.map((lineItem: LineItem) => {
+  cartLineItems.value = lineItems.map((lineItem: LineItem) => {
     const {
       name,
       variant,
@@ -71,6 +71,7 @@ async function fetchProducts({
     return {
       name: name['en-GB'],
       srcImg: variant.images?.length ? variant.images?.[0].url : '',
+      individualPrice: getPriceAccordingToFractionDigits(price.value),
       price: getPriceAccordingToFractionDigits(price.value, quantity),
       discountedPrice: getPriceAccordingToFractionDigits(
         discountedPricePerQuantity.length
@@ -96,10 +97,25 @@ function applyPromoCode() {
   if (!cart.value) {
     return
   }
+
   cartApiService
     .applyPromoCode(cart.value.id, cart.value.version, promoCode.value)
     .then(({ body }) => {
       useCartStore().setCart(body)
+      cartLineItems.value = body.lineItems.map((lineItem: LineItem, i) => {
+        const { price, discountedPricePerQuantity, quantity } = lineItem
+
+        return {
+          ...cartLineItems.value![i],
+          discountedPrice: getPriceAccordingToFractionDigits(
+            discountedPricePerQuantity.length
+              ? discountedPricePerQuantity[0].discountedPrice.value
+              : price.discounted?.value,
+            quantity,
+          ),
+        }
+      })
+      promoCode.value = ''
     })
     .catch((error: Error) => {
       useAlertStore().show(error.message, 'warning')
@@ -113,6 +129,7 @@ function applyPromoCode() {
       v-for="{
         name,
         srcImg,
+        individualPrice,
         price,
         discountedPrice,
         productSlug,
@@ -121,10 +138,11 @@ function applyPromoCode() {
         lineItemId,
         attributes,
         variantId,
-      } in cartLineItem"
+      } in cartLineItems"
       :key="lineItemId"
       :srcImg
       :name
+      :individualPrice
       :price
       :discountedPrice
       :productSlug

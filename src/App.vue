@@ -16,6 +16,9 @@ import { useLoadingStore } from './stores/loading'
 import IconZero from './components/icons/IconZero.vue'
 
 const alert = useAlertStore()
+const loadingStore = useLoadingStore()
+
+loadingStore.setLoading(true)
 
 const { isOpenAlert } = storeToRefs(useAlertStore())
 const { isLoading } = storeToRefs(useLoadingStore())
@@ -34,8 +37,14 @@ if (refreshToken) {
   })
 }
 
-cartService.setAnonymousSession()
-favoritesService.setAnonymousSession()
+Promise.all([cartService.setAnonymousSession(), favoritesService.setAnonymousSession()])
+  .then(() => {
+    loadingStore.setLoading(false)
+  })
+  .catch((error: Error) => {
+    loadingStore.setLoading(false)
+    alert.show(`Error: ${error.message}`, 'warning')
+  })
 </script>
 
 <template>
@@ -55,7 +64,7 @@ favoritesService.setAnonymousSession()
     </v-main>
     <Footer />
     <AlertWindow v-if="isOpenAlert" />
-    <v-overlay v-model="isLoading" class="d-flex align-center justify-center">
+    <v-overlay :persistent="true" v-model="isLoading" class="d-flex align-center justify-center">
       <IconZero :is-loading="true" />
     </v-overlay>
   </v-app>

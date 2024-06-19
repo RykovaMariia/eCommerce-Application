@@ -12,10 +12,12 @@ import { favoritesService } from '@/services/favoritesService'
 import { useFavoritesStore } from '@/stores/favorites'
 import { favoritesApiService } from '@/services/favoritesApiService'
 import { useAlertStore } from '@/stores/alert'
+import { useLoadingStore } from '@/stores/loading'
 
 const props = defineProps<{
   srcImg: string
   name: string
+  individualPrice: number
   price: number
   discountedPrice?: number
   productSlug: string
@@ -33,10 +35,13 @@ const href = { name: 'productId', params: { productId: props.productSlug } }
 const alert = useAlertStore()
 const cartStore = useCartStore()
 const favoritesStore = useFavoritesStore()
+const loadingStore = useLoadingStore()
+
 const { favorites } = storeToRefs(favoritesStore)
 const { cart } = storeToRefs(cartStore)
 const quantity = ref(props.quantity)
 const isAddedInFavorites = ref(isProductInFavorites())
+const disabledNumberInput = ref(false)
 
 const heartIcon = computed(() => {
   return isAddedInFavorites.value ? 'mdi-heart' : 'mdi-heart-outline'
@@ -61,6 +66,7 @@ function updateQuantity() {
   if (!cart.value) {
     return
   }
+  disabledNumberInput.value = true
   cartApiService
     .changeProductQuantity({
       id: cart.value.id,
@@ -74,6 +80,11 @@ function updateQuantity() {
         lineItems: body.lineItems,
         totalLineItemQuantity: body.totalLineItemQuantity,
       })
+      disabledNumberInput.value = false
+    })
+    .catch((error: Error) => {
+      useAlertStore().show(error.message, 'warning')
+      disabledNumberInput.value = false
     })
 }
 
@@ -94,9 +105,13 @@ function removeLineItem() {
         totalLineItemQuantity: body.totalLineItemQuantity,
       })
     })
+    .catch((error: Error) => {
+      useAlertStore().show(error.message, 'warning')
+    })
 }
 
 function clickHeart() {
+  loadingStore.setLoading(true)
   if (!isAddedInFavorites.value) {
     isAddedInFavorites.value = true
     favoritesService
@@ -105,9 +120,12 @@ function clickHeart() {
         variantId: props.variantId,
         favorites: favorites.value,
       })
+      .then(() => loadingStore.setLoading(false))
       .catch((error: Error) => {
+        loadingStore.setLoading(false)
         alert.show(`Error: ${error.message}`, 'warning')
       })
+
     return
   }
   isAddedInFavorites.value = false
@@ -127,8 +145,10 @@ function clickHeart() {
     })
     .then(({ body }) => {
       useFavoritesStore().setFavorites(body)
+      loadingStore.setLoading(false)
     })
     .catch((error: Error) => {
+      loadingStore.setLoading(false)
       alert.show(`Error: ${error.message}`, 'warning')
     })
 }
@@ -142,7 +162,9 @@ function clickHeart() {
 
     <v-col class="product-info">
       <div class="d-flex product-title">
-        <v-card-title>{{ name }}</v-card-title>
+        <v-card-title
+          >{{ name }}, <span class="individual-price">€{{ individualPrice }}</span></v-card-title
+        >
         <div class="d-flex icons">
           <v-card-actions
             ><v-btn icon @click="clickHeart">
@@ -160,7 +182,11 @@ function clickHeart() {
         <div v-for="{ name, value } in attributes" :key="name">{{ name }}: {{ value[0].key }}</div>
       </div>
       <div class="d-flex product-prices">
-        <NumberInput v-model="quantity" @update:modelValue="updateQuantity" />
+        <NumberInput
+          :disabled="disabledNumberInput"
+          v-model="quantity"
+          @update:modelValue="updateQuantity"
+        />
         <v-card-text
           ><Price
             :isWithDiscount="!!discountedPrice"
@@ -255,6 +281,18 @@ function clickHeart() {
 .product-title {
   align-items: center;
   justify-content: space-between;
+}
+
+.individual-price {
+  @include mixins.media-tablet {
+    font-size: 1rem;
+  }
+
+  @include mixins.media-mini-mobile {
+    font-size: 1rem;
+  }
+  font-size: 1.4rem;
+  color: constants.$color-text-dark;
 }
 
 .v-card-title {

@@ -9,6 +9,7 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categories'
 import { categoryService } from '@/services/categoriesService'
 import { useCartStore } from '@/stores/cart'
+import { useAlertStore } from '@/stores/alert'
 
 const userLinks = [
   { name: 'Profile', href: '/profile' },
@@ -44,7 +45,12 @@ function openBurger() {
   store.toggleOpenState()
 }
 
-categoryService.getCategories().then((value) => categoriesStore.setCategories(value))
+categoryService
+  .getCategories()
+  .then((value) => categoriesStore.setCategories(value))
+  .catch((error: Error) => {
+    useAlertStore().show(error.message, 'warning')
+  })
 </script>
 
 <template>

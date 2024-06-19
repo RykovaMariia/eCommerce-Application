@@ -1,7 +1,7 @@
 import type { FavoritesData } from '@/interfaces/favoritesData'
 import { ClientService, clientService } from '@/services/clientService'
 
-class FavoritesService {
+class FavoritesApiService {
   constructor(private clientService: ClientService) {}
 
   public createFavoritesList() {
@@ -85,5 +85,5 @@ class FavoritesService {
   }
 }
 
-export const favoritesApiService = new FavoritesService(clientService)
-export type FavoritesServiceType = typeof favoritesApiService
+export const favoritesApiService = new FavoritesApiService(clientService)
+export type FavoritesApiServiceType = typeof favoritesApiService
