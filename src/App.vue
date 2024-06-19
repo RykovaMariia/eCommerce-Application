@@ -46,7 +46,7 @@ favoritesService.setAnonymousSession()
       <router-view v-slot="{ Component }">
         <transition name="fade">
           <!-- eslint-disable-next-line vue/require-toggle-inside-transition -->
-          <div>
+          <div class="d-flex page-container">
             <component :is="Component" />
           </div>
         </transition>
@@ -122,5 +122,10 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
+}
+
+.page-container {
+  height: 100%;
+  flex-direction: column;
 }
 </style>
