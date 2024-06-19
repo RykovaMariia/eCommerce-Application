@@ -6,6 +6,8 @@ import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { cartApiService } from '@/services/cartApiService'
 
+const emit = defineEmits(['updateProduct'])
+
 const { cart } = storeToRefs(useCartStore())
 const dialog = ref(false)
 
@@ -15,6 +17,10 @@ function deleteCart() {
     cartApiService.deleteCart({ id: cart.value.id, version: cart.value.version }).then(() => {
       cart.value = undefined
       localStorageService.removeData('cartId')
+      emit('updateProduct', {
+        lineItems: [],
+        totalLineItemQuantity: 0,
+      })
     })
   }
 }

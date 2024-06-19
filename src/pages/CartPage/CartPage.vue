@@ -151,13 +151,13 @@ function applyPromoCode() {
       <div class="total-price">
         Total:
         <Price
-          :isWithDiscount="totalPriceWithoutDiscount !== totalPrice"
+          :isWithDiscount="parseFloat(totalPriceWithoutDiscount.toFixed(2)) !== totalPrice"
           :price="parseFloat(totalPriceWithoutDiscount.toFixed(2))"
           :priceWithDiscount="totalPrice"
         />
       </div>
     </div>
-    <v-col class="clear-cart"> <ClearCartDialog /></v-col>
+    <v-col class="clear-cart"> <ClearCartDialog @updateProduct="fetchProducts($event)" /></v-col>
   </div>
   <div v-if="!totalLineItem && !isLoading" class="d-flex empty-cart">
     <IconHeart class="icon-heart" />
