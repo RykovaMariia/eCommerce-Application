@@ -26,6 +26,8 @@ const props = defineProps<{
   variantId: number
 }>()
 
+const emit = defineEmits(['updateProduct'])
+
 const href = { name: 'productId', params: { productId: props.productSlug } }
 
 const alert = useAlertStore()
@@ -66,7 +68,13 @@ function updateQuantity() {
       lineItemId: props.lineItemId,
       quantity: quantity.value,
     })
-    .then(({ body }) => cartStore.setCart(body))
+    .then(({ body }) => {
+      cartStore.setCart(body)
+      emit('updateProduct', {
+        lineItems: body.lineItems,
+        totalLineItemQuantity: body.totalLineItemQuantity,
+      })
+    })
 }
 
 function removeLineItem() {
@@ -79,7 +87,13 @@ function removeLineItem() {
       version: cart.value.version,
       lineItemId: props.lineItemId,
     })
-    .then(({ body }) => cartStore.setCart(body))
+    .then(({ body }) => {
+      cartStore.setCart(body)
+      emit('updateProduct', {
+        lineItems: body.lineItems,
+        totalLineItemQuantity: body.totalLineItemQuantity,
+      })
+    })
 }
 
 function clickHeart() {

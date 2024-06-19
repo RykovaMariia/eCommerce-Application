@@ -12,10 +12,13 @@ import { cartService } from './services/cartService'
 import { localStorageService } from './services/storageService'
 import { favoritesService } from './services/favoritesService'
 import ScrollToTopButton from './components/scroll-to-top-button/ScrollToTopButton.vue'
-
-const { isOpenAlert } = storeToRefs(useAlertStore())
+import { useLoadingStore } from './stores/loading'
+import IconZero from './components/icons/IconZero.vue'
 
 const alert = useAlertStore()
+
+const { isOpenAlert } = storeToRefs(useAlertStore())
+const { isLoading } = storeToRefs(useLoadingStore())
 
 const refreshToken = localStorageService.getData('token')?.refreshToken ?? ''
 const TOKEN_ERROR_MESSAGE = 'The refresh token was not found'
@@ -40,11 +43,21 @@ favoritesService.setAnonymousSession()
     <Header />
     <v-main>
       <Breadcrumbs />
-      <RouterView />
+      <router-view v-slot="{ Component }">
+        <transition name="fade">
+          <!-- eslint-disable-next-line vue/require-toggle-inside-transition -->
+          <div class="d-flex page-container">
+            <component :is="Component" />
+          </div>
+        </transition>
+      </router-view>
       <ScrollToTopButton />
     </v-main>
     <Footer />
     <AlertWindow v-if="isOpenAlert" />
+    <v-overlay v-model="isLoading" class="d-flex align-center justify-center">
+      <IconZero :is-loading="true" />
+    </v-overlay>
   </v-app>
 </template>
 
@@ -109,5 +122,10 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
+}
+
+.page-container {
+  flex-direction: column;
+  height: 100%;
 }
 </style>

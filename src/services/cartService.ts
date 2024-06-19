@@ -28,7 +28,7 @@ class CartService {
       })
   }
 
-  private async createCartAndSaveState() {
+  public async createCartAndSaveState() {
     const { body } = await this.cartApiService.createCart()
     localStorageService.saveData('cartId', body.id)
     useCartStore().setCart(body)

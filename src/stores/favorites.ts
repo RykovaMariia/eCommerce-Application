@@ -2,7 +2,9 @@ import type { ShoppingList, ShoppingListLineItem } from '@commercetools/platform
 import { defineStore } from 'pinia'
 
 export const useFavoritesStore = defineStore('Favorites', {
-  state: (): { favorites: ShoppingList | undefined } => ({
+  state: (): {
+    favorites: ShoppingList | undefined
+  } => ({
     favorites: undefined,
   }),
   actions: {
@@ -11,7 +13,7 @@ export const useFavoritesStore = defineStore('Favorites', {
     },
   },
   getters: {
-    lineItemsInFavorites(state: { favorites: ShoppingList | undefined }) {
+    lineItemsInFavorites(state) {
       return state.favorites?.lineItems.map(({ productId, variantId }: ShoppingListLineItem) => {
         return { productId, variantId }
       })

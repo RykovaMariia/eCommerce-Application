@@ -3,7 +3,7 @@ import ProductInCart from './components/ProductInCart.vue'
 import ClearCartDialog from './components/ClearCartDialog.vue'
 import Input from '@/components/inputs/Input.vue'
 import Button from '@/components/buttons/Button.vue'
-import { ref, watchEffect, type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import { storeToRefs } from 'pinia'
 import { getPriceAccordingToFractionDigits } from '@/utils/formatPrice'
@@ -13,18 +13,49 @@ import { useAlertStore } from '@/stores/alert'
 import Price from '@/components/price/Price.vue'
 import type { CartLineItem } from '@/interfaces/cartLineItem'
 import type { LineItem } from '@commercetools/platform-sdk'
+import { useLoadingStore } from '@/stores/loading'
+import { localStorageService } from '@/services/storageService'
+import { cartService } from '@/services/cartService'
+
+const loadingStore = useLoadingStore()
 
 const { cart, totalPrice } = storeToRefs(useCartStore())
 const cartLineItem: Ref<CartLineItem[] | undefined> = ref()
 const totalPriceWithoutDiscount = ref(0)
+const totalLineItem = ref(0)
 const promoCode = ref('')
 
-watchEffect(() => {
-  if (!cart.value?.totalLineItemQuantity) {
+const { isLoading } = storeToRefs(loadingStore)
+
+loadingStore.setLoading(true)
+
+async function fetchProducts({
+  lineItems,
+  totalLineItemQuantity,
+}: {
+  lineItems?: LineItem[]
+  totalLineItemQuantity?: number
+}) {
+  const cartId = localStorageService.getData('cartId') ?? ''
+
+  if (!cartId) {
+    lineItems = (await cartService.createCartAndSaveState()).lineItems
+  }
+
+  totalPriceWithoutDiscount.value = 0
+  if (!lineItems?.length) {
+    const cart = await cartApiService.getCartById(cartId)
+    lineItems = cart.body.lineItems
+    totalLineItemQuantity = cart.body.totalLineItemQuantity
+  }
+
+  if (!totalLineItemQuantity) {
+    totalLineItem.value = 0
+    loadingStore.setLoading(false)
     return
   }
-  totalPriceWithoutDiscount.value = 0
-  cartLineItem.value = cart.value.lineItems.map((lineItem: LineItem) => {
+  totalLineItem.value = totalLineItemQuantity
+  cartLineItem.value = lineItems.map((lineItem: LineItem) => {
     const {
       name,
       variant,
@@ -35,7 +66,6 @@ watchEffect(() => {
       quantity,
       id,
     } = lineItem
-
     totalPriceWithoutDiscount.value += getPriceAccordingToFractionDigits(price.value, quantity)
 
     return {
@@ -56,7 +86,11 @@ watchEffect(() => {
       variantId: variant.id,
     }
   })
-})
+
+  loadingStore.setLoading(false)
+}
+
+fetchProducts({})
 
 function applyPromoCode() {
   if (!cart.value) {
@@ -74,7 +108,7 @@ function applyPromoCode() {
 </script>
 
 <template>
-  <div v-if="cart?.totalLineItemQuantity" class="products">
+  <div v-if="totalLineItem" class="products">
     <ProductInCart
       v-for="{
         name,
@@ -99,6 +133,7 @@ function applyPromoCode() {
       :lineItemId
       :attributes
       :variantId
+      @updateProduct="fetchProducts($event)"
     />
     <div class="d-flex cart-total">
       <v-form @submit.prevent="applyPromoCode">
@@ -124,7 +159,7 @@ function applyPromoCode() {
     </div>
     <v-col class="clear-cart"> <ClearCartDialog /></v-col>
   </div>
-  <div v-else class="d-flex empty-cart">
+  <div v-if="!totalLineItem && !isLoading" class="d-flex empty-cart">
     <IconHeart class="icon-heart" />
     <div class="title">The cart is empty</div>
     <div>

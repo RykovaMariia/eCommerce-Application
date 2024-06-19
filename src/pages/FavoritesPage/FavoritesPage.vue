@@ -11,6 +11,7 @@ import { LOADING_TIMEOUT } from '@/constants/constants'
 import { useCartStore } from '@/stores/cart'
 import { favoritesApiService } from '@/services/favoritesApiService'
 import IconHeart from '@/components/icons/IconHeart.vue'
+import { useLoadingStore } from '@/stores/loading'
 
 interface FavoritesProducts {
   name: string
@@ -24,9 +25,11 @@ interface FavoritesProducts {
 }
 const alert = useAlertStore()
 const favoritesStore = useFavoritesStore()
+const loadingStore = useLoadingStore()
 
 const { favorites } = storeToRefs(favoritesStore)
 const { cart } = storeToRefs(useCartStore())
+const { isLoading } = storeToRefs(loadingStore)
 
 const loadingStates: Ref<{ [key: string]: boolean }> = ref({})
 const favoritesProducts: Ref<FavoritesProducts[]> = ref([])
@@ -34,8 +37,9 @@ const favoritesProducts: Ref<FavoritesProducts[]> = ref([])
 watchEffect(fetchProducts)
 
 async function fetchProducts() {
+  loadingStore.setLoading(true)
   const lineItems = favoritesStore.lineItemsInFavorites
-  if (!lineItems) {
+  if (lineItems == null) {
     return
   }
   const lineItemsPromises = lineItems.map(async (lineItem) => {
@@ -60,6 +64,7 @@ async function fetchProducts() {
   })
 
   favoritesProducts.value = await Promise.all(lineItemsPromises)
+  loadingStore.setLoading(false)
 }
 
 async function addProductToCartById({
@@ -143,7 +148,7 @@ async function deleteProductFromFavorites(lineItemId: string) {
     />
   </TransitionGroup>
   <Transition name="empty-fade" class="d-flex empty-favorites">
-    <div v-if="!favoritesProducts.length">
+    <div v-if="!favoritesProducts.length && !isLoading">
       <IconHeart class="icon-heart" />
       <div class="text-favorites">
         The products you liked will be here. Just click on the heart on the product card
@@ -187,6 +192,7 @@ async function deleteProductFromFavorites(lineItemId: string) {
   align-items: center;
   justify-content: center;
 
+  width: 100%;
   height: 100%;
 }
 
