@@ -33,8 +33,6 @@ const route = useRoute()
 const { categories } = storeToRefs(useCategoriesStore())
 const categoryId = ref()
 
-loadingStore.setLoading(true)
-
 const getLimitProductsOnPage = () => {
   const minDesktopWidth = 1440
   const maxTableWidth = 1099
@@ -108,6 +106,7 @@ const selectColor = update('color')
 const selectQuantity = update('quantity')
 
 function fetchProducts() {
+  loadingStore.setLoading(true)
   limitProductsOnPage = getLimitProductsOnPage()
   updateCategoryId()
 
@@ -138,6 +137,7 @@ function fetchProducts() {
       loadingStore.setLoading(false)
     })
     .catch((error: Error) => {
+      loadingStore.setLoading(false)
       useAlertStore().show(error.message, 'warning')
     })
 }

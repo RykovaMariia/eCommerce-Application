@@ -18,12 +18,14 @@ import Price from '@/components/price/Price.vue'
 import { favoritesService } from '@/services/favoritesService'
 import { useFavoritesStore } from '@/stores/favorites'
 import { favoritesApiService } from '@/services/favoritesApiService'
+import { useLoadingStore } from '@/stores/loading'
 
 let attributeValues: string[][] = []
 let masterAttributeNames: string[] = []
 const productId = localStorageService.getData('productId') ?? ''
 
 const alert = useAlertStore()
+const loadingStore = useLoadingStore()
 
 const { favorites } = storeToRefs(useFavoritesStore())
 const { cart } = storeToRefs(useCartStore())
@@ -133,14 +135,22 @@ const definePrice = ({ price, discountPrice }: ProductItem) => {
 }
 
 async function addProductToCart() {
+  loadingStore.setLoading(true)
   const variantId =
     cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id ?? 1
-  cartService.addProductToCart({ productId, variantId, cart: cart.value }).catch((error: Error) => {
-    alert.show(`Error: ${error.message}`, 'warning')
-  })
+  cartService
+    .addProductToCart({ productId, variantId, cart: cart.value })
+    .then(() => {
+      loadingStore.setLoading(false)
+    })
+    .catch((error: Error) => {
+      loadingStore.setLoading(true)
+      alert.show(`Error: ${error.message}`, 'warning')
+    })
 }
 
 function removeProductFromCart() {
+  loadingStore.setLoading(true)
   if (!cart.value?.lineItems || !productId) {
     return
   }
@@ -161,8 +171,10 @@ function removeProductFromCart() {
     .then(({ body }) => {
       alert.show('Product is removed', 'success')
       useCartStore().setCart(body)
+      loadingStore.setLoading(false)
     })
     .catch((error: Error) => {
+      loadingStore.setLoading(false)
       alert.show(`Error: ${error.message}`, 'warning')
     })
 }
@@ -172,18 +184,22 @@ function setAction() {
 }
 
 function addProductToFavorites() {
+  loadingStore.setLoading(true)
   const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
   if (!variantId || !productId) {
     return
   }
   favoritesService
     .addProductToFavoritesList({ productId, variantId, favorites: favorites.value })
+    .then(() => loadingStore.setLoading(false))
     .catch((error: Error) => {
+      loadingStore.setLoading(false)
       alert.show(`Error: ${error.message}`, 'warning')
     })
 }
 
 function deleteProductFromFavoritesById() {
+  loadingStore.setLoading(true)
   const variantId = cartService.getVariantByAttribute(product.variants, selectedVariants.value)?.id
   if (!favorites.value?.lineItems || !productId || !variantId) {
     return
@@ -204,8 +220,10 @@ function deleteProductFromFavoritesById() {
     })
     .then(({ body }) => {
       useFavoritesStore().setFavorites(body)
+      loadingStore.setLoading(false)
     })
     .catch((error: Error) => {
+      loadingStore.setLoading(false)
       alert.show(`Error: ${error.message}`, 'warning')
     })
 }
