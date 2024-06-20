@@ -40,6 +40,7 @@ async function fetchProducts() {
   loadingStore.setLoading(true)
   const lineItems = favoritesStore.lineItemsInFavorites
   if (lineItems == null) {
+    loadingStore.setLoading(false)
     return
   }
   const lineItemsPromises = lineItems.map(async (lineItem) => {
@@ -153,7 +154,7 @@ async function deleteProductFromFavorites(lineItemId: string) {
     />
   </TransitionGroup>
   <Transition name="empty-fade" class="d-flex empty-favorites">
-    <div v-if="favoritesProducts?.length === 0 && !isLoading">
+    <div v-if="!favoritesProducts?.length && !isLoading">
       <IconHeart class="icon-heart" />
       <div class="text-favorites">
         The products you liked will be here. Just click on the heart on the product card
