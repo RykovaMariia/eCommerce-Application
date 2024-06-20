@@ -7,6 +7,7 @@ import {
 } from '@/services/storageService'
 import { tokenData } from '@/services/tokenService'
 import type { UserCustomerDraft, UserLoginData } from '@/interfaces/userData'
+import { useCartStore } from '@/stores/cart'
 
 const mergeWithExistingCustomerCart = 'MergeWithExistingCustomerCart'
 
@@ -14,6 +15,7 @@ export class AuthService {
   constructor(
     private clientService: ClientService,
     private localStorageService: StorageService<LocalStorageState>,
+    private cartStore: typeof useCartStore,
   ) {}
 
   login(userData: UserLoginData) {
@@ -34,10 +36,11 @@ export class AuthService {
       .post({ body: userData })
       .execute()
 
-      .then(() => {
+      .then(({ body }) => {
         this.localStorageService.saveData('token', tokenData.get())
         localStorageService.removeData('anonymousId')
         this.clientService.setApiRoot()
+        this.cartStore().setCart(body.cart)
       })
   }
 
@@ -50,10 +53,11 @@ export class AuthService {
         body: userData,
       })
       .execute()
-      .then(() => {
+      .then(({ body }) => {
         this.login(userData)
+        this.cartStore().setCart(body.cart)
       })
   }
 }
 
-export const authService = new AuthService(clientService, localStorageService)
+export const authService = new AuthService(clientService, localStorageService, useCartStore)

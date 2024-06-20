@@ -103,10 +103,8 @@ function applyPromoCode() {
   cartApiService
     .applyPromoCode(cart.value.id, cart.value.version, promoCode.value)
     .then(({ body }) => {
-      useCartStore().setCart(body)
       cartLineItems.value = body.lineItems.map((lineItem: LineItem, i) => {
         const { price, discountedPricePerQuantity, quantity } = lineItem
-
         return {
           ...cartLineItems.value![i],
           discountedPrice: getPriceAccordingToFractionDigits(

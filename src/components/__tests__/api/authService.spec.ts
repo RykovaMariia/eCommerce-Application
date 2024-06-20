@@ -12,7 +12,7 @@ describe('Auth Service', () => {
             login: () => {
               return {
                 post: () => {
-                  return { execute: () => Promise.resolve({}) }
+                  return { execute: () => Promise.resolve({ body: { cart: 10 } }) }
                 },
               }
             },
@@ -31,6 +31,10 @@ describe('Auth Service', () => {
   const authService = new AuthService(
     ClientServiceMock as unknown as ClientService,
     localStorageServiceMock as unknown as StorageService<LocalStorageState>,
+    (() => {
+      return { setCart: vi.fn() }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }) as any,
   )
 
   afterEach(() => {
