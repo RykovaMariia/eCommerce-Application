@@ -39,8 +39,13 @@ export class AuthService {
       .then(({ body }) => {
         this.localStorageService.saveData('token', tokenData.get())
         localStorageService.removeData('anonymousId')
+        localStorageService.removeData('cartId')
         this.clientService.setApiRoot()
-        this.cartStore().setCart(body.cart)
+
+        if (body.cart) {
+          localStorageService.saveData('cartId', body.cart.id)
+          this.cartStore().setCart(body.cart)
+        }
       })
   }
 
@@ -53,9 +58,8 @@ export class AuthService {
         body: userData,
       })
       .execute()
-      .then(({ body }) => {
+      .then(() => {
         this.login(userData)
-        this.cartStore().setCart(body.cart)
       })
   }
 }
