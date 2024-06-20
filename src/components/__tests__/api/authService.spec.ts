@@ -7,14 +7,10 @@ describe('Auth Service', () => {
   const ClientServiceMock = {
     getRoot: vi.fn(() => {
       return {
-        me: () => {
+        login: () => {
           return {
-            login: () => {
-              return {
-                post: () => {
-                  return { execute: () => Promise.resolve({ body: { cart: 10 } }) }
-                },
-              }
+            post: () => {
+              return { execute: () => Promise.resolve({ body: { cart: 10 } }) }
             },
           }
         },

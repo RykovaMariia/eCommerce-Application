@@ -23,15 +23,13 @@ export class AuthService {
     const anonymousId = localStorageService.getData('anonymousId')
 
     if (cartId && anonymousId) {
-      userData.anonymousCartId = cartId
+      userData.anonymousCart = { id: cartId, typeId: 'cart' }
       userData.anonymousId = anonymousId
       userData.anonymousCartSignInMode = mergeWithExistingCustomerCart
-      userData.updateProductData = true
     }
 
     return this.clientService
       .getRoot(this.clientService.getPasswordFlowClient(userData.email, userData.password))
-      .me()
       .login()
       .post({ body: userData })
       .execute()
@@ -59,7 +57,7 @@ export class AuthService {
       })
       .execute()
       .then(() => {
-        this.login(userData)
+        this.login({ ...userData })
       })
   }
 }
