@@ -36,7 +36,7 @@ async function fetchProducts({
   lineItems?: LineItem[]
   totalLineItemQuantity?: number
 }) {
-  const cartId = localStorageService.getData('cartId') ?? ''
+  let cartId = localStorageService.getData('cartId')
 
   if (!cartId) {
     lineItems = (await cartService.createCartAndSaveState()).lineItems
@@ -44,7 +44,9 @@ async function fetchProducts({
 
   totalPriceWithoutDiscount.value = 0
   if (!lineItems?.length) {
-    const cart = await cartApiService.getCartById(cartId)
+    cartId = localStorageService.getData('cartId')
+    const cart = await cartApiService.getCartById(cartId!)
+    useCartStore().setCart(cart.body)
     lineItems = cart.body.lineItems
     totalLineItemQuantity = cart.body.totalLineItemQuantity
   }
@@ -102,10 +104,8 @@ function applyPromoCode() {
   cartApiService
     .applyPromoCode(cart.value.id, cart.value.version, promoCode.value)
     .then(({ body }) => {
-      useCartStore().setCart(body)
       cartLineItems.value = body.lineItems.map((lineItem: LineItem, i) => {
         const { price, discountedPricePerQuantity, quantity } = lineItem
-
         return {
           ...cartLineItems.value![i],
           discountedPrice: getPriceAccordingToFractionDigits(
