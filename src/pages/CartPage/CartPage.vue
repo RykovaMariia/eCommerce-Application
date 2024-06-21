@@ -45,9 +45,6 @@ async function fetchProducts({
   totalPriceWithoutDiscount.value = 0
   if (!lineItems?.length) {
     cartId = localStorageService.getData('cartId')
-    if (!cartId) {
-      console.error('object')
-    }
     const cart = await cartApiService.getCartById(cartId!)
     useCartStore().setCart(cart.body)
     lineItems = cart.body.lineItems
