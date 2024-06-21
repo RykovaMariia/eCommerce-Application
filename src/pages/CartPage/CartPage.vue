@@ -106,6 +106,7 @@ function applyPromoCode() {
     .then(({ body }) => {
       cartLineItems.value = body.lineItems.map((lineItem: LineItem, i) => {
         const { price, discountedPricePerQuantity, quantity } = lineItem
+        useCartStore().setCart(body)
         return {
           ...cartLineItems.value![i],
           discountedPrice: getPriceAccordingToFractionDigits(
