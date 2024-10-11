@@ -1,0 +1,29 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-standard-scss",
+    "stylelint-config-clean-order",
+    "stylelint-config-recommended-vue",
+    "stylelint-config-recommended-vue/scss",
+    "stylelint-config-standard-vue"
+  ],
+  "plugins": ["stylelint-order", "stylelint-scss"],
+  "overrides": [
+    {
+      "files": ["*.scss", "**/*.scss"],
+      "extends": ["stylelint-config-standard-scss"]
+    },
+    {
+      "files": ["*.vue", "**/*.vue"],
+      "extends": ["stylelint-config-standard-scss", "stylelint-config-standard-vue/scss"]
+    }
+  ],
+  "rules": {
+    "no-empty-source": null,
+    "declaration-empty-line-before": null,
+    "selector-class-pattern": null,
+    "keyframes-name-pattern": null,
+    "no-duplicate-selectors": null,
+    "no-descending-specificity": null
+  }
+}

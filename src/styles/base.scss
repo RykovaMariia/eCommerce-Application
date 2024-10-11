@@ -1,0 +1,94 @@
+@use './constants.scss';
+@use './mixins.scss';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body {
+  min-height: 100vh;
+
+  font-family: constants.$font-base;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  color: constants.$color-text-dark;
+  text-rendering: optimizelegibility;
+
+  transition:
+    color 0.5s,
+    background-color 0.5s;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: constants.$font-heading;
+}
+
+h1 {
+  font-size: 3rem;
+  color: constants.$color-primary;
+}
+
+h2 {
+  font-size: 2.5rem;
+}
+
+h3 {
+  font-size: 2rem;
+}
+
+main.v-main {
+  @include mixins.media-mobile {
+    padding: calc(100px + 2rem) 2rem 2rem;
+  }
+
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: calc(100px + 3rem) 4rem 3rem;
+}
+
+.v-container.container {
+  @include mixins.media-mobile {
+    padding: 0;
+  }
+  max-width: 1440px;
+  padding: 0;
+}
+
+a {
+  color: constants.$color-text-dark;
+  text-decoration: none;
+
+  &:hover {
+    color: constants.$color-primary;
+  }
+}
+
+.page-card {
+  border: 1px solid constants.$color-primary;
+  border-radius: 6px;
+}
+
+.v-application {
+  background: url('@assets/images/texture.png') !important;
+  background-repeat: round !important;
+  background-size: 35% !important;
+}
+
+.link_redirect {
+  @include mixins.media-mobile {
+    font-size: 0.8rem;
+  }
+  text-decoration: underline;
+}

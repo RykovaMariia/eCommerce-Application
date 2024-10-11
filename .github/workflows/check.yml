@@ -1,0 +1,64 @@
+name: Check
+on:
+  push:
+    branches:
+      - main
+      - 'develop/**'
+      - 'release/**'
+  pull_request:
+    branches:
+      - main
+      - 'develop/**'
+      - 'release/**'
+jobs:
+  lint:
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: ./
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Code Linting
+        run: npm run lint
+
+      - name: Code Stylelinting
+        run: npm run stylelint:fix
+
+  test:
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: ./
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Test
+        run: npm run test:run
